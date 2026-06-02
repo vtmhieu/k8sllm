@@ -1,0 +1,64 @@
+---
+title: Inference Benchmarking And Cost Model
+description: Benchmark LLM inference on Kubernetes using latency phases, throughput, GPU pressure, and cost per request.
+tags:
+  - llm
+  - benchmarking
+  - cost
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://docs.vllm.ai/"
+  - "https://kserve.github.io/website/"
+  - "https://docs.ray.io/en/latest/serve/"
+  - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# Inference Benchmarking And Cost Model
+
+LLM benchmarks are useful only when they match the request mix you expect in production. Measure latency phases and unit economics, not only headline tokens per second.
+
+## Benchmark dimensions
+
+| Dimension | Why it matters |
+| --- | --- |
+| Prompt tokens | Prefill time and memory pressure grow with input size. |
+| Output tokens | Decode duration drives user wait and GPU occupancy. |
+| Concurrency | Batching efficiency and queue wait change under load. |
+| Model version | Memory profile, context length, and throughput can shift between revisions. |
+| Route class | Interactive, agentic, and batch traffic need different SLOs. |
+
+## Required metrics
+
+- Time to first token.
+- Inter-token latency and output tokens per second.
+- Queue wait before runtime execution.
+- Prompt tokens, completion tokens, and total tokens.
+- GPU memory used, GPU utilization, and cache pressure.
+- Error rate by model, route, and request class.
+
+## Cost model
+
+Start with a simple unit model:
+
+```text
+request_cost = accelerator_hourly_cost * request_gpu_seconds / 3600
+             + platform_overhead
+             + storage_and_retrieval_cost
+```
+
+Then segment by request class:
+
+| Request class | Cost concern |
+| --- | --- |
+| Interactive chat | Warm capacity and tail latency. |
+| Agent workflows | Multi-call amplification and tool latency. |
+| RAG | Retrieval, reranking, context size, and generation. |
+| Batch inference | Throughput per GPU hour and deadline windows. |
+
+## Acceptance criteria
+
+A benchmark is publishable when it includes workload shape, model version, hardware profile, concurrency, request distribution, latency percentiles, and cost per request class.
+

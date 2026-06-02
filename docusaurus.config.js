@@ -1,6 +1,6 @@
 // @ts-check
 
-const siteUrl = process.env.DOCUSAURUS_SITE_URL || 'https://your-domain.example';
+const siteUrl = process.env.DOCUSAURUS_SITE_URL || 'https://vtmhieu.github.io';
 const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/k8sllm/';
 
 /** @type {import('@docusaurus/types').Config} */

@@ -1,0 +1,51 @@
+---
+title: RAG Failure Modes And Evaluation
+description: Failure modes and evaluation strategy for production RAG systems on Kubernetes.
+tags:
+  - rag
+  - evaluation
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://opentelemetry.io/docs/"
+  - "https://kubernetes.io/docs/concepts/workloads/controllers/job/"
+  - "https://docs.ray.io/en/latest/serve/"
+diagram_ids:
+  - "rag-platform"
+---
+
+# RAG Failure Modes And Evaluation
+
+Production RAG fails in more ways than model hallucination. Retrieval, metadata policy, context assembly, and evaluation drift are often the real source of bad answers.
+
+## Failure modes
+
+| Failure | Signal |
+| --- | --- |
+| Bad chunking | Relevant documents exist but retrieval misses useful spans. |
+| Weak metadata | Retrieved context cannot be filtered by tenant, source, or freshness. |
+| Authorization gap | Retrieval returns documents the user should not see. |
+| Context bloat | Prompt grows until latency and cost become unstable. |
+| Reranker regression | Better vector recall still produces worse final context. |
+| Stale index | Answers miss recently changed source material. |
+
+## Evaluation layers
+
+- **Retrieval recall**: did top-k include the expected source?
+- **Groundedness**: is the answer supported by retrieved evidence?
+- **Citation quality**: can users inspect the evidence path?
+- **Policy compliance**: did retrieval obey tenant and access constraints?
+- **Latency**: did retrieval, rerank, prompt assembly, and generation stay within SLO?
+
+## Kubernetes operating model
+
+- Run ingestion as versioned Jobs or workflows.
+- Emit traces for retrieve, rerank, prompt assembly, and generation.
+- Keep vector database backup and restore separate from model serving.
+- Deploy evaluation jobs on every chunking, embedding, reranker, or prompt change.
+
+## Release gate
+
+Do not release a RAG change unless it passes curated evaluation sets, unauthorized-document tests, latency thresholds, and rollback readiness for the previous index version.
+

@@ -21,7 +21,9 @@ const sidebars = {
       link: { type: 'doc', id: 'best-practices/index' },
       items: [
         'best-practices/scaling-autoscaling',
+        'best-practices/production-scaling-decision-guide',
         'best-practices/security-baseline',
+        'best-practices/security-hardening-checklist',
         'best-practices/observability-baseline',
         'best-practices/backup-dr',
       ],
@@ -44,7 +46,9 @@ const sidebars = {
       items: [
         'llm-on-kubernetes/gpu-node-pools',
         'llm-on-kubernetes/model-serving-options',
+        'llm-on-kubernetes/inference-benchmarking-cost-model',
         'llm-on-kubernetes/rag-on-kubernetes',
+        'llm-on-kubernetes/rag-failure-modes-evaluation',
         'llm-on-kubernetes/inference-scaling-cost',
       ],
     },

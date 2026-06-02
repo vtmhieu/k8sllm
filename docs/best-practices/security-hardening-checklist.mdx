@@ -1,0 +1,61 @@
+---
+title: Security Hardening Checklist
+description: A senior Kubernetes security hardening checklist for identity, admission, runtime, network, and audit controls.
+tags:
+  - security
+  - hardening
+  - kubernetes
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/security/"
+  - "https://kubernetes.io/docs/concepts/security/pod-security-standards/"
+  - "https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/"
+  - "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+diagram_ids:
+  - "multi-tenant-security"
+---
+
+# Security Hardening Checklist
+
+Hardening is not a one-time pass. Treat it as a baseline contract that new clusters, namespaces, and workloads must satisfy before production traffic is allowed.
+
+## Cluster access
+
+| Control | Production bar |
+| --- | --- |
+| Identity | Use OIDC or enterprise identity provider. Avoid local static users. |
+| RBAC | Grant namespace-scoped roles by default. Keep cluster-wide roles rare and reviewed. |
+| Admin access | Use break-glass access with expiry, reason, and audit trail. |
+| Service accounts | Bind least privilege roles and avoid default service account usage for apps. |
+
+## Admission and workload policy
+
+- Enforce Pod Security Standards at `restricted` where possible, with documented exceptions.
+- Reject privileged containers, host namespace access, hostPath volumes, and unsafe capabilities unless approved.
+- Require resource requests, approved registries, immutable image references, and ownership labels.
+- Validate ingress, egress, and secret references before rollout.
+- Roll out new policies in audit or warn mode before enforce mode.
+
+## Runtime and network
+
+| Area | Minimum control |
+| --- | --- |
+| Network | Default deny ingress and egress for tenant namespaces where CNI supports it. |
+| Runtime | Use runtime profiles, seccomp defaults, and minimal Linux capabilities. |
+| Secrets | Encrypt at rest, rotate credentials, and keep plaintext out of Git. |
+| Images | Scan, sign, and pin deployment artifacts to digests for high-risk workloads. |
+
+## Audit evidence
+
+Keep audit logs durable enough to answer:
+
+- Who changed an RBAC role or binding?
+- Which admission policy rejected a workload?
+- Which identity accessed a secret?
+- Which namespace had policy exceptions active during an incident?
+
+## Exit criteria
+
+A namespace is production-ready only when it has owner metadata, quota, Pod Security labels, NetworkPolicy stance, secret ownership, deployment path, and observability labels.
+

@@ -1,0 +1,57 @@
+---
+title: Production Scaling Decision Guide
+description: A practical decision guide for choosing HPA, VPA, KEDA, node autoscaling, and capacity buffers.
+tags:
+  - autoscaling
+  - capacity-planning
+  - production
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
+  - "https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler"
+  - "https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler"
+  - "https://keda.sh/docs/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Production Scaling Decision Guide
+
+Scaling decisions should start from demand shape, not tool preference. Decide what changes, what signal proves demand, and how long the platform may take to react.
+
+## Decision matrix
+
+| Demand shape | Primary mechanism | Primary signal |
+| --- | --- | --- |
+| User-facing HTTP traffic | HPA | RPS, latency, CPU saturation as secondary. |
+| Queue-backed workers | KEDA or HPA with external metrics | Queue depth, oldest message age, processing rate. |
+| Unknown resource requests | VPA in recommendation mode first | Historical CPU and memory usage. |
+| Pending pods due to capacity | Cluster Autoscaler or Karpenter | Unschedulable pods and node provisioning latency. |
+| GPU inference | Runtime-aware autoscaling | Queue wait, active sequences, GPU memory, TTFT. |
+
+## Recommended sequence
+
+1. Fix requests, limits, probes, and rollout strategy.
+2. Load test the workload at expected and failure traffic levels.
+3. Choose a scale metric tied to user impact.
+4. Add node autoscaling only after pod placement constraints are realistic.
+5. Validate scale-up and scale-down behavior with real delay budgets.
+
+## Capacity buffers
+
+Do not rely on just-in-time scale-up for every class of traffic. Keep explicit buffers for:
+
+- Critical ingress and DNS infrastructure.
+- High-value interactive services.
+- GPU model servers with long model-load time.
+- Batch windows with deadline commitments.
+
+## Failure review questions
+
+- Did replicas increase but latency stay high?
+- Did nodes scale but pods remain pending?
+- Did scale-up overload a shared dependency?
+- Did scale-down evict useful warm capacity?
+- Did the autoscaler optimize infrastructure metrics while user SLO still burned?
+

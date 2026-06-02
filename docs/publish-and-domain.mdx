@@ -17,7 +17,11 @@ diagram_ids:
 
 # Publish And Domain
 
-This folder is intentionally self-contained so it can become a standalone Git repository later.
+This repository is configured for GitHub Pages first. The target public URL is:
+
+```text
+https://vtmhieu.github.io/k8sllm/
+```
 
 ## Local run
 
@@ -30,10 +34,17 @@ Open the local URL printed by Docusaurus.
 
 ## GitHub Pages
 
-1. Create a GitHub repository named `k8sllm`.
-2. Push this folder as the repository root.
-3. In repository settings, enable Pages from GitHub Actions.
-4. Update `docusaurus.config.js`:
+1. In repository settings, open **Pages**.
+2. Set **Source** to **GitHub Actions**.
+3. Push to `main`.
+4. The `Build and Deploy` workflow builds the site and deploys the `build/` artifact.
+5. Expected public URL:
+
+```text
+https://vtmhieu.github.io/k8sllm/
+```
+
+The current `docusaurus.config.js` GitHub Pages settings are:
 
 ```js
 url: 'https://vtmhieu.github.io',
@@ -42,7 +53,7 @@ organizationName: 'vtmhieu',
 projectName: 'k8sllm',
 ```
 
-5. Keep `static/.nojekyll` so GitHub Pages does not process Docusaurus output with Jekyll.
+Keep `static/.nojekyll` so GitHub Pages does not process Docusaurus output with Jekyll.
 
 ## Custom domain
 
@@ -60,7 +71,7 @@ baseUrl: '/',
 ```text
 Type: CNAME
 Name: kubernetes
-Value: YOUR_GITHUB_USERNAME.github.io
+Value: vtmhieu.github.io
 ```
 
 5. In GitHub Pages settings, set the custom domain and enable HTTPS.
@@ -80,4 +91,16 @@ For Cloudflare Pages with a root custom domain, set:
 ```js
 url: 'https://kubernetes.example.com',
 baseUrl: '/',
+```
+
+## Verification URLs
+
+After deployment, verify:
+
+```text
+https://vtmhieu.github.io/k8sllm/
+https://vtmhieu.github.io/k8sllm/docs/kubernetes
+https://vtmhieu.github.io/k8sllm/docs/llm-on-kubernetes
+https://vtmhieu.github.io/k8sllm/docs/reference-architectures
+https://vtmhieu.github.io/k8sllm/img/architectures/llm-inference-stack.svg
 ```

@@ -1,10 +1,19 @@
-name: Build
+name: Build and Deploy
 
 on:
   pull_request:
   push:
     branches:
       - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -23,4 +32,25 @@ jobs:
         run: npm ci
 
       - name: Build site
+        env:
+          DOCUSAURUS_SITE_URL: https://vtmhieu.github.io
+          DOCUSAURUS_BASE_URL: /k8sllm/
         run: npm run build
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

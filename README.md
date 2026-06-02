@@ -2,7 +2,17 @@
 
 A Docusaurus knowledge site for senior platform engineers who need to design and operate Kubernetes platforms, platform services, and LLM workloads on Kubernetes.
 
-The project is self-contained in this folder so it can later be pushed as its own GitHub repository.
+Public site target:
+
+```text
+https://vtmhieu.github.io/k8sllm/
+```
+
+GitHub repository:
+
+```text
+https://github.com/vtmhieu/k8sllm
+```
 
 ## What is included
 
@@ -11,8 +21,23 @@ The project is self-contained in this folder so it can later be pushed as its ow
 - Platform Services: traffic, GitOps, policy, secrets, supply chain, observability stack.
 - LLM On Kubernetes: GPU node pools, model serving, RAG, inference scaling and cost.
 - Reference Architectures: six SVG architecture diagrams with explanatory pages.
-- GitHub Actions build workflow.
+- GitHub Actions build and GitHub Pages deploy workflow.
 - GitHub Pages and custom domain deployment instructions.
+
+## Learning roadmap
+
+1. Kubernetes Core: build a reliable mental model of API, control plane, scheduling, networking, and storage.
+2. Production Best Practices: turn cluster primitives into scaling, security, observability, and recovery baselines.
+3. Platform Services: choose ingress, GitOps, policy, secrets, supply chain, and telemetry services by capability.
+4. LLM On Kubernetes: design GPU pools, serving runtimes, RAG systems, and inference cost controls.
+5. Reference Architectures: use the diagrams as review checklists for real platform designs.
+
+## Source of truth policy
+
+- Kubernetes behavior should anchor on official Kubernetes documentation.
+- LLM serving guidance should cite official project docs for vLLM, KServe, Ray Serve, Triton, and NVIDIA Kubernetes integrations.
+- Vendor blogs can support examples, but should not override official docs for API behavior or security guarantees.
+- Every content page includes frontmatter with `sources` and `last_reviewed`.
 
 ## Local development
 
@@ -33,27 +58,32 @@ Serve the production build locally:
 npm run serve
 ```
 
-## Push as a new GitHub repository
+## Repository workflow
 
-From inside this folder:
+This repository is already connected to:
+
+```text
+https://github.com/vtmhieu/k8sllm.git
+```
+
+Use the normal workflow:
 
 ```bash
-git init
 git add .
-git commit -m "Initial Kubernetes LLM platform guide"
-git branch -M main
-git remote add origin git@github.com:vtmhieu/k8sllm.git
+git commit -m "Describe the content or platform change"
 git push -u origin main
 ```
 
 Then follow `docs/publish-and-domain.mdx` to enable GitHub Pages or Cloudflare Pages.
 
+The repository is already configured for GitHub Pages from GitHub Actions. In GitHub settings, set Pages source to GitHub Actions and push to `main`.
+
 ## Configuration to update before publishing
 
-Edit `docusaurus.config.js`:
+Edit `docusaurus.config.js` only if the publishing target changes:
 
-- `url`
-- `baseUrl`
+- `url` is currently `https://vtmhieu.github.io`
+- `baseUrl` is currently `/k8sllm/`
 - `organizationName` is currently `vtmhieu`
 - `projectName` is currently `k8sllm`
 - GitHub navbar and edit URLs
