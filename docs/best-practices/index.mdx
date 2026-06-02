@@ -1,0 +1,40 @@
+---
+title: Production Best Practices
+description: Production Kubernetes practices for scale, security, observability, and recovery.
+tags:
+  - kubernetes
+  - production
+  - sre
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/cluster-administration/"
+  - "https://kubernetes.io/docs/concepts/security/"
+  - "https://kubernetes.io/docs/tasks/debug/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Production Best Practices
+
+Best practice không phải là checklist cố định. Nó là cách biến risk thành platform contract: workload phải khai báo resource, security phải có guardrail, observability phải trả lời incident questions, và backup phải restore được.
+
+## Baseline capabilities
+
+| Capability | Minimum production bar |
+| --- | --- |
+| Scaling | Requests, HPA, cluster autoscaler, capacity buffer, load test evidence. |
+| Security | RBAC, Pod Security, NetworkPolicy, admission policy, audit, secret lifecycle. |
+| Monitoring | Metrics, logs, traces, SLOs, alert routing, incident review. |
+| Recovery | etcd backup, workload backup, restore drills, DR tests. |
+
+## Start here
+
+- [Scaling And Autoscaling](/docs/best-practices/scaling-autoscaling)
+- [Security Baseline](/docs/best-practices/security-baseline)
+- [Observability Baseline](/docs/best-practices/observability-baseline)
+- [Backup And Disaster Recovery](/docs/best-practices/backup-dr)
+
+## Operating principle
+
+Every baseline should be versioned, tested, and reviewed like product code. If a cluster setting can break availability or security, it should not live only in a dashboard click path.

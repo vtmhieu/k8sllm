@@ -1,0 +1,40 @@
+---
+title: GitOps Flow
+description: Reference architecture for GitOps-based Kubernetes delivery.
+tags:
+  - architecture
+  - gitops
+  - delivery
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://argo-cd.readthedocs.io/"
+  - "https://helm.sh/docs/"
+  - "https://kubectl.docs.kubernetes.io/references/kustomize/"
+diagram_ids:
+  - "gitops-flow"
+---
+
+# GitOps Flow
+
+![GitOps deployment flow architecture](/img/architectures/gitops-flow.svg)
+
+## Intent
+
+Make desired state reviewable, reproducible, and recoverable. CI owns artifact creation. CD owns cluster reconciliation.
+
+## Key decisions
+
+- Pull requests are the control point for application and manifest changes.
+- CI scans and signs artifacts.
+- Argo CD reconciles configuration repository state.
+- Admission policy validates before runtime.
+- Sync and rollout health feed back into engineering workflows.
+
+## Review signals
+
+- Manual cluster changes are detected as drift.
+- Rollout health is tied to readiness and SLOs, not only sync status.
+- Environment overlays are understandable and reviewable.
+- Image tags are immutable or resolved to digests.
+

@@ -1,0 +1,40 @@
+---
+title: LLM Inference Stack
+description: Reference architecture for LLM inference on Kubernetes.
+tags:
+  - architecture
+  - llm
+  - inference
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://docs.vllm.ai/"
+  - "https://kserve.github.io/website/"
+  - "https://docs.ray.io/en/latest/serve/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# LLM Inference Stack
+
+![LLM inference stack on Kubernetes architecture](/img/architectures/llm-inference-stack.svg)
+
+## Intent
+
+Separate gateway behavior, autoscaling, model runtime, GPU capacity, and telemetry. This keeps each layer tunable without changing the entire platform.
+
+## Key decisions
+
+- Gateway handles auth, quota, and route policy.
+- Runtime handles batching, KV cache, streaming, and model-specific serving.
+- GPU pool is isolated with taints, labels, and compatible node profiles.
+- Autoscaling uses inference-specific signals where possible.
+- Telemetry reports both user latency and GPU economics.
+
+## Review signals
+
+- Interactive and batch traffic do not share the same queue by default.
+- Model loading time is measured and budgeted.
+- Runtime version and model version are visible in telemetry.
+- Cost per request can be calculated by model and tenant.
+

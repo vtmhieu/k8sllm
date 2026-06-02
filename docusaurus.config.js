@@ -1,0 +1,127 @@
+// @ts-check
+
+const siteUrl = process.env.DOCUSAURUS_SITE_URL || 'https://your-domain.example';
+const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/k8sllm/';
+
+/** @type {import('@docusaurus/types').Config} */
+const config = {
+  title: 'Kubernetes + LLM Platform Guide',
+  tagline: 'Production Kubernetes, platform services, and AI infrastructure patterns for senior engineers.',
+  favicon: 'img/brand-mark.svg',
+
+  url: siteUrl,
+  baseUrl,
+  trailingSlash: false,
+
+  organizationName: 'vtmhieu',
+  projectName: 'k8sllm',
+
+  onBrokenLinks: 'throw',
+
+  i18n: {
+    defaultLocale: 'vi',
+    locales: ['vi'],
+  },
+
+  markdown: {
+    mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
+
+  presets: [
+    [
+      'classic',
+      /** @type {import('@docusaurus/preset-classic').Options} */
+      ({
+        docs: {
+          routeBasePath: 'docs',
+          sidebarPath: require.resolve('./sidebars.js'),
+          editUrl: 'https://github.com/vtmhieu/k8sllm/tree/main/',
+        },
+        blog: false,
+        theme: {
+          customCss: require.resolve('./src/css/custom.css'),
+        },
+      }),
+    ],
+  ],
+
+  themes: ['@docusaurus/theme-mermaid'],
+
+  themeConfig:
+    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+    ({
+      image: 'img/social-card.svg',
+      colorMode: {
+        defaultMode: 'light',
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
+      },
+      metadata: [
+        {
+          name: 'keywords',
+          content:
+            'Kubernetes, LLM, platform engineering, vLLM, KServe, Ray Serve, observability, security, GitOps',
+        },
+      ],
+      navbar: {
+        title: 'K8s + LLM Guide',
+        logo: {
+          alt: 'Kubernetes LLM Platform Guide mark',
+          src: 'img/brand-mark.svg',
+        },
+        items: [
+          { to: '/docs/kubernetes', label: 'Kubernetes', position: 'left' },
+          { to: '/docs/best-practices', label: 'Best Practices', position: 'left' },
+          { to: '/docs/platform-services', label: 'Platform Services', position: 'left' },
+          { to: '/docs/llm-on-kubernetes', label: 'LLM', position: 'left' },
+          { to: '/docs/reference-architectures', label: 'Architectures', position: 'left' },
+          {
+            href: 'https://github.com/vtmhieu/k8sllm',
+            label: 'GitHub',
+            position: 'right',
+          },
+        ],
+      },
+      footer: {
+        style: 'light',
+        links: [
+          {
+            title: 'Learning paths',
+            items: [
+              { label: 'Kubernetes Core', to: '/docs/kubernetes' },
+              { label: 'Production Best Practices', to: '/docs/best-practices' },
+              { label: 'LLM On Kubernetes', to: '/docs/llm-on-kubernetes' },
+            ],
+          },
+          {
+            title: 'Operate',
+            items: [
+              { label: 'Platform Services', to: '/docs/platform-services' },
+              { label: 'Reference Architectures', to: '/docs/reference-architectures' },
+              { label: 'Deploy Guide', to: '/docs/publish-and-domain' },
+            ],
+          },
+          {
+            title: 'Source of truth',
+            items: [
+              { label: 'Kubernetes Docs', href: 'https://kubernetes.io/docs/' },
+              { label: 'KServe', href: 'https://kserve.github.io/website/' },
+              { label: 'Ray Serve', href: 'https://docs.ray.io/en/latest/serve/' },
+              { label: 'vLLM', href: 'https://docs.vllm.ai/' },
+            ],
+          },
+        ],
+        copyright: `Copyright ${new Date().getFullYear()} Kubernetes + LLM Platform Guide contributors.`,
+      },
+      prism: {
+        theme: require('prism-react-renderer').themes.github,
+        darkTheme: require('prism-react-renderer').themes.dracula,
+        additionalLanguages: ['bash', 'yaml', 'go', 'json'],
+      },
+    }),
+};
+
+module.exports = config;

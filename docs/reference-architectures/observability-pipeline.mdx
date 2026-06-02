@@ -1,0 +1,39 @@
+---
+title: Observability Pipeline
+description: Reference architecture for Kubernetes observability pipelines.
+tags:
+  - architecture
+  - observability
+  - sre
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://prometheus.io/docs/"
+  - "https://opentelemetry.io/docs/"
+  - "https://grafana.com/docs/loki/latest/"
+diagram_ids:
+  - "observability-pipeline"
+---
+
+# Observability Pipeline
+
+![Kubernetes observability pipeline architecture](/img/architectures/observability-pipeline.svg)
+
+## Intent
+
+Collect signals from workloads and cluster components, standardize labels, store by access pattern, and expose operations views tied to SLOs.
+
+## Key decisions
+
+- Metrics are optimized for alerting and dashboards.
+- Logs carry enough context for forensic debugging without uncontrolled cardinality.
+- Traces show request path and dependency latency.
+- Events explain Kubernetes scheduling, lifecycle, and policy outcomes.
+
+## Review signals
+
+- Every alert has an owner and an action.
+- Dashboards start from user impact.
+- LLM routes expose TTFT, tokens/sec, queue wait, and GPU pressure.
+- Storage retention matches incident and audit requirements.
+

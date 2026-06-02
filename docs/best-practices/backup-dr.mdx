@@ -1,0 +1,53 @@
+---
+title: Backup And Disaster Recovery
+description: Kubernetes backup and disaster recovery baseline for control plane, workloads, and platform services.
+tags:
+  - backup
+  - disaster-recovery
+  - velero
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/"
+  - "https://velero.io/docs/"
+  - "https://kubernetes.io/docs/concepts/storage/volume-snapshots/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Backup And Disaster Recovery
+
+Disaster recovery is not a tool. It is an agreement about data loss, downtime, restore order, and who can execute the runbook.
+
+## What to back up
+
+| Scope | Why |
+| --- | --- |
+| etcd | Control plane state and Kubernetes objects. |
+| Application data | Databases, queues, object storage, and external systems. |
+| Kubernetes manifests | Desired state for rebuild and drift recovery. |
+| Secrets | Required for restore, but must be protected and rotated. |
+| Platform services | Argo CD, monitoring, policy, ingress, certificate state. |
+
+## RPO and RTO
+
+- **RPO** answers how much data loss is acceptable.
+- **RTO** answers how long restore may take.
+- Both must be measured by restore drills, not estimated from tool documentation.
+
+## Restore order
+
+1. Restore or rebuild control plane.
+2. Restore platform services required for deployment and policy.
+3. Restore secrets and external dependencies.
+4. Restore stateful workloads.
+5. Restore stateless workloads.
+6. Validate traffic, data consistency, and telemetry.
+
+## Failure modes
+
+- Backups exclude CRDs, so restored custom resources cannot be understood.
+- Backup tool has cluster credentials but no tested restore process.
+- Object storage bucket is in the same failure domain as the cluster.
+- Restore succeeds technically but application data is inconsistent.
+

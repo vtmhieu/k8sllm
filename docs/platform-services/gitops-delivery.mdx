@@ -1,0 +1,46 @@
+---
+title: GitOps Delivery
+description: GitOps deployment model for Kubernetes using desired state, reconciliation, and drift detection.
+tags:
+  - gitops
+  - argo-cd
+  - delivery
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://argo-cd.readthedocs.io/"
+  - "https://helm.sh/docs/"
+  - "https://kubectl.docs.kubernetes.io/references/kustomize/"
+diagram_ids:
+  - "gitops-flow"
+---
+
+# GitOps Delivery
+
+GitOps makes Git the desired-state source and makes cluster changes auditable. It is strongest when application teams can own configuration safely while platform teams own guardrails.
+
+![GitOps deployment flow architecture](/img/architectures/gitops-flow.svg)
+
+## Repository models
+
+| Model | Use when |
+| --- | --- |
+| App repo contains manifests | Small teams, simple environments, tight app ownership. |
+| Separate config repo | Strong environment control, platform-owned deployment policy. |
+| Mono config repo | Centralized governance, easier global review, higher repo coordination cost. |
+| Per-team config repo | Better ownership, more policy automation required. |
+
+## Delivery controls
+
+- CI builds and signs immutable artifacts.
+- CD reconciles manifests and surfaces drift.
+- Admission policy validates cluster safety.
+- Rollout health uses workload readiness and SLO impact, not just object sync status.
+
+## Failure modes
+
+- Auto-sync hides broken rollout if health checks are weak.
+- Manual kubectl changes bypass Git and create drift.
+- Helm values become an unreviewed configuration API.
+- Environment overlays diverge so much that staging no longer predicts production.
+

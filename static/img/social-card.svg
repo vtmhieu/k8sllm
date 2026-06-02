@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Kubernetes and LLM Platform Guide social preview">
+  <rect width="1200" height="630" fill="#f8faf9"/>
+  <path d="M0 84h1200M0 168h1200M0 252h1200M0 336h1200M0 420h1200M0 504h1200M120 0v630M240 0v630M360 0v630M480 0v630M600 0v630M720 0v630M840 0v630M960 0v630M1080 0v630" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="78" y="84" width="420" height="420" fill="#101718"/>
+  <path d="M288 150 400 214v128L288 406 176 342V214Z" fill="none" stroke="#2dd4bf" stroke-width="12" stroke-linejoin="round"/>
+  <circle cx="288" cy="278" r="34" fill="#f8faf9"/>
+  <text x="560" y="210" fill="#101718" font-family="Inter, Arial, sans-serif" font-size="68" font-weight="800">Kubernetes + LLM</text>
+  <text x="560" y="292" fill="#101718" font-family="Inter, Arial, sans-serif" font-size="68" font-weight="800">Platform Guide</text>
+  <text x="563" y="366" fill="#475569" font-family="Inter, Arial, sans-serif" font-size="30">Production architecture, platform services,</text>
+  <text x="563" y="410" fill="#475569" font-family="Inter, Arial, sans-serif" font-size="30">security, observability, and AI workloads.</text>
+  <rect x="560" y="474" width="244" height="46" fill="#0f766e"/>
+  <text x="584" y="505" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">Senior platform guide</text>
+</svg>

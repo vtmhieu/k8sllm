@@ -1,0 +1,57 @@
+---
+title: Workloads And Scheduling
+description: Workload primitives, placement rules, and scheduling controls for reliable Kubernetes platforms.
+tags:
+  - kubernetes
+  - workloads
+  - scheduling
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/workloads/"
+  - "https://kubernetes.io/docs/concepts/scheduling-eviction/"
+  - "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Workloads And Scheduling
+
+Most production failures are not caused by choosing the wrong workload primitive. They come from missing readiness semantics, weak resource contracts, or placement rules that hide failure domains.
+
+## Choose the primitive
+
+| Need | Kubernetes primitive |
+| --- | --- |
+| Stateless service | Deployment |
+| Stable identity and ordered rollout | StatefulSet |
+| Run to completion | Job |
+| Scheduled run | CronJob |
+| Node-local agent | DaemonSet |
+
+## Scheduling controls
+
+- **Requests and limits** define the scheduler contract. Requests are capacity reservation; limits are runtime enforcement.
+- **Taints and tolerations** keep special nodes, especially GPU or system nodes, from accepting accidental workloads.
+- **Node affinity** selects hardware, zones, compliance domains, or accelerator profiles.
+- **Pod topology spread** prevents all replicas from landing in one failure domain.
+- **PriorityClass** protects platform-critical workloads during pressure.
+- **PodDisruptionBudget** limits voluntary disruptions but can block node maintenance if set unrealistically.
+
+## Senior guidance
+
+For critical services, review workload design as a tuple:
+
+```text
+replica strategy + resource requests + probes + topology spread + PDB + rollout policy
+```
+
+Do not tune autoscaling before requests and probes are trustworthy. Bad requests corrupt scheduling; bad probes corrupt availability.
+
+## Failure modes
+
+- Pending pods because requested resources do not fit any node profile.
+- Rollout deadlock because readiness never becomes true and maxUnavailable is too strict.
+- Zone outage impact because topology spread was not configured.
+- Node drain blocked by overly strict PDBs.
+

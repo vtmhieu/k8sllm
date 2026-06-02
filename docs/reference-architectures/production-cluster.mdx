@@ -1,0 +1,39 @@
+---
+title: Production Cluster
+description: Reference architecture for a production Kubernetes cluster.
+tags:
+  - architecture
+  - kubernetes
+  - production
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/overview/components/"
+  - "https://kubernetes.io/docs/concepts/architecture/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Production Cluster
+
+![Production Kubernetes cluster architecture](/img/architectures/production-cluster.svg)
+
+## Intent
+
+Tách rõ control plane, worker pools, platform control, và shared services. Mục tiêu là giảm blast radius, làm capacity planning dễ hơn, và giữ platform services có ownership rõ.
+
+## Key decisions
+
+- Dedicated system pool for platform agents and cluster-critical services.
+- Separate app pool for normal workloads.
+- Separate GPU pool for model serving and batch inference.
+- GitOps and policy-as-code manage desired state.
+- Observability and backup run as shared platform services with tested recovery.
+
+## Review signals
+
+- System workloads do not compete with tenant workloads.
+- Critical add-ons have resource requests and PDBs.
+- GPU workloads cannot accidentally land on general nodes.
+- Shared services have dashboards and runbooks.
+

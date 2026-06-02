@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-label="GitOps deployment flow architecture">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0f766e"/></marker>
+    <style>.bg{fill:#f8faf9}.grid{stroke:#e2e8f0}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2}.green{fill:#ecfdf5;stroke:#0f766e;stroke-width:2}.amber{fill:#fff7ed;stroke:#a16207;stroke-width:2}.dark{fill:#101718}.txt{font-family:Inter,Arial,sans-serif;fill:#101718}.muted{fill:#475569}.white{fill:#fff}.line{stroke:#0f766e;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect class="bg" width="1400" height="820"/>
+  <path class="grid" d="M0 82h1400M0 164h1400M0 246h1400M0 328h1400M0 410h1400M0 492h1400M0 574h1400M0 656h1400M0 738h1400M100 0v820M200 0v820M300 0v820M400 0v820M500 0v820M600 0v820M700 0v820M800 0v820M900 0v820M1000 0v820M1100 0v820M1200 0v820M1300 0v820"/>
+  <text class="txt" x="60" y="68" font-size="34" font-weight="800">GitOps Delivery Flow</text>
+  <text class="muted" x="60" y="104" font-size="18">Git is the desired-state source. CI builds artifacts; CD reconciles cluster state and reports drift.</text>
+
+  <rect class="box" x="72" y="238" width="242" height="240"/>
+  <text class="txt" x="104" y="292" font-size="22" font-weight="800">Developer</text>
+  <text class="muted" x="104" y="334" font-size="16">Code change</text>
+  <text class="muted" x="104" y="366" font-size="16">Manifest change</text>
+  <text class="muted" x="104" y="398" font-size="16">Pull request</text>
+
+  <rect class="green" x="416" y="154" width="292" height="168"/>
+  <text class="txt" x="448" y="206" font-size="22" font-weight="800">CI pipeline</text>
+  <text class="muted" x="448" y="248" font-size="16">Build image</text>
+  <text class="muted" x="448" y="280" font-size="16">Scan and sign</text>
+
+  <rect class="green" x="416" y="416" width="292" height="168"/>
+  <text class="txt" x="448" y="468" font-size="22" font-weight="800">Config repo</text>
+  <text class="muted" x="448" y="510" font-size="16">Helm or Kustomize</text>
+  <text class="muted" x="448" y="542" font-size="16">Environment overlays</text>
+
+  <rect class="dark" x="824" y="238" width="260" height="240"/>
+  <text class="white" x="856" y="292" font-size="22" font-weight="800">Argo CD</text>
+  <text class="white" x="856" y="334" font-size="16">Pull desired state</text>
+  <text class="white" x="856" y="366" font-size="16">Diff live state</text>
+  <text class="white" x="856" y="398" font-size="16">Sync policy</text>
+
+  <rect class="amber" x="1192" y="238" width="266" height="240" transform="translate(-110 0)"/>
+  <text class="txt" x="1124" y="292" font-size="22" font-weight="800">Cluster</text>
+  <text class="muted" x="1124" y="334" font-size="16">Admission policy</text>
+  <text class="muted" x="1124" y="366" font-size="16">Workload rollout</text>
+  <text class="muted" x="1124" y="398" font-size="16">Health signals</text>
+
+  <rect class="box" x="416" y="642" width="694" height="92"/>
+  <text class="txt" x="448" y="698" font-size="22" font-weight="800">Feedback: sync status, image provenance, policy violations, rollout health, SLO impact</text>
+
+  <path class="line" d="M314 318h100"/>
+  <path class="line" d="M314 416h100"/>
+  <path class="line" d="M708 238h116"/>
+  <path class="line" d="M708 500h116"/>
+  <path class="line" d="M1084 358h92"/>
+  <path class="line" d="M1084 478c0 118-86 164-194 164H622"/>
+</svg>

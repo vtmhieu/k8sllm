@@ -1,0 +1,46 @@
+---
+title: Platform Services
+description: Core Kubernetes platform services and the decisions they support.
+tags:
+  - platform-services
+  - gitops
+  - observability
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/services-networking/ingress/"
+  - "https://gateway-api.sigs.k8s.io/"
+  - "https://argo-cd.readthedocs.io/"
+  - "https://prometheus.io/docs/"
+diagram_ids:
+  - "gitops-flow"
+  - "observability-pipeline"
+---
+
+# Platform Services
+
+Platform services turn Kubernetes from a runtime into a product. The goal is not to install every popular tool. The goal is to expose stable capabilities that application teams can use without owning cluster internals.
+
+## Capability map
+
+| Capability | Typical services |
+| --- | --- |
+| Traffic | Ingress controller, Gateway API controller, service mesh. |
+| Delivery | Argo CD, Helm, Kustomize, image automation. |
+| Policy | Kyverno, Gatekeeper, Pod Security Admission. |
+| Secrets | External Secrets Operator, Sealed Secrets, cloud secret stores. |
+| Observability | Prometheus, Grafana, OpenTelemetry, Loki, Tempo or Jaeger. |
+| Recovery | Velero, CSI snapshots, database-native backup. |
+
+## Implementation stance
+
+- Standardize a small number of golden paths.
+- Expose escape hatches only with clear owner, expiry, and review.
+- Measure adoption and friction. A platform service that teams route around is not working.
+
+## Start here
+
+- [Ingress, Gateway, And Service Mesh](/docs/platform-services/ingress-gateway-service-mesh)
+- [GitOps Delivery](/docs/platform-services/gitops-delivery)
+- [Policy, Secrets, And Supply Chain](/docs/platform-services/policy-secrets-supply-chain)
+- [Observability Stack](/docs/platform-services/observability-stack)

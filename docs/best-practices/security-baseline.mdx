@@ -1,0 +1,61 @@
+---
+title: Security Baseline
+description: Kubernetes security baseline for identity, admission, workload isolation, secrets, and audit.
+tags:
+  - security
+  - rbac
+  - admission-control
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/security/"
+  - "https://kubernetes.io/docs/concepts/security/pod-security-standards/"
+  - "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+  - "https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/"
+diagram_ids:
+  - "multi-tenant-security"
+---
+
+# Security Baseline
+
+Kubernetes security is layered. RBAC alone is not enough. A production baseline needs identity, admission, runtime isolation, network controls, secret lifecycle, supply-chain controls, and audit evidence.
+
+![Secure multi-tenant Kubernetes architecture](/img/architectures/multi-tenant-security.svg)
+
+## Baseline controls
+
+| Layer | Baseline |
+| --- | --- |
+| Identity | OIDC or enterprise identity provider, group-based RBAC, no shared admin identity. |
+| Authorization | Least privilege Roles, namespace-scoped access by default, separate break-glass path. |
+| Admission | Enforce Pod Security Standards, image policy, required labels, resource requests, and approved registries. |
+| Network | Default deny where feasible, explicit ingress and egress allow-lists. |
+| Secrets | Encrypt at rest, rotate credentials, avoid long-lived static secrets in manifests. |
+| Audit | API audit logs shipped to durable storage and reviewed during incidents. |
+
+## Policy shape
+
+At senior maturity, policy should be boring:
+
+- The default path is safe.
+- Exceptions have expiry and owner.
+- Rejections explain the fix.
+- Policy is tested before rollout.
+- Production and lower environments differ only where risk requires it.
+
+## Common weak spots
+
+- Cluster-admin access used for daily work.
+- Admission webhooks fail closed without operational readiness.
+- NetworkPolicy applied inconsistently across namespaces.
+- Service account tokens are over-permissive.
+- Images are deployed without digest pinning, signature verification, or vulnerability review.
+
+## Security metrics
+
+- Number of active cluster-admin identities.
+- Policy violations by namespace and owner.
+- Images without approved registry or digest.
+- Secrets older than rotation target.
+- NetworkPolicy coverage by namespace.
+

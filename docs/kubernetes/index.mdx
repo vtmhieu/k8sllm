@@ -1,0 +1,48 @@
+---
+title: Kubernetes Core
+description: Core Kubernetes concepts for senior platform design.
+tags:
+  - kubernetes
+  - control-plane
+  - workloads
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/"
+  - "https://kubernetes.io/docs/concepts/overview/components/"
+  - "https://kubernetes.io/docs/concepts/architecture/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Kubernetes Core
+
+Kubernetes là một distributed control system. Người dùng gửi desired state vào API server; controllers liên tục reconcile actual state về desired state; scheduler quyết định placement; kubelet thực thi trên node.
+
+## Mental model cần giữ
+
+- **API là contract**: mọi object, policy, và automation nên đi qua Kubernetes API hoặc một abstraction có lifecycle rõ.
+- **Controllers là vòng lặp**: lỗi thường đến từ reconcile loop không idempotent, finalizer kẹt, hoặc dependency thiếu readiness.
+- **Scheduler là capacity brain**: resource requests, taints, affinity, topology spread, và priority quyết định cluster có dùng tài nguyên đúng không.
+- **Networking là policy surface**: Service discovery, ingress, egress, NetworkPolicy, DNS, và service mesh ảnh hưởng trực tiếp tới blast radius.
+- **Storage là state contract**: StorageClass, PVC, backup, restore, và topology phải được review như data architecture.
+
+## Production reading order
+
+1. [Control Plane And API](/docs/kubernetes/control-plane-api)
+2. [Workloads And Scheduling](/docs/kubernetes/workloads-scheduling)
+3. [Networking](/docs/kubernetes/networking)
+4. [Storage](/docs/kubernetes/storage)
+
+## Boundary diagram
+
+![Production Kubernetes cluster architecture](/img/architectures/production-cluster.svg)
+
+## Senior review questions
+
+| Area | Question |
+| --- | --- |
+| API | Có object nào bypass GitOps hoặc admission policy không? |
+| Scheduling | Workloads critical có priority, topology spread, PDB, và resource requests đúng không? |
+| Network | Default deny có được áp dụng theo namespace không? |
+| Storage | Restore path đã test bằng workload thật chưa? |

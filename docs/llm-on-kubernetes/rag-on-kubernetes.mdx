@@ -1,0 +1,55 @@
+---
+title: RAG On Kubernetes
+description: Production RAG architecture on Kubernetes with ingestion, retrieval, serving, and evaluation.
+tags:
+  - rag
+  - vector-database
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/workloads/controllers/job/"
+  - "https://docs.ray.io/en/latest/serve/"
+  - "https://opentelemetry.io/docs/"
+diagram_ids:
+  - "rag-platform"
+---
+
+# RAG On Kubernetes
+
+Retrieval-augmented generation is not just "LLM plus vector database." A production RAG system has two independent lifecycles: ingestion quality and online serving latency.
+
+![RAG platform on Kubernetes architecture](/img/architectures/rag-platform.svg)
+
+## System split
+
+| Plane | Responsibilities |
+| --- | --- |
+| Ingestion | Load sources, normalize, chunk, embed, attach metadata, version indexes. |
+| Retrieval | Query rewrite, vector search, hybrid search, reranking, access filtering. |
+| Generation | Prompt assembly, model call, streaming, guardrails, citation shaping. |
+| Evaluation | Groundedness, answer quality, retrieval recall, latency, human review. |
+
+## Kubernetes mapping
+
+- Use Jobs or workflow engines for ingestion batches.
+- Use separate Deployments for retrieval, reranking, and generation when they scale differently.
+- Keep vector DB availability and backup strategy explicit.
+- Keep tenant authorization in retrieval, not only at the final API layer.
+- Emit trace spans for retrieval, rerank, prompt assembly, and model generation.
+
+## Failure modes
+
+- Chunking strategy changes without re-evaluating answer quality.
+- Retrieval returns documents the user is not allowed to see.
+- Vector DB is treated as cache but becomes a critical database without backup.
+- Prompt context grows until cost and latency become unstable.
+
+## Metrics
+
+- Retrieval recall on curated test sets.
+- Reranker latency and top-k distribution.
+- Prompt token count and output token count.
+- Groundedness review rate and citation quality.
+- End-to-end p95 and p99 latency by request class.
+

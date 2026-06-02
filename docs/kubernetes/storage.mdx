@@ -1,0 +1,53 @@
+---
+title: Storage
+description: Kubernetes storage contracts for persistent workloads, backup, restore, and topology.
+tags:
+  - kubernetes
+  - storage
+  - stateful-workloads
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/storage/"
+  - "https://kubernetes.io/docs/concepts/storage/persistent-volumes/"
+  - "https://kubernetes.io/docs/concepts/storage/storage-classes/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Storage
+
+Storage is where Kubernetes stops being disposable. Stateful workloads need explicit contracts for persistence, locality, backup, restore, and ownership.
+
+## Core objects
+
+| Object | Meaning |
+| --- | --- |
+| PersistentVolumeClaim | Workload request for storage. |
+| PersistentVolume | Concrete storage resource backing a claim. |
+| StorageClass | Dynamic provisioning policy and driver selection. |
+| VolumeSnapshot | Snapshot lifecycle when supported by CSI driver. |
+
+## Production decisions
+
+- Choose StorageClass per workload class, not one default for everything.
+- Understand topology constraints. A volume bound to one zone can trap a pod there.
+- Backup application state, not just volumes. Some databases need quiescing, log shipping, or native backup tools.
+- Test restore with real runbooks. A backup that has never restored a service is only a hypothesis.
+
+## Storage review checklist
+
+| Question | Why it matters |
+| --- | --- |
+| Is reclaim policy explicit? | Prevent accidental data deletion or uncontrolled orphaned volumes. |
+| Does the workload tolerate zone failure? | Volume locality may block rescheduling. |
+| Are snapshots application-consistent? | Crash-consistent snapshots are not enough for every database. |
+| Is restore tested under incident pressure? | Recovery time is a practiced behavior, not a document. |
+
+## Failure modes
+
+- Pod cannot schedule because PVC is bound to a zone with no available capacity.
+- StatefulSet upgrade changes volume assumptions.
+- Snapshot exists but cannot restore due to missing secret, driver, or version compatibility.
+- Storage latency degrades and surfaces as application timeout.
+

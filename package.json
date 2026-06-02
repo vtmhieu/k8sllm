@@ -1,0 +1,29 @@
+{
+  "name": "k8sllm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A senior platform engineering knowledge site for Kubernetes, production best practices, and LLM workloads on Kubernetes.",
+  "scripts": {
+    "start": "docusaurus start --host 127.0.0.1",
+    "build": "docusaurus build",
+    "serve": "docusaurus serve --host 127.0.0.1",
+    "clear": "docusaurus clear"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.8.1",
+    "@docusaurus/preset-classic": "^3.8.1",
+    "@docusaurus/theme-mermaid": "^3.8.1",
+    "@mermaid-js/layout-elk": "^0.1.9",
+    "@mdx-js/react": "^3.1.0",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.8.1"
+  },
+  "engines": {
+    "node": ">=18.0"
+  }
+}

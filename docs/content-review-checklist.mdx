@@ -1,0 +1,54 @@
+---
+title: Content Review Checklist
+description: Checklist for keeping Kubernetes and LLM platform content accurate and useful for senior engineers.
+tags:
+  - content
+  - review
+  - governance
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/"
+  - "https://docs.vllm.ai/"
+  - "https://kserve.github.io/website/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Content Review Checklist
+
+Use this checklist before publishing new pages or changing architecture recommendations.
+
+## Article quality
+
+- Frontmatter includes `title`, `description`, `tags`, `difficulty`, `last_reviewed`, `sources`, and `diagram_ids`.
+- The page states the operational decision, not only definitions.
+- Tradeoffs and failure modes are explicit.
+- Metrics show how to validate the recommendation.
+- Sources prefer official project documentation.
+
+## Architecture quality
+
+- Diagram shows ownership boundaries.
+- Data flow or control flow is visible.
+- Security and telemetry paths are not hidden.
+- Shared services and failure domains are named.
+- Diagram id appears in related article frontmatter.
+
+## Senior usefulness
+
+The page should help answer at least one of these questions:
+
+- What decision should a platform architect make?
+- What can fail in production?
+- Which metric confirms health?
+- Which team owns the capability?
+- What should be tested before rollout?
+
+## Review cadence
+
+- Review Kubernetes core pages when adopting a new Kubernetes minor version.
+- Review LLM serving pages when runtime versions or GPU node profiles change.
+- Review security pages after policy exceptions, incident reviews, or admission-controller changes.
+- Review architecture diagrams when the platform adds a new shared service.
+

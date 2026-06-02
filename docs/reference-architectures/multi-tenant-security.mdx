@@ -1,0 +1,39 @@
+---
+title: Multi-Tenant Security
+description: Reference architecture for secure multi-tenant Kubernetes clusters.
+tags:
+  - architecture
+  - security
+  - multi-tenancy
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/security/"
+  - "https://kubernetes.io/docs/concepts/security/pod-security-standards/"
+  - "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+diagram_ids:
+  - "multi-tenant-security"
+---
+
+# Multi-Tenant Security
+
+![Secure multi-tenant Kubernetes architecture](/img/architectures/multi-tenant-security.svg)
+
+## Intent
+
+Cho phép nhiều team hoặc tenant dùng chung infrastructure nhưng không chia sẻ quyền admin, network reachability, secrets, hoặc policy bypass.
+
+## Key decisions
+
+- Identity flows through OIDC and group-based RBAC.
+- Namespace isolation includes quotas, NetworkPolicy, Pod Security, and secret boundaries.
+- Admission policy enforces guardrails before objects reach runtime.
+- Exceptions are owned, time-bounded, and auditable.
+
+## Review signals
+
+- Namespace owners are visible from labels or metadata.
+- Default deny is enforced consistently.
+- Audit logs can answer who changed what and when.
+- No team needs cluster-admin for daily work.
+

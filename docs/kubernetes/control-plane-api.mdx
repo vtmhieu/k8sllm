@@ -1,0 +1,51 @@
+---
+title: Control Plane And API
+description: How Kubernetes control plane components shape production architecture decisions.
+tags:
+  - kubernetes
+  - api-server
+  - control-plane
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/overview/components/"
+  - "https://kubernetes.io/docs/reference/using-api/"
+  - "https://kubernetes.io/docs/concepts/architecture/controller/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Control Plane And API
+
+Control plane là nơi quyết định Kubernetes có vận hành được như một platform hay chỉ là một cụm máy chạy containers. API server là cổng duy nhất nên mọi policy quan trọng cần được enforce ở đây hoặc quanh đây.
+
+## Components
+
+| Component | Production concern |
+| --- | --- |
+| API server | Authn/authz, admission, rate limits, audit, API availability. |
+| etcd | Encryption, backup, compaction, quorum, restore drill. |
+| Scheduler | Placement, fairness, priority, topology awareness. |
+| Controller manager | Reconcile correctness, stuck finalizers, leader election. |
+| Cloud controller manager | Load balancer, node lifecycle, route and volume integration. |
+
+## API design principles
+
+- Treat Kubernetes manifests as public interfaces. A breaking change in labels, selectors, probes, or PVC names can be as serious as a code API change.
+- Custom resources should have clear status conditions. If a CRD cannot explain progress, failure, and observed generation, operators become hard to debug.
+- Admission policy should reject unsafe intent early: privileged pods, missing resource requests, mutable image tags, and broad host access.
+
+## Failure modes
+
+- **API server overload**: excessive controllers, chatty clients, or large list calls. Watch cache and client-side rate limiting matter.
+- **etcd pressure**: too many events, large objects, or stale compaction can slow cluster-wide operations.
+- **Admission outage**: webhook failure policy can block all workload changes if not designed carefully.
+- **Controller storm**: bad reconciliation can create repeated writes and amplify API pressure.
+
+## Operating signals
+
+- API server request latency by verb and resource.
+- Admission webhook latency and rejection rate.
+- etcd fsync duration, leader changes, database size.
+- Controller work queue depth and retry rate.
+

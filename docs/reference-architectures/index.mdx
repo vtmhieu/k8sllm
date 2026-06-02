@@ -1,0 +1,37 @@
+---
+title: Reference Architectures
+description: Reference architecture diagrams for production Kubernetes and LLM platforms.
+tags:
+  - architecture
+  - diagrams
+  - platform-engineering
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/"
+  - "https://gateway-api.sigs.k8s.io/"
+  - "https://docs.vllm.ai/"
+  - "https://kserve.github.io/website/"
+diagram_ids:
+  - "production-cluster"
+  - "multi-tenant-security"
+  - "observability-pipeline"
+  - "gitops-flow"
+  - "llm-inference-stack"
+  - "rag-platform"
+---
+
+# Reference Architectures
+
+Các architecture này là blueprint để review. Chúng không thay thế thiết kế chi tiết của từng tổ chức, nhưng giúp platform team tránh bỏ sót boundary quan trọng.
+
+## Architecture set
+
+| Architecture | Use when |
+| --- | --- |
+| [Production Cluster](/docs/reference-architectures/production-cluster) | Thiết kế baseline cluster. |
+| [Multi-Tenant Security](/docs/reference-architectures/multi-tenant-security) | Chia sẻ cluster giữa team hoặc tenant. |
+| [Observability Pipeline](/docs/reference-architectures/observability-pipeline) | Chuẩn hóa metrics, logs, traces, events. |
+| [GitOps Flow](/docs/reference-architectures/gitops-flow) | Thiết kế deployment flow và drift control. |
+| [LLM Inference Stack](/docs/reference-architectures/llm-inference-stack) | Chạy model serving trên GPU node pools. |
+| [RAG Platform](/docs/reference-architectures/rag-platform) | Thiết kế retrieval augmented generation production. |

@@ -1,0 +1,51 @@
+---
+title: Observability Baseline
+description: Minimum observability baseline for Kubernetes platforms and user-facing workloads.
+tags:
+  - observability
+  - prometheus
+  - opentelemetry
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/tasks/debug/"
+  - "https://prometheus.io/docs/introduction/overview/"
+  - "https://opentelemetry.io/docs/"
+diagram_ids:
+  - "observability-pipeline"
+---
+
+# Observability Baseline
+
+Observability should answer operational questions under pressure: what broke, who is affected, whether the fix is working, and what risk remains.
+
+![Kubernetes observability pipeline architecture](/img/architectures/observability-pipeline.svg)
+
+## Signal model
+
+| Signal | Purpose |
+| --- | --- |
+| Metrics | Fast health, SLOs, capacity, alerting. |
+| Logs | Detailed context and forensic trail. |
+| Traces | Request path, dependency latency, fan-out behavior. |
+| Events | Kubernetes lifecycle and scheduling decisions. |
+
+## Minimum dashboards
+
+- Cluster health: API server latency, node readiness, pod scheduling failures, DNS latency.
+- Workload health: request rate, error rate, latency, saturation.
+- Autoscaling: desired replicas, actual replicas, pending pods, node provisioning time.
+- Security operations: admission rejections, audit anomalies, policy exceptions.
+- LLM serving: TTFT, tokens/sec, queue wait, GPU memory, model load time, cost/request.
+
+## Alerting stance
+
+Alert on user impact and fast-burning SLOs. Page less on symptoms that can be observed in dashboards unless they directly threaten availability or data safety.
+
+## Failure modes
+
+- High-cardinality labels explode storage cost.
+- Dashboards track infrastructure but not user impact.
+- Logs exist but lack tenant, request, model, or version context.
+- Traces are sampled away exactly when incidents happen.
+

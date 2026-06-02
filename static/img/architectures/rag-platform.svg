@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-label="RAG platform on Kubernetes architecture">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0f766e"/></marker>
+    <style>.bg{fill:#f8faf9}.grid{stroke:#e2e8f0}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2}.green{fill:#ecfdf5;stroke:#0f766e;stroke-width:2}.amber{fill:#fff7ed;stroke:#a16207;stroke-width:2}.dark{fill:#101718}.txt{font-family:Inter,Arial,sans-serif;fill:#101718}.muted{fill:#475569}.white{fill:#fff}.line{stroke:#0f766e;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect class="bg" width="1400" height="820"/>
+  <path class="grid" d="M0 82h1400M0 164h1400M0 246h1400M0 328h1400M0 410h1400M0 492h1400M0 574h1400M0 656h1400M0 738h1400M100 0v820M200 0v820M300 0v820M400 0v820M500 0v820M600 0v820M700 0v820M800 0v820M900 0v820M1000 0v820M1100 0v820M1200 0v820M1300 0v820"/>
+  <text class="txt" x="60" y="68" font-size="34" font-weight="800">RAG Platform On Kubernetes</text>
+  <text class="muted" x="60" y="104" font-size="18">Production RAG is two systems: ingestion quality and serving latency. Operate them with separate SLOs.</text>
+
+  <rect class="box" x="72" y="172" width="248" height="212"/>
+  <text class="txt" x="104" y="224" font-size="22" font-weight="800">Content sources</text>
+  <text class="muted" x="104" y="266" font-size="16">Docs</text>
+  <text class="muted" x="104" y="298" font-size="16">Tickets</text>
+  <text class="muted" x="104" y="330" font-size="16">Code</text>
+
+  <rect class="green" x="428" y="172" width="286" height="212"/>
+  <text class="txt" x="460" y="224" font-size="22" font-weight="800">Ingestion jobs</text>
+  <text class="muted" x="460" y="266" font-size="16">Chunking</text>
+  <text class="muted" x="460" y="298" font-size="16">Embedding</text>
+  <text class="muted" x="460" y="330" font-size="16">Metadata policy</text>
+
+  <rect class="amber" x="824" y="172" width="286" height="212"/>
+  <text class="txt" x="856" y="224" font-size="22" font-weight="800">Retrieval stores</text>
+  <text class="muted" x="856" y="266" font-size="16">Vector database</text>
+  <text class="muted" x="856" y="298" font-size="16">Object storage</text>
+  <text class="muted" x="856" y="330" font-size="16">Metadata index</text>
+
+  <rect class="box" x="72" y="506" width="248" height="212"/>
+  <text class="txt" x="104" y="558" font-size="22" font-weight="800">User request</text>
+  <text class="muted" x="104" y="600" font-size="16">Auth context</text>
+  <text class="muted" x="104" y="632" font-size="16">Tenant scope</text>
+  <text class="muted" x="104" y="664" font-size="16">Prompt policy</text>
+
+  <rect class="green" x="428" y="506" width="286" height="212"/>
+  <text class="txt" x="460" y="558" font-size="22" font-weight="800">RAG service</text>
+  <text class="muted" x="460" y="600" font-size="16">Retrieve</text>
+  <text class="muted" x="460" y="632" font-size="16">Rerank</text>
+  <text class="muted" x="460" y="664" font-size="16">Assemble context</text>
+
+  <rect class="dark" x="824" y="506" width="286" height="212"/>
+  <text class="white" x="856" y="558" font-size="22" font-weight="800">LLM serving</text>
+  <text class="white" x="856" y="600" font-size="16">vLLM or KServe</text>
+  <text class="white" x="856" y="632" font-size="16">Streaming response</text>
+  <text class="white" x="856" y="664" font-size="16">Safety filters</text>
+
+  <rect class="box" x="1190" y="304" width="276" height="286" transform="translate(-92 0)"/>
+  <text class="txt" x="1128" y="356" font-size="22" font-weight="800">Evaluation</text>
+  <text class="muted" x="1128" y="398" font-size="16">Groundedness</text>
+  <text class="muted" x="1128" y="430" font-size="16">Retrieval recall</text>
+  <text class="muted" x="1128" y="462" font-size="16">Latency SLO</text>
+  <text class="muted" x="1128" y="494" font-size="16">Human review</text>
+
+  <path class="line" d="M320 278h108"/>
+  <path class="line" d="M714 278h110"/>
+  <path class="line" d="M320 612h108"/>
+  <path class="line" d="M714 612h110"/>
+  <path class="line" d="M967 384v122"/>
+  <path class="line" d="M1110 612h76"/>
+</svg>

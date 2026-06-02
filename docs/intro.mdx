@@ -1,0 +1,51 @@
+---
+title: Learning Map
+description: Senior learning map for Kubernetes, platform services, and LLM workloads on Kubernetes.
+tags:
+  - kubernetes
+  - platform-engineering
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/"
+  - "https://kubernetes.io/docs/concepts/"
+  - "https://docs.vllm.ai/"
+  - "https://kserve.github.io/website/"
+  - "https://docs.ray.io/en/latest/serve/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Kubernetes + LLM Platform Guide
+
+Site này dành cho engineers đã biết Kubernetes ở mức cơ bản và muốn thiết kế, vận hành, hoặc audit một production platform có AI workloads. Nội dung viết bằng tiếng Việt ngắn gọn, giữ nguyên thuật ngữ kỹ thuật tiếng Anh khi thuật ngữ đó chính xác hơn.
+
+## Cách học
+
+1. Bắt đầu với [Kubernetes Core](/docs/kubernetes) để thống nhất mental model về control plane, workloads, networking, storage.
+2. Đi qua [Production Best Practices](/docs/best-practices) để biến primitives thành baseline vận hành.
+3. Dùng [Platform Services](/docs/platform-services) để chọn service theo capability, không chọn theo hype.
+4. Học [LLM On Kubernetes](/docs/llm-on-kubernetes) như một capacity, latency, GPU scheduling, và cost problem.
+5. Dùng [Reference Architectures](/docs/reference-architectures) như blueprint khi review thiết kế.
+
+## Nguyên tắc biên tập
+
+- Mỗi bài phải trả lời được: quyết định nào cần đưa ra, failure mode chính là gì, metric nào chứng minh hệ thống hoạt động tốt.
+- Source chính ưu tiên official docs. Blog và vendor article chỉ dùng để bổ sung case study, không dùng làm source of truth cho core behavior.
+- Mỗi architecture diagram phải thể hiện boundary, data flow, ownership, và điểm vận hành quan trọng.
+
+## Production platform overview
+
+![Production Kubernetes cluster architecture](/img/architectures/production-cluster.svg)
+
+Một Kubernetes platform tốt không chỉ là cluster chạy được workload. Nó phải có control plane ổn định, worker pools tách chức năng, policy rõ, telemetry đủ, và delivery flow có khả năng rollback.
+
+## Review checklist ngắn
+
+| Câu hỏi | Tín hiệu tốt |
+| --- | --- |
+| Ai sở hữu cluster baseline? | Platform team có policy, versioning, và change process. |
+| Workload scale theo metric nào? | CPU/memory chỉ là baseline; queue, RPS, token latency, hoặc business metric được dùng khi phù hợp. |
+| Security exception xử lý thế nào? | Có expiry, approval, audit trail, và policy-as-code. |
+| LLM serving có SLO riêng không? | Có TTFT, tokens/sec, queue wait, GPU memory, và cost/request. |

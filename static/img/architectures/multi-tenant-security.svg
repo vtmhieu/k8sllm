@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-label="Secure multi-tenant Kubernetes architecture">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0f766e"/></marker>
+    <style>.bg{fill:#f8faf9}.grid{stroke:#e2e8f0}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2}.guard{fill:#ecfdf5;stroke:#0f766e;stroke-width:2}.deny{fill:#fff1f2;stroke:#be123c;stroke-width:2}.txt{font-family:Inter,Arial,sans-serif;fill:#101718}.muted{fill:#475569}.line{stroke:#0f766e;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect class="bg" width="1400" height="820"/>
+  <path class="grid" d="M0 82h1400M0 164h1400M0 246h1400M0 328h1400M0 410h1400M0 492h1400M0 574h1400M0 656h1400M0 738h1400M100 0v820M200 0v820M300 0v820M400 0v820M500 0v820M600 0v820M700 0v820M800 0v820M900 0v820M1000 0v820M1100 0v820M1200 0v820M1300 0v820"/>
+  <text class="txt" x="60" y="68" font-size="34" font-weight="800">Secure Multi-Tenant Cluster</text>
+  <text class="muted" x="60" y="104" font-size="18">Tenants share infrastructure but not identity, network reachability, secrets, or policy exceptions.</text>
+
+  <rect class="guard" x="68" y="154" width="272" height="546"/>
+  <text class="txt" x="98" y="204" font-size="24" font-weight="800">Access plane</text>
+  <text class="muted" x="98" y="246" font-size="16">OIDC identity</text>
+  <text class="muted" x="98" y="282" font-size="16">RBAC groups</text>
+  <text class="muted" x="98" y="318" font-size="16">Just-in-time admin</text>
+  <text class="muted" x="98" y="354" font-size="16">Audit logging</text>
+  <rect class="deny" x="98" y="448" width="210" height="96"/>
+  <text class="txt" x="124" y="489" font-size="17" font-weight="800">No shared admin</text>
+  <text class="muted" x="124" y="520" font-size="14">Privilege must expire.</text>
+
+  <rect class="box" x="430" y="138" width="914" height="562"/>
+  <text class="txt" x="460" y="186" font-size="25" font-weight="800">Tenant isolation boundary</text>
+
+  <rect class="box" x="474" y="238" width="244" height="316"/>
+  <text class="txt" x="506" y="286" font-size="21" font-weight="800">Tenant A</text>
+  <text class="muted" x="506" y="326" font-size="15">Namespace quota</text>
+  <text class="muted" x="506" y="356" font-size="15">NetworkPolicy allow-list</text>
+  <text class="muted" x="506" y="386" font-size="15">Pod Security restricted</text>
+  <text class="muted" x="506" y="416" font-size="15">Dedicated SecretStore</text>
+
+  <rect class="box" x="778" y="238" width="244" height="316"/>
+  <text class="txt" x="810" y="286" font-size="21" font-weight="800">Tenant B</text>
+  <text class="muted" x="810" y="326" font-size="15">Namespace quota</text>
+  <text class="muted" x="810" y="356" font-size="15">NetworkPolicy allow-list</text>
+  <text class="muted" x="810" y="386" font-size="15">Pod Security restricted</text>
+  <text class="muted" x="810" y="416" font-size="15">Dedicated SecretStore</text>
+
+  <rect class="guard" x="1082" y="238" width="244" height="316"/>
+  <text class="txt" x="1114" y="286" font-size="21" font-weight="800">Policy gate</text>
+  <text class="muted" x="1114" y="326" font-size="15">Admission control</text>
+  <text class="muted" x="1114" y="356" font-size="15">Image signatures</text>
+  <text class="muted" x="1114" y="386" font-size="15">Runtime profiles</text>
+  <text class="muted" x="1114" y="416" font-size="15">Exception workflow</text>
+
+  <rect class="guard" x="474" y="594" width="852" height="82"/>
+  <text class="txt" x="506" y="644" font-size="21" font-weight="800">Cluster guardrails: encryption at rest, audit sink, runtime alerts, vulnerability scanning</text>
+
+  <path class="line" d="M340 280h132"/>
+  <path class="line" d="M340 430h132"/>
+  <path class="line" d="M1022 396h60"/>
+  <path class="line" d="M900 554v40"/>
+</svg>

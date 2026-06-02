@@ -1,0 +1,56 @@
+---
+title: Inference Scaling And Cost
+description: LLM inference scaling signals, latency phases, and cost controls on Kubernetes.
+tags:
+  - inference
+  - autoscaling
+  - cost
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://docs.vllm.ai/"
+  - "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
+  - "https://keda.sh/docs/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# Inference Scaling And Cost
+
+LLM scaling cannot be reduced to CPU utilization. The user experiences latency phases: routing, queue wait, prefill, time to first token, decoding, and stream completion.
+
+## Important metrics
+
+| Metric | Why it matters |
+| --- | --- |
+| Time to first token | Primary interactive latency signal. |
+| Tokens per second | Throughput after generation starts. |
+| Queue wait | Shows insufficient serving capacity or batching pressure. |
+| Active sequences | Runtime-level pressure indicator. |
+| KV cache usage | Memory pressure and batching efficiency. |
+| GPU memory | Capacity limit for model, context, and parallel requests. |
+| Cost per request | Business-level unit economics. |
+
+## Scaling patterns
+
+- Scale gateway separately from model servers.
+- Split interactive and batch traffic into different routes or deployments.
+- Keep warm capacity for high-value interactive models.
+- Use queue depth and runtime metrics for autoscaling where possible.
+- Track model load and readiness separately from pod start.
+
+## Cost controls
+
+- Model tiering: small model for simple requests, larger model for complex requests.
+- Prompt compression and retrieval quality to reduce context waste.
+- Batch jobs on cheaper capacity windows where acceptable.
+- GPU pool right-sizing by accelerator class and memory profile.
+- Request quotas by tenant, model, and priority.
+
+## Failure modes
+
+- Autoscaler adds pods but each pod spends minutes loading model weights.
+- Interactive traffic shares queue with long batch generations.
+- Context window growth silently increases cost.
+- GPU memory becomes the bottleneck while CPU-based HPA shows low pressure.
+

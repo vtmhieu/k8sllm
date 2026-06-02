@@ -1,0 +1,72 @@
+---
+title: GPU Node Pools
+description: GPU scheduling and node-pool design for LLM workloads on Kubernetes.
+tags:
+  - gpu
+  - scheduling
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/"
+  - "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
+  - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
+  - "https://github.com/NVIDIA/k8s-device-plugin"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# GPU Node Pools
+
+GPU nodes should be treated as a separate capacity class. They have different cost, scheduling constraints, startup time, failure modes, and security requirements.
+
+## Baseline design
+
+| Control | Recommendation |
+| --- | --- |
+| Taints | Taint GPU nodes so only GPU workloads land there. |
+| Tolerations | Require explicit toleration from approved workloads. |
+| Node labels | Label accelerator type, memory, MIG profile, zone, and lifecycle. |
+| Requests | Request GPU resources explicitly through the device plugin. |
+| Affinity | Pin workloads to compatible model and memory profiles. |
+| System workloads | Keep core system pods off GPU pools unless required. |
+
+## Example scheduling contract
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-vllm
+spec:
+  template:
+    spec:
+      nodeSelector:
+        accelerator.platform.example.com/type: nvidia-a100
+      tolerations:
+        - key: accelerator.platform.example.com/gpu
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
+      containers:
+        - name: server
+          image: registry.example.com/llm/vllm:stable
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
+```
+
+## Failure modes
+
+- GPU node scales up but model loading takes longer than user-facing SLO.
+- Workload lands on incompatible GPU memory profile.
+- General workloads consume CPU and memory on GPU nodes, reducing inference capacity.
+- Autoscaler cannot provision because node selectors do not match any node group.
+
+## Metrics
+
+- GPU utilization, memory used, and memory fragmentation.
+- Model load time and readiness duration.
+- Queue wait and active sequences per replica.
+- Cost per generated token and cost per request class.
+

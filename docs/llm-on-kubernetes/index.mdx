@@ -1,0 +1,41 @@
+---
+title: LLM On Kubernetes
+description: How to run LLM workloads on Kubernetes with GPU scheduling, model serving, RAG, and cost controls.
+tags:
+  - llm
+  - gpu
+  - ai-infrastructure
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://docs.vllm.ai/"
+  - "https://kserve.github.io/website/"
+  - "https://docs.ray.io/en/latest/serve/"
+  - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
+diagram_ids:
+  - "llm-inference-stack"
+  - "rag-platform"
+---
+
+# LLM On Kubernetes
+
+LLM workloads stress Kubernetes in unusual ways: GPU capacity is scarce, model startup is slow, latency has multiple phases, and request cost varies by token count. Treat LLM serving as a platform capability with its own SLOs.
+
+![LLM inference stack on Kubernetes architecture](/img/architectures/llm-inference-stack.svg)
+
+## Core capabilities
+
+| Capability | Why it matters |
+| --- | --- |
+| GPU node pools | Keeps accelerator scheduling explicit and protects general workloads. |
+| Model runtime | Handles batching, KV cache, streaming, and model loading. |
+| Serving abstraction | Routes traffic, manages revisions, exposes autoscaling hooks. |
+| RAG services | Adds retrieval, metadata policy, and evaluation loop. |
+| Telemetry | Measures TTFT, throughput, queue wait, GPU saturation, and cost. |
+
+## Start here
+
+- [GPU Node Pools](/docs/llm-on-kubernetes/gpu-node-pools)
+- [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options)
+- [RAG On Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes)
+- [Inference Scaling And Cost](/docs/llm-on-kubernetes/inference-scaling-cost)

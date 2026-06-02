@@ -1,0 +1,55 @@
+---
+title: Observability Stack
+description: Practical Kubernetes observability stack design with metrics, logs, traces, and events.
+tags:
+  - observability
+  - prometheus
+  - grafana
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://prometheus.io/docs/"
+  - "https://grafana.com/docs/"
+  - "https://opentelemetry.io/docs/"
+  - "https://grafana.com/docs/loki/latest/"
+diagram_ids:
+  - "observability-pipeline"
+---
+
+# Observability Stack
+
+An observability stack must optimize for incident questions, not vendor completeness. Start with user impact, then wire metrics, logs, traces, and events into a shared context model.
+
+![Kubernetes observability pipeline architecture](/img/architectures/observability-pipeline.svg)
+
+## Stack shape
+
+| Layer | Common tools | Key decision |
+| --- | --- | --- |
+| Metrics | Prometheus, Mimir, Thanos | Retention, cardinality, HA, remote write. |
+| Logs | Loki, Fluent Bit, Vector | Label discipline and tenant isolation. |
+| Traces | OpenTelemetry, Tempo, Jaeger | Sampling and context propagation. |
+| Dashboards | Grafana | SLO-first layout and ownership. |
+| Alerts | Alertmanager, incident tooling | Routing, deduplication, on-call policy. |
+
+## Label contract
+
+Every signal should carry enough context to join across systems:
+
+```text
+cluster, namespace, workload, service, team, environment, version, tenant where applicable
+```
+
+For LLM serving, add:
+
+```text
+model, model_version, route, accelerator_type, request_class
+```
+
+## Failure modes
+
+- Cardinality grows faster than storage budget.
+- Logs and metrics use different labels, making correlation slow.
+- Alerts fire on infrastructure symptoms but not SLO burn.
+- Traces miss edge or model-serving spans, hiding queue time.
+

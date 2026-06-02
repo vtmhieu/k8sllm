@@ -1,0 +1,252 @@
+.page {
+  background:
+    linear-gradient(90deg, rgba(17, 24, 39, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(17, 24, 39, 0.045) 1px, transparent 1px),
+    #f8faf9;
+  background-size: 42px 42px;
+}
+
+.hero {
+  min-height: calc(100dvh - 64px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(420px, 1.12fr);
+  align-items: center;
+  gap: 40px;
+  width: min(1440px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0 58px;
+}
+
+.heroCopy {
+  max-width: 680px;
+}
+
+.kicker {
+  margin: 0 0 12px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 780;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 0;
+  color: #101718;
+  font-size: clamp(44px, 7vw, 92px);
+  line-height: 0.96;
+  letter-spacing: 0;
+}
+
+.lead {
+  max-width: 62ch;
+  margin: 24px 0 0;
+  color: #475569;
+  font-size: 19px;
+  line-height: 1.58;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid #101718;
+  font-weight: 760;
+  text-decoration: none;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.primaryAction {
+  background: #101718;
+  color: white;
+}
+
+.secondaryAction {
+  background: rgba(255, 255, 255, 0.68);
+  color: #101718;
+}
+
+.primaryAction:hover,
+.secondaryAction:hover {
+  color: white;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.secondaryAction:hover {
+  background: #0f766e;
+  border-color: #0f766e;
+}
+
+.heroVisual {
+  position: relative;
+  min-height: 540px;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 28px 90px rgba(15, 23, 42, 0.14);
+  overflow: hidden;
+}
+
+.heroVisual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.12), transparent 42%, rgba(161, 98, 7, 0.1));
+  pointer-events: none;
+}
+
+.heroVisual img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 540px;
+  object-fit: cover;
+  display: block;
+}
+
+.trackSection,
+.operatingModel {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 64px 0;
+}
+
+.sectionHeader {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.32fr) minmax(0, 0.68fr);
+  gap: 28px;
+  align-items: end;
+  margin-bottom: 24px;
+}
+
+.sectionHeader h2,
+.operatingModel h2 {
+  margin: 0;
+  color: #101718;
+  font-size: clamp(30px, 4vw, 54px);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.trackGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1.2fr;
+  gap: 14px;
+}
+
+.trackLink {
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 22px;
+  color: #101718;
+  text-decoration: none;
+  animation: rise 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--index) * 90ms);
+}
+
+.trackLink:hover {
+  color: #101718;
+  text-decoration: none;
+  transform: translateY(-2px);
+  border-color: #0f766e;
+}
+
+.trackLink span {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.trackLink small {
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.operatingModel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(360px, 0.55fr);
+  gap: 48px;
+  align-items: start;
+  border-top: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.operatingModel p {
+  color: #475569;
+  font-size: 17px;
+  line-height: 1.62;
+}
+
+.signalList {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid rgba(15, 23, 42, 0.14);
+}
+
+.signalRow {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.14);
+}
+
+.signalRow span {
+  width: 9px;
+  height: 9px;
+  margin-top: 8px;
+  background: #a16207;
+}
+
+.signalRow p {
+  margin: 0;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 996px) {
+  .hero,
+  .sectionHeader,
+  .operatingModel {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    width: min(100% - 28px, 760px);
+    min-height: auto;
+    padding-top: 32px;
+  }
+
+  .heroVisual,
+  .heroVisual img {
+    min-height: 360px;
+  }
+
+  .trackGrid {
+    grid-template-columns: 1fr;
+  }
+}

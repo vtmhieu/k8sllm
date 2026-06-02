@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-label="Production Kubernetes cluster architecture">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z" fill="#0f766e"/>
+    </marker>
+    <style>
+      .bg{fill:#f8faf9}.grid{stroke:#e2e8f0;stroke-width:1}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2}.dark{fill:#101718}.soft{fill:#ecfdf5;stroke:#0f766e;stroke-width:2}.warn{fill:#fff7ed;stroke:#a16207;stroke-width:2}.txt{font-family:Inter,Arial,sans-serif;fill:#101718}.muted{fill:#475569}.white{fill:#fff}.line{stroke:#0f766e;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1400" height="820"/>
+  <path class="grid" d="M0 80h1400M0 160h1400M0 240h1400M0 320h1400M0 400h1400M0 480h1400M0 560h1400M0 640h1400M0 720h1400M100 0v820M200 0v820M300 0v820M400 0v820M500 0v820M600 0v820M700 0v820M800 0v820M900 0v820M1000 0v820M1100 0v820M1200 0v820M1300 0v820"/>
+  <text class="txt" x="60" y="68" font-size="34" font-weight="800">Production Kubernetes Cluster</text>
+  <text class="muted" x="60" y="104" font-size="18">Control plane separated from tenant workloads, with policy, telemetry, delivery, and recovery planes.</text>
+
+  <rect class="dark" x="62" y="154" width="326" height="206"/>
+  <text class="white" x="90" y="202" font-size="25" font-weight="800">Control plane</text>
+  <text class="white" x="90" y="244" font-size="17">API server</text>
+  <text class="white" x="90" y="279" font-size="17">Scheduler</text>
+  <text class="white" x="90" y="314" font-size="17">Controller manager</text>
+  <text class="white" x="245" y="244" font-size="17">etcd</text>
+  <text class="white" x="245" y="279" font-size="17">Admission</text>
+  <text class="white" x="245" y="314" font-size="17">Audit logs</text>
+
+  <rect class="box" x="480" y="142" width="802" height="420"/>
+  <text class="txt" x="506" y="184" font-size="26" font-weight="800">Worker pools</text>
+  <text class="muted" x="506" y="214" font-size="16">Dedicated node groups keep blast radius and scaling behavior explicit.</text>
+
+  <rect class="soft" x="522" y="252" width="206" height="238"/>
+  <text class="txt" x="546" y="292" font-size="20" font-weight="800">System pool</text>
+  <text class="muted" x="546" y="330" font-size="15">CoreDNS</text>
+  <text class="muted" x="546" y="360" font-size="15">Ingress controller</text>
+  <text class="muted" x="546" y="390" font-size="15">CNI agents</text>
+  <text class="muted" x="546" y="420" font-size="15">Observability agents</text>
+
+  <rect class="soft" x="780" y="252" width="206" height="238"/>
+  <text class="txt" x="804" y="292" font-size="20" font-weight="800">App pool</text>
+  <text class="muted" x="804" y="330" font-size="15">Deployments</text>
+  <text class="muted" x="804" y="360" font-size="15">StatefulSets</text>
+  <text class="muted" x="804" y="390" font-size="15">Jobs</text>
+  <text class="muted" x="804" y="420" font-size="15">Horizontal scaling</text>
+
+  <rect class="warn" x="1038" y="252" width="206" height="238"/>
+  <text class="txt" x="1062" y="292" font-size="20" font-weight="800">GPU pool</text>
+  <text class="muted" x="1062" y="330" font-size="15">Taints</text>
+  <text class="muted" x="1062" y="360" font-size="15">MIG profiles</text>
+  <text class="muted" x="1062" y="390" font-size="15">Model servers</text>
+  <text class="muted" x="1062" y="420" font-size="15">Batch inference</text>
+
+  <rect class="box" x="78" y="444" width="326" height="214"/>
+  <text class="txt" x="104" y="486" font-size="23" font-weight="800">Platform control</text>
+  <text class="muted" x="104" y="526" font-size="16">GitOps</text>
+  <text class="muted" x="104" y="558" font-size="16">Policy as code</text>
+  <text class="muted" x="104" y="590" font-size="16">Secrets management</text>
+  <text class="muted" x="104" y="622" font-size="16">Backup and restore</text>
+
+  <rect class="box" x="480" y="624" width="802" height="126"/>
+  <text class="txt" x="506" y="664" font-size="23" font-weight="800">Shared services</text>
+  <text class="muted" x="506" y="704" font-size="16">Prometheus, Grafana, OpenTelemetry, Loki, cert-manager, external-dns, Velero</text>
+
+  <path class="line" d="M388 248h92"/>
+  <path class="line" d="M404 548h74"/>
+  <path class="line" d="M880 562v62"/>
+  <path class="line" d="M1188 490v132"/>
+</svg>

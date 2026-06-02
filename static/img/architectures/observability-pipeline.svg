@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-label="Kubernetes observability pipeline architecture">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0f766e"/></marker>
+    <style>.bg{fill:#f8faf9}.grid{stroke:#e2e8f0}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2}.green{fill:#ecfdf5;stroke:#0f766e;stroke-width:2}.amber{fill:#fff7ed;stroke:#a16207;stroke-width:2}.txt{font-family:Inter,Arial,sans-serif;fill:#101718}.muted{fill:#475569}.line{stroke:#0f766e;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect class="bg" width="1400" height="820"/>
+  <path class="grid" d="M0 82h1400M0 164h1400M0 246h1400M0 328h1400M0 410h1400M0 492h1400M0 574h1400M0 656h1400M0 738h1400M100 0v820M200 0v820M300 0v820M400 0v820M500 0v820M600 0v820M700 0v820M800 0v820M900 0v820M1000 0v820M1100 0v820M1200 0v820M1300 0v820"/>
+  <text class="txt" x="60" y="68" font-size="34" font-weight="800">Observability Pipeline</text>
+  <text class="muted" x="60" y="104" font-size="18">Collect signals close to workloads, standardize context, store by query pattern, and alert on user impact.</text>
+
+  <rect class="box" x="64" y="184" width="252" height="452"/>
+  <text class="txt" x="96" y="234" font-size="23" font-weight="800">Workloads</text>
+  <text class="muted" x="96" y="276" font-size="16">Apps</text>
+  <text class="muted" x="96" y="312" font-size="16">Model servers</text>
+  <text class="muted" x="96" y="348" font-size="16">Ingress</text>
+  <text class="muted" x="96" y="384" font-size="16">Nodes</text>
+  <text class="muted" x="96" y="420" font-size="16">Kubernetes events</text>
+
+  <rect class="green" x="424" y="128" width="290" height="168"/>
+  <text class="txt" x="456" y="180" font-size="22" font-weight="800">Metrics</text>
+  <text class="muted" x="456" y="220" font-size="16">Prometheus scrape</text>
+  <text class="muted" x="456" y="252" font-size="16">Recording rules</text>
+
+  <rect class="green" x="424" y="352" width="290" height="168"/>
+  <text class="txt" x="456" y="404" font-size="22" font-weight="800">Logs</text>
+  <text class="muted" x="456" y="444" font-size="16">Agent collection</text>
+  <text class="muted" x="456" y="476" font-size="16">Tenant labels</text>
+
+  <rect class="green" x="424" y="576" width="290" height="168"/>
+  <text class="txt" x="456" y="628" font-size="22" font-weight="800">Traces</text>
+  <text class="muted" x="456" y="668" font-size="16">OpenTelemetry SDK</text>
+  <text class="muted" x="456" y="700" font-size="16">Context propagation</text>
+
+  <rect class="box" x="824" y="192" width="268" height="444"/>
+  <text class="txt" x="856" y="242" font-size="23" font-weight="800">Storage</text>
+  <text class="muted" x="856" y="286" font-size="16">Prometheus or Mimir</text>
+  <text class="muted" x="856" y="322" font-size="16">Loki</text>
+  <text class="muted" x="856" y="358" font-size="16">Tempo or Jaeger</text>
+  <text class="muted" x="856" y="394" font-size="16">Object storage</text>
+
+  <rect class="amber" x="1180" y="192" width="250" height="444" transform="translate(-88 0)"/>
+  <text class="txt" x="1124" y="242" font-size="23" font-weight="800">Operations</text>
+  <text class="muted" x="1124" y="286" font-size="16">SLO dashboards</text>
+  <text class="muted" x="1124" y="322" font-size="16">Alert routing</text>
+  <text class="muted" x="1124" y="358" font-size="16">Incident review</text>
+  <text class="muted" x="1124" y="394" font-size="16">Capacity reports</text>
+
+  <path class="line" d="M316 270h108"/>
+  <path class="line" d="M316 420h108"/>
+  <path class="line" d="M316 586h108"/>
+  <path class="line" d="M714 212h110"/>
+  <path class="line" d="M714 436h110"/>
+  <path class="line" d="M714 660h110"/>
+  <path class="line" d="M1092 414h92"/>
+</svg>

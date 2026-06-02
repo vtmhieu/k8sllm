@@ -1,0 +1,55 @@
+---
+title: Scaling And Autoscaling
+description: Kubernetes scaling strategy across workload, node, and event-driven layers.
+tags:
+  - autoscaling
+  - capacity
+  - sre
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
+  - "https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler"
+  - "https://keda.sh/docs/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# Scaling And Autoscaling
+
+Scaling is a control-loop design problem. You need to decide which layer scales, which metric drives it, what delay is acceptable, and how much overprovisioning protects the user experience.
+
+## Scaling layers
+
+| Layer | Tooling | Use when |
+| --- | --- | --- |
+| Pod replicas | HPA | Request load changes and pods can scale horizontally. |
+| Pod resources | VPA | Requests are unknown or workloads are vertically bounded. Avoid blind use with latency-critical services. |
+| Nodes | Cluster Autoscaler or Karpenter | Pending pods need more node capacity. |
+| Event-driven | KEDA | Queue length, stream lag, or custom external metrics drive demand. |
+| GPU serving | Runtime-specific autoscaling | Queue wait, tokens/sec, GPU memory, and batch efficiency matter more than CPU. |
+
+## Decision table
+
+| Situation | Preferred signal |
+| --- | --- |
+| Web API | RPS, p95 latency, CPU only as secondary. |
+| Worker queue | Queue depth, age of oldest message, processing rate. |
+| LLM inference | Time to first token, queue wait, active sequences, GPU memory. |
+| Batch jobs | Deadline, throughput, and cost window. |
+
+## Guardrails
+
+- Set requests before HPA. Without requests, CPU and memory utilization ratios are meaningless.
+- Use load tests to validate scale-up time, not only steady-state capacity.
+- Keep headroom for node provisioning delay. Autoscaling is not instant.
+- Separate node pools for system, general app, and GPU workloads.
+- Use PodDisruptionBudgets carefully. Too strict can block node rotation; too loose can cause outage during maintenance.
+
+## Failure modes
+
+- HPA scales on CPU while real bottleneck is I/O, locks, database pool, or token generation.
+- Cluster autoscaler cannot add nodes because pod constraints do not match any node group.
+- GPU node pools scale slowly and cold-start model load dominates user latency.
+- Too many replicas overload downstream dependencies.
+

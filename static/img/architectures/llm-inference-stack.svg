@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-label="LLM inference stack on Kubernetes architecture">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#0f766e"/></marker>
+    <style>.bg{fill:#f8faf9}.grid{stroke:#e2e8f0}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2}.green{fill:#ecfdf5;stroke:#0f766e;stroke-width:2}.amber{fill:#fff7ed;stroke:#a16207;stroke-width:2}.dark{fill:#101718}.txt{font-family:Inter,Arial,sans-serif;fill:#101718}.muted{fill:#475569}.white{fill:#fff}.line{stroke:#0f766e;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect class="bg" width="1400" height="820"/>
+  <path class="grid" d="M0 82h1400M0 164h1400M0 246h1400M0 328h1400M0 410h1400M0 492h1400M0 574h1400M0 656h1400M0 738h1400M100 0v820M200 0v820M300 0v820M400 0v820M500 0v820M600 0v820M700 0v820M800 0v820M900 0v820M1000 0v820M1100 0v820M1200 0v820M1300 0v820"/>
+  <text class="txt" x="60" y="68" font-size="34" font-weight="800">LLM Inference Stack On Kubernetes</text>
+  <text class="muted" x="60" y="104" font-size="18">Separate request routing, model runtime, GPU scheduling, and telemetry so each layer can scale independently.</text>
+
+  <rect class="box" x="72" y="242" width="226" height="242"/>
+  <text class="txt" x="104" y="294" font-size="22" font-weight="800">Clients</text>
+  <text class="muted" x="104" y="336" font-size="16">Apps</text>
+  <text class="muted" x="104" y="368" font-size="16">Agents</text>
+  <text class="muted" x="104" y="400" font-size="16">Batch jobs</text>
+
+  <rect class="green" x="396" y="174" width="252" height="158"/>
+  <text class="txt" x="428" y="226" font-size="22" font-weight="800">Gateway</text>
+  <text class="muted" x="428" y="268" font-size="16">Auth, quota, routing</text>
+
+  <rect class="green" x="396" y="438" width="252" height="158"/>
+  <text class="txt" x="428" y="490" font-size="22" font-weight="800">Autoscaler</text>
+  <text class="muted" x="428" y="532" font-size="16">Queue depth</text>
+  <text class="muted" x="428" y="562" font-size="16">GPU utilization</text>
+
+  <rect class="dark" x="764" y="160" width="304" height="454"/>
+  <text class="white" x="804" y="214" font-size="24" font-weight="800">Model runtime</text>
+  <text class="white" x="804" y="258" font-size="16">vLLM</text>
+  <text class="white" x="804" y="292" font-size="16">KServe InferenceService</text>
+  <text class="white" x="804" y="326" font-size="16">Ray Serve deployments</text>
+  <text class="white" x="804" y="360" font-size="16">Triton model repository</text>
+  <rect x="804" y="432" width="228" height="70" fill="#2dd4bf"/>
+  <text class="txt" x="828" y="474" font-size="17" font-weight="800">KV cache and batching</text>
+
+  <rect class="amber" x="1162" y="160" width="270" height="454" transform="translate(-70 0)"/>
+  <text class="txt" x="1128" y="214" font-size="24" font-weight="800">GPU node pool</text>
+  <text class="muted" x="1128" y="258" font-size="16">Device plugin</text>
+  <text class="muted" x="1128" y="292" font-size="16">Taints and tolerations</text>
+  <text class="muted" x="1128" y="326" font-size="16">Node affinity</text>
+  <text class="muted" x="1128" y="360" font-size="16">MIG or whole GPU</text>
+  <text class="muted" x="1128" y="394" font-size="16">Capacity buffer</text>
+
+  <rect class="box" x="396" y="672" width="866" height="86"/>
+  <text class="txt" x="428" y="725" font-size="22" font-weight="800">Telemetry: tokens per second, time to first token, queue wait, cache hit ratio, GPU memory, cost per request</text>
+
+  <path class="line" d="M298 332h98"/>
+  <path class="line" d="M648 254h116"/>
+  <path class="line" d="M648 518h116"/>
+  <path class="line" d="M1068 386h94"/>
+  <path class="line" d="M916 614v58"/>
+</svg>

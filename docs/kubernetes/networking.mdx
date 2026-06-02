@@ -1,0 +1,67 @@
+---
+title: Networking
+description: Kubernetes networking decisions for service discovery, ingress, egress, and network isolation.
+tags:
+  - kubernetes
+  - networking
+  - network-policy
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://kubernetes.io/docs/concepts/services-networking/"
+  - "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+  - "https://gateway-api.sigs.k8s.io/"
+diagram_ids:
+  - "multi-tenant-security"
+---
+
+# Networking
+
+Kubernetes networking is a platform contract: how workloads discover each other, how traffic enters, how traffic leaves, and which paths are forbidden.
+
+## Core layers
+
+| Layer | Design decision |
+| --- | --- |
+| Pod network | CNI, IP capacity, network policy support, encryption needs. |
+| Service | Stable virtual endpoint and load balancing mode. |
+| Ingress or Gateway API | External traffic ownership, TLS, routing, tenancy. |
+| Egress | NAT, firewall, private endpoints, external dependency controls. |
+| NetworkPolicy | Namespace isolation and explicit service-to-service allow-list. |
+
+## Default stance
+
+- Use namespace-level default deny for ingress and egress where CNI supports it.
+- Prefer Gateway API for new multi-team routing platforms when controller support is mature enough for your environment.
+- Keep service mesh as a capability choice, not a default. Use it when mTLS, retries, traffic shaping, or deep service telemetry justify the operational cost.
+- Track DNS and connection churn for high-scale workloads; CoreDNS and kube-proxy issues can look like application instability.
+
+## Example policy shape
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api-from-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app: api
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              platform.example.com/role: ingress
+      ports:
+        - protocol: TCP
+          port: 8080
+```
+
+## Failure modes
+
+- NetworkPolicy assumed active, but CNI does not enforce it.
+- Egress is unrestricted, so data exfiltration and shadow dependencies are hard to detect.
+- Ingress controller becomes a noisy shared failure domain.
+- DNS latency is not monitored even though it sits on every request path.
+

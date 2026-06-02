@@ -1,0 +1,40 @@
+---
+title: RAG Platform
+description: Reference architecture for retrieval augmented generation on Kubernetes.
+tags:
+  - architecture
+  - rag
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-02
+sources:
+  - "https://docs.ray.io/en/latest/serve/"
+  - "https://opentelemetry.io/docs/"
+  - "https://kubernetes.io/docs/concepts/workloads/"
+diagram_ids:
+  - "rag-platform"
+---
+
+# RAG Platform
+
+![RAG platform on Kubernetes architecture](/img/architectures/rag-platform.svg)
+
+## Intent
+
+Run ingestion and online serving as separate systems. Ingestion optimizes corpus quality and index freshness. Serving optimizes authorization, retrieval latency, generation latency, and answer quality.
+
+## Key decisions
+
+- Ingestion jobs create versioned indexes with metadata.
+- Retrieval filters by tenant and access policy before generation.
+- RAG service owns prompt assembly and context budget.
+- LLM serving owns streaming and model runtime behavior.
+- Evaluation loop tracks retrieval recall and groundedness.
+
+## Review signals
+
+- Vector DB has backup and restore process.
+- Retrieval policy is tested for unauthorized documents.
+- Evaluation data catches chunking and reranking regressions.
+- Traces show retrieval, rerank, prompt assembly, and generation phases.
+
