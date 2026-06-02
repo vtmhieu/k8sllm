@@ -101,7 +101,6 @@ const config = {
             items: [
               { label: 'Platform Services', to: '/docs/platform-services' },
               { label: 'Reference Architectures', to: '/docs/reference-architectures' },
-              { label: 'Deploy Guide', to: '/docs/publish-and-domain' },
             ],
           },
           {

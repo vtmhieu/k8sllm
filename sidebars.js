@@ -66,7 +66,6 @@ const sidebars = {
       ],
     },
     'content-review-checklist',
-    'publish-and-domain',
   ],
 };
 

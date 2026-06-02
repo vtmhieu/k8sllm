@@ -22,7 +22,6 @@ https://github.com/vtmhieu/k8sllm
 - LLM On Kubernetes: GPU node pools, model serving, RAG, inference scaling and cost.
 - Reference Architectures: six SVG architecture diagrams with explanatory pages.
 - GitHub Actions build and GitHub Pages deploy workflow.
-- GitHub Pages and custom domain deployment instructions.
 
 ## Learning roadmap
 
@@ -74,13 +73,25 @@ git commit -m "Describe the content or platform change"
 git push -u origin main
 ```
 
-Then follow `docs/publish-and-domain.mdx` to enable GitHub Pages or Cloudflare Pages.
-
 The repository is already configured for GitHub Pages from GitHub Actions. In GitHub settings, set Pages source to GitHub Actions and push to `main`.
 
-## Configuration to update before publishing
+## Publishing
 
-Edit `docusaurus.config.js` only if the publishing target changes:
+The site is configured for GitHub Pages first.
+
+Target public URL:
+
+```text
+https://vtmhieu.github.io/k8sllm/
+```
+
+To enable GitHub Pages:
+
+1. Open `https://github.com/vtmhieu/k8sllm/settings/pages`.
+2. Set **Source** to **GitHub Actions**.
+3. Rerun the latest `Build and Deploy` workflow, or push a new commit to `main`.
+
+The current `docusaurus.config.js` publishing settings are:
 
 - `url` is currently `https://vtmhieu.github.io`
 - `baseUrl` is currently `/k8sllm/`
@@ -88,7 +99,36 @@ Edit `docusaurus.config.js` only if the publishing target changes:
 - `projectName` is currently `k8sllm`
 - GitHub navbar and edit URLs
 
+After deployment, verify:
+
+```text
+https://vtmhieu.github.io/k8sllm/
+https://vtmhieu.github.io/k8sllm/docs/kubernetes
+https://vtmhieu.github.io/k8sllm/docs/llm-on-kubernetes
+https://vtmhieu.github.io/k8sllm/docs/reference-architectures
+https://vtmhieu.github.io/k8sllm/img/architectures/llm-inference-stack.svg
+```
+
+## Custom domain
+
 For a custom domain, copy `static/CNAME.example` to `static/CNAME` and replace the domain.
+
+For example, with `kubernetes.example.com`:
+
+```js
+url: 'https://kubernetes.example.com',
+baseUrl: '/',
+```
+
+DNS:
+
+```text
+Type: CNAME
+Name: kubernetes
+Value: vtmhieu.github.io
+```
+
+Then set the same custom domain in GitHub Pages settings and enable HTTPS.
 
 ## Content rules
 
