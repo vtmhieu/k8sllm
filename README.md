@@ -22,6 +22,7 @@ https://github.com/vtmhieu/k8sllm
 - LLM On Kubernetes: GPU node pools, model serving, RAG, inference scaling and cost.
 - Reference Architectures: six SVG architecture diagrams with explanatory pages.
 - GitHub Actions build validation and Vercel production deployment.
+- Vercel Web Analytics for page-view and visitor measurement.
 
 ## Learning roadmap
 
@@ -164,6 +165,12 @@ Environment:
 DOCUSAURUS_SITE_URL=https://www.k8sllm.online
 DOCUSAURUS_BASE_URL=/
 ```
+
+Analytics:
+
+- `@vercel/analytics` is installed.
+- `src/theme/Root.js` loads the Vercel `<Analytics />` component on every page.
+- Analytics is for measuring traffic and content performance; it does not directly change Google ranking.
 
 ### Google Search Console
 
