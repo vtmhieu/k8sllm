@@ -5,7 +5,7 @@ A Docusaurus knowledge site for senior platform engineers who need to design and
 Public site target:
 
 ```text
-https://vtmhieu.github.io/k8sllm/
+https://k8sllm.online/
 ```
 
 GitHub repository:
@@ -77,24 +77,25 @@ The repository is already configured for GitHub Pages from GitHub Actions. In Gi
 
 ## Publishing
 
-The site is configured for GitHub Pages first.
+The site is configured for GitHub Pages with the custom domain `k8sllm.online`.
 
 Target public URL:
 
 ```text
-https://vtmhieu.github.io/k8sllm/
+https://k8sllm.online/
 ```
 
-To enable GitHub Pages:
+GitHub Pages settings:
 
 1. Open `https://github.com/vtmhieu/k8sllm/settings/pages`.
-2. Set **Source** to **GitHub Actions**.
-3. Rerun the latest `Build and Deploy` workflow, or push a new commit to `main`.
+2. Keep **Source** set to **GitHub Actions**.
+3. Keep **Custom domain** set to `k8sllm.online`.
+4. Enable HTTPS after GitHub validates the certificate.
 
 The current `docusaurus.config.js` publishing settings are:
 
-- `url` is currently `https://vtmhieu.github.io`
-- `baseUrl` is currently `/k8sllm/`
+- `url` is currently `https://k8sllm.online`
+- `baseUrl` is currently `/`
 - `organizationName` is currently `vtmhieu`
 - `projectName` is currently `k8sllm`
 - GitHub navbar and edit URLs
@@ -102,46 +103,28 @@ The current `docusaurus.config.js` publishing settings are:
 After deployment, verify:
 
 ```text
-https://vtmhieu.github.io/k8sllm/
-https://vtmhieu.github.io/k8sllm/docs/kubernetes
-https://vtmhieu.github.io/k8sllm/docs/llm-on-kubernetes
-https://vtmhieu.github.io/k8sllm/docs/reference-architectures
-https://vtmhieu.github.io/k8sllm/img/architectures/llm-inference-stack.svg
+https://k8sllm.online/
+https://k8sllm.online/docs/kubernetes
+https://k8sllm.online/docs/llm-on-kubernetes
+https://k8sllm.online/docs/reference-architectures
+https://k8sllm.online/img/architectures/llm-inference-stack.svg
+https://k8sllm.online/sitemap.xml
+https://k8sllm.online/robots.txt
 ```
 
-## Planned custom domain
+## Custom domain
 
-The planned canonical domain is:
+The canonical domain is:
 
 ```text
 https://k8sllm.online/
 ```
 
-Do not add `static/CNAME`, change production config, or set **Custom domain** in GitHub Pages until the domain is purchased and DNS is editable. If the GitHub Pages custom domain is set too early, GitHub will redirect the working `github.io` URL to an unresolved domain. Until then, keep the GitHub Pages URL active:
+The repo includes:
 
 ```text
-https://vtmhieu.github.io/k8sllm/
-```
-
-After `k8sllm.online` is purchased, make these repository changes:
-
-```js
-url: 'https://k8sllm.online',
-baseUrl: '/',
-```
-
-Also update GitHub Actions build environment:
-
-```yaml
-DOCUSAURUS_SITE_URL: https://k8sllm.online
-DOCUSAURUS_BASE_URL: /
-```
-
-Then copy the prepared examples:
-
-```bash
-cp static/CNAME.example static/CNAME
-cp static/robots.txt.example static/robots.txt
+static/CNAME
+static/robots.txt
 ```
 
 `static/CNAME` should contain:

@@ -1,7 +1,7 @@
 // @ts-check
 
-const siteUrl = process.env.DOCUSAURUS_SITE_URL || 'https://vtmhieu.github.io';
-const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/k8sllm/';
+const siteUrl = process.env.DOCUSAURUS_SITE_URL || 'https://k8sllm.online';
+const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
