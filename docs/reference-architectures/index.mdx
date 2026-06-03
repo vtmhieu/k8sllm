@@ -6,7 +6,7 @@ tags:
   - diagrams
   - platform-engineering
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://kubernetes.io/docs/concepts/"
   - "https://gateway-api.sigs.k8s.io/"
@@ -23,15 +23,15 @@ diagram_ids:
 
 # Reference Architectures
 
-Các architecture này là blueprint để review. Chúng không thay thế thiết kế chi tiết của từng tổ chức, nhưng giúp platform team tránh bỏ sót boundary quan trọng.
+These architectures are review blueprints. They do not replace organization-specific design, but they help platform teams avoid missing important boundaries.
 
 ## Architecture set
 
 | Architecture | Use when |
 | --- | --- |
-| [Production Cluster](/docs/reference-architectures/production-cluster) | Thiết kế baseline cluster. |
-| [Multi-Tenant Security](/docs/reference-architectures/multi-tenant-security) | Chia sẻ cluster giữa team hoặc tenant. |
-| [Observability Pipeline](/docs/reference-architectures/observability-pipeline) | Chuẩn hóa metrics, logs, traces, events. |
-| [GitOps Flow](/docs/reference-architectures/gitops-flow) | Thiết kế deployment flow và drift control. |
-| [LLM Inference Stack](/docs/reference-architectures/llm-inference-stack) | Chạy model serving trên GPU node pools. |
-| [RAG Platform](/docs/reference-architectures/rag-platform) | Thiết kế retrieval augmented generation production. |
+| [Production Cluster](/docs/reference-architectures/production-cluster) | You need a baseline cluster design. |
+| [Multi-Tenant Security](/docs/reference-architectures/multi-tenant-security) | Multiple teams or tenants share infrastructure. |
+| [Observability Pipeline](/docs/reference-architectures/observability-pipeline) | You need standardized metrics, logs, traces, and events. |
+| [GitOps Flow](/docs/reference-architectures/gitops-flow) | You need deployment flow and drift control. |
+| [LLM Inference Stack](/docs/reference-architectures/llm-inference-stack) | You run model serving on GPU node pools. |
+| [RAG Platform](/docs/reference-architectures/rag-platform) | You design production retrieval augmented generation. |

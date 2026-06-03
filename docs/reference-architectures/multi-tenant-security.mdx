@@ -6,7 +6,7 @@ tags:
   - security
   - multi-tenancy
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://kubernetes.io/docs/concepts/security/"
   - "https://kubernetes.io/docs/concepts/security/pod-security-standards/"
@@ -21,7 +21,7 @@ diagram_ids:
 
 ## Intent
 
-Cho phép nhiều team hoặc tenant dùng chung infrastructure nhưng không chia sẻ quyền admin, network reachability, secrets, hoặc policy bypass.
+Allow multiple teams or tenants to share infrastructure without sharing admin power, network reachability, secrets, or policy bypass paths.
 
 ## Key decisions
 
@@ -36,4 +36,3 @@ Cho phép nhiều team hoặc tenant dùng chung infrastructure nhưng không ch
 - Default deny is enforced consistently.
 - Audit logs can answer who changed what and when.
 - No team needs cluster-admin for daily work.
-

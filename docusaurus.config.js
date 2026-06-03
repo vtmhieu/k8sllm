@@ -8,7 +8,7 @@ const normalizeSiteUrl = (value) => {
 const siteUrl = normalizeSiteUrl(process.env.DOCUSAURUS_SITE_URL);
 const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/';
 const siteDescription =
-  'A senior platform engineering guide for Kubernetes, production services, observability, security, GitOps, and LLM workloads on Kubernetes.';
+  'A senior platform engineering guide for Kubernetes LLM infrastructure, production services, observability, security, GitOps, and AI workloads on Kubernetes.';
 const siteStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -16,7 +16,7 @@ const siteStructuredData = {
   alternateName: 'K8s + LLM Guide',
   url: `${siteUrl}/`,
   description: siteDescription,
-  inLanguage: 'vi',
+  inLanguage: 'en',
   about: [
     'Kubernetes',
     'Platform engineering',
@@ -46,8 +46,8 @@ const config = {
   onBrokenLinks: 'throw',
 
   i18n: {
-    defaultLocale: 'vi',
-    locales: ['vi'],
+    defaultLocale: 'en',
+    locales: ['en'],
   },
 
   markdown: {
@@ -104,7 +104,7 @@ const config = {
         {
           name: 'keywords',
           content:
-            'Kubernetes, LLM, Kubernetes LLM, LLM on Kubernetes, platform engineering, vLLM, KServe, Ray Serve, observability, security, GitOps',
+            'Kubernetes, LLM, Kubernetes LLM, LLM on Kubernetes, vLLM Kubernetes, KServe vs Ray Serve, GPU node pool Kubernetes, RAG on Kubernetes, platform engineering, observability, security, GitOps',
         },
       ],
       navbar: {

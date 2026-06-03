@@ -1,0 +1,116 @@
+---
+title: vLLM On Kubernetes
+description: Production guide for running vLLM on Kubernetes with GPU scheduling, model cache strategy, runtime flags, probes, metrics, and failure modes.
+tags:
+  - vllm
+  - kubernetes
+  - inference
+  - gpu
+difficulty: senior
+last_reviewed: 2026-06-04
+sources:
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
+  - "https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html"
+  - "https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/"
+  - "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# vLLM On Kubernetes
+
+vLLM on Kubernetes is a strong fit when the platform needs high-throughput text generation, OpenAI-compatible APIs, continuous batching, and efficient KV cache behavior. Treat vLLM as the model runtime layer, not the entire platform. Kubernetes still owns scheduling, rollout, traffic, identity, telemetry, and capacity safety.
+
+![LLM inference stack on Kubernetes architecture](/img/architectures/llm-inference-stack.svg)
+
+## Production role
+
+| Layer | Responsibility |
+| --- | --- |
+| Gateway | Auth, tenant routing, quotas, request shaping, and streaming behavior. |
+| vLLM runtime | Model loading, token generation, batching, KV cache, and OpenAI-compatible serving. |
+| GPU node pool | Accelerator placement, taints, tolerations, node labels, and capacity buffers. |
+| Platform telemetry | TTFT, queue wait, tokens/sec, GPU memory, cache pressure, and cost/request. |
+
+## Deployment contract
+
+- Pin the model ID, runtime image, tensor parallel settings, tokenizer behavior, and serving arguments.
+- Request `nvidia.com/gpu` explicitly and place the pod on a compatible GPU node profile.
+- Keep model storage and cache paths predictable so cold starts are understood and repeatable.
+- Use readiness probes that reflect model load completion, not only container process startup.
+- Separate interactive traffic from batch or agentic traffic when latency expectations differ.
+
+## Runtime settings to review
+
+| Setting area | Why it matters |
+| --- | --- |
+| Model and tokenizer | A model revision can change memory use, context length, and output behavior. |
+| Parallelism | Tensor and pipeline parallel settings must match GPU topology and memory. |
+| Max sequence length | Longer context improves capability but increases memory pressure and prefill latency. |
+| Batching behavior | Higher throughput can increase queue wait or tail latency for interactive users. |
+| API compatibility | OpenAI-compatible routes still need platform auth, quotas, and tenant controls. |
+
+## Kubernetes scheduling pattern
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-llama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-llama
+  template:
+    metadata:
+      labels:
+        app: vllm-llama
+    spec:
+      nodeSelector:
+        accelerator.platform.example.com/type: nvidia-a100
+      tolerations:
+        - key: accelerator.platform.example.com/gpu
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
+      containers:
+        - name: vllm
+          image: registry.example.com/ai/vllm:stable
+          args:
+            - --model
+            - meta-llama/Llama-3.1-8B-Instruct
+            - --host
+            - 0.0.0.0
+            - --port
+            - "8000"
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
+```
+
+## Metrics that decide readiness
+
+- Time to first token by route and model.
+- Inter-token latency and output tokens per second.
+- Queue wait before generation starts.
+- GPU memory used, cache pressure, and eviction behavior.
+- Model load duration and readiness delay.
+- Error rate by route, model revision, and request size.
+
+## Failure modes
+
+- The pod becomes ready before the model is actually loaded.
+- A model revision fits in staging but exceeds memory on the production GPU profile.
+- Autoscaling adds replicas, but each new replica has a long cold-start penalty.
+- Gateway timeouts or buffering break streaming behavior that worked in runtime-only tests.
+- One shared vLLM route mixes small interactive requests with long batch generations.
+
+## Related pages
+
+- [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools)
+- [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options)
+- [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
+- [LLM Inference Stack](/docs/reference-architectures/llm-inference-stack)

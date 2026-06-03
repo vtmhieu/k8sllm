@@ -1,14 +1,15 @@
 ---
 title: RAG On Kubernetes
-description: Production RAG architecture on Kubernetes with ingestion, retrieval, serving, and evaluation.
+description: Production RAG on Kubernetes guide covering ingestion, retrieval, vector databases, serving, evaluation, authorization, observability, and failure modes.
 tags:
   - rag
   - vector-database
   - llm
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://kubernetes.io/docs/concepts/workloads/controllers/job/"
+  - "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
   - "https://docs.ray.io/en/latest/serve/"
   - "https://opentelemetry.io/docs/"
 diagram_ids:
@@ -17,7 +18,7 @@ diagram_ids:
 
 # RAG On Kubernetes
 
-Retrieval-augmented generation is not just "LLM plus vector database." A production RAG system has two independent lifecycles: ingestion quality and online serving latency.
+Retrieval-augmented generation is not just "LLM plus vector database." A production RAG system has two independent lifecycles: ingestion quality and online serving latency. Kubernetes is useful when those lifecycles need separate scaling, rollout, observability, and rollback controls.
 
 ![RAG platform on Kubernetes architecture](/img/architectures/rag-platform.svg)
 
@@ -34,9 +35,42 @@ Retrieval-augmented generation is not just "LLM plus vector database." A product
 
 - Use Jobs or workflow engines for ingestion batches.
 - Use separate Deployments for retrieval, reranking, and generation when they scale differently.
-- Keep vector DB availability and backup strategy explicit.
+- Keep vector database availability, backup, and restore strategy explicit.
 - Keep tenant authorization in retrieval, not only at the final API layer.
 - Emit trace spans for retrieval, rerank, prompt assembly, and model generation.
+- Version source snapshots, chunking config, embedding model, and index generation together.
+
+## Ingestion lifecycle
+
+| Step | Platform requirement |
+| --- | --- |
+| Source loading | Track source version, owner, freshness, and access scope. |
+| Normalization | Make document format conversion deterministic and observable. |
+| Chunking | Version chunking rules and test retrieval recall after changes. |
+| Embedding | Pin embedding model and batch size; monitor latency and cost. |
+| Index publish | Use staged index rollout, validation, and rollback to the previous index. |
+
+## Serving lifecycle
+
+| Step | Platform requirement |
+| --- | --- |
+| Query handling | Carry user identity, tenant, and authorization context into retrieval. |
+| Retrieval | Track top-k, filters, score distribution, and empty-result rate. |
+| Reranking | Measure latency and quality impact separately from vector search. |
+| Prompt assembly | Track context token count, citation IDs, and policy decisions. |
+| Generation | Route to a model serving stack such as [vLLM](/docs/llm-on-kubernetes/vllm-kubernetes), KServe, or Ray Serve. |
+
+## Authorization boundary
+
+RAG authorization must happen before context enters the prompt. If unauthorized documents are retrieved and only filtered after generation, the system can leak sensitive data through summaries, citations, or prompt side effects.
+
+## Evaluation loop
+
+- Maintain curated question sets with expected sources.
+- Measure retrieval recall before judging model answer quality.
+- Track groundedness, citation accuracy, and unauthorized-document tests.
+- Run evaluation jobs after chunking, embedding, reranker, prompt, or model changes.
+- Keep index rollback ready when quality regresses.
 
 ## Failure modes
 
@@ -44,6 +78,8 @@ Retrieval-augmented generation is not just "LLM plus vector database." A product
 - Retrieval returns documents the user is not allowed to see.
 - Vector DB is treated as cache but becomes a critical database without backup.
 - Prompt context grows until cost and latency become unstable.
+- Ingestion succeeds but publishes stale metadata or incorrect tenant filters.
+- A reranker improves offline quality but breaks p95 latency for interactive routes.
 
 ## Metrics
 
@@ -53,3 +89,9 @@ Retrieval-augmented generation is not just "LLM plus vector database." A product
 - Groundedness review rate and citation quality.
 - End-to-end p95 and p99 latency by request class.
 
+## Related pages
+
+- [RAG Failure Modes And Evaluation](/docs/llm-on-kubernetes/rag-failure-modes-evaluation)
+- [KServe vs Ray Serve](/docs/llm-on-kubernetes/kserve-vs-ray-serve)
+- [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options)
+- [RAG Platform Reference Architecture](/docs/reference-architectures/rag-platform)

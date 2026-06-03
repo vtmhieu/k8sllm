@@ -8,24 +8,43 @@ const tracks = [
   {
     label: 'Kubernetes Core',
     href: '/docs/kubernetes',
-    detail: 'Control plane, workloads, scheduling, networking, storage.',
+    detail: 'Control plane, workloads, scheduling, networking, and storage.',
   },
   {
     label: 'Production Baseline',
     href: '/docs/best-practices',
-    detail: 'Scale, security, observability, backup, disaster recovery.',
+    detail: 'Scaling, security, observability, backup, and disaster recovery.',
   },
   {
-    label: 'LLM Infrastructure',
+    label: 'LLM On Kubernetes',
     href: '/docs/llm-on-kubernetes',
-    detail: 'GPU pools, model serving, RAG, inference economics.',
+    detail: 'GPU node pools, vLLM, KServe, Ray Serve, RAG, and inference cost.',
   },
 ];
 
 const signals = [
   'Design for failure domains before tuning replicas.',
   'Prefer explicit platform contracts over tool sprawl.',
-  'Treat LLM serving as a latency and capacity problem, not only a model problem.',
+  'Treat LLM serving on Kubernetes as a latency, capacity, and GPU economics problem.',
+];
+
+const llmPillars = [
+  {
+    label: 'vLLM Kubernetes',
+    href: '/docs/llm-on-kubernetes/vllm-kubernetes',
+  },
+  {
+    label: 'KServe vs Ray Serve',
+    href: '/docs/llm-on-kubernetes/kserve-vs-ray-serve',
+  },
+  {
+    label: 'GPU Node Pools',
+    href: '/docs/llm-on-kubernetes/gpu-node-pools',
+  },
+  {
+    label: 'RAG On Kubernetes',
+    href: '/docs/llm-on-kubernetes/rag-on-kubernetes',
+  },
 ];
 
 function TrackLink({ label, href, detail, index }) {
@@ -43,7 +62,7 @@ export default function Home() {
   return (
     <Layout
       title="Kubernetes + LLM Platform Guide"
-      description="A senior platform engineering guide for Kubernetes, production services, and LLM workloads."
+      description="A senior platform engineering guide for Kubernetes LLM infrastructure, GPU node pools, model serving, RAG, and production platform services."
     >
       <main className={styles.page}>
         <section className={styles.hero}>
@@ -51,8 +70,9 @@ export default function Home() {
             <p className={styles.kicker}>Senior platform engineering guide</p>
             <h1>Kubernetes + LLM Platform Guide</h1>
             <p className={styles.lead}>
-              Knowledge base thực chiến cho platform engineers: Kubernetes production,
-              security, observability, GitOps, và LLM workloads trên GPU clusters.
+              Learn how to design, scale, secure, and operate LLM workloads on
+              Kubernetes with production-grade GPU node pools, model serving,
+              observability, GitOps, and RAG platform patterns.
             </p>
             <div className={styles.heroActions}>
               <Link className={styles.primaryAction} to="/docs/intro">
@@ -75,7 +95,7 @@ export default function Home() {
         <section className={styles.trackSection}>
           <div className={styles.sectionHeader}>
             <p className={styles.kicker}>Learning map</p>
-            <h2>Đi từ cluster primitives tới AI inference platform.</h2>
+            <h2>Move from cluster primitives to an AI inference platform.</h2>
           </div>
           <div className={styles.trackGrid}>
             {tracks.map((track, index) => (
@@ -87,11 +107,12 @@ export default function Home() {
         <section className={styles.operatingModel}>
           <div>
             <p className={styles.kicker}>Operating model</p>
-            <h2>Không học từng tool rời rạc.</h2>
+            <h2>Learn the platform decisions behind the tools.</h2>
             <p>
-              Mỗi guide nối kỹ thuật với quyết định vận hành: khi nào dùng service đó,
-              failure mode chính là gì, metric nào chứng minh hệ thống đang khỏe,
-              và tradeoff nào ảnh hưởng trực tiếp tới latency, cost, hoặc security.
+              Each guide connects Kubernetes mechanics to operational decisions:
+              when to use a service, which failure modes matter, which metrics
+              prove the system is healthy, and which tradeoffs affect latency,
+              cost, or security.
             </p>
           </div>
           <div className={styles.signalList}>
@@ -100,6 +121,21 @@ export default function Home() {
                 <span aria-hidden="true" />
                 <p>{signal}</p>
               </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.trackSection}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.kicker}>Kubernetes LLM pillars</p>
+            <h2>Start with the pages that shape real AI infrastructure decisions.</h2>
+          </div>
+          <div className={styles.trackGrid}>
+            {llmPillars.map((pillar, index) => (
+              <Link className={styles.trackLink} key={pillar.label} to={pillar.href} style={{ '--index': index }}>
+                <span>{pillar.label}</span>
+                <small>Deep guide for production LLM infrastructure.</small>
+              </Link>
             ))}
           </div>
         </section>

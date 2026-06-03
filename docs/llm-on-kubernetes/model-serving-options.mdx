@@ -1,17 +1,20 @@
 ---
 title: Model Serving Options
-description: Compare vLLM, KServe, Ray Serve, and Triton for Kubernetes LLM serving.
+description: Compare vLLM, KServe, Ray Serve, and Triton for Kubernetes LLM serving, and link to deeper vLLM Kubernetes and KServe vs Ray Serve guides.
 tags:
   - model-serving
   - vllm
   - kserve
   - ray-serve
+  - llm
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
-  - "https://kserve.github.io/website/latest/"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/llmisvc/llmisvc-overview"
   - "https://docs.ray.io/en/latest/serve/"
+  - "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html"
   - "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/"
 diagram_ids:
   - "llm-inference-stack"
@@ -19,14 +22,14 @@ diagram_ids:
 
 # Model Serving Options
 
-No single runtime is best for every LLM workload. Choose based on batching, model lifecycle, distributed serving, framework integration, and platform ownership.
+No single runtime is best for every LLM workload on Kubernetes. Choose based on batching, model lifecycle, distributed serving, framework integration, rollout model, team ownership, and how much abstraction the platform team must provide.
 
 ## Comparison
 
 | Option | Strong fit | Watch out |
 | --- | --- | --- |
-| vLLM | High-throughput text generation, OpenAI-compatible serving, efficient KV cache. | You still need deployment, routing, auth, autoscaling, and telemetry around it. |
-| KServe | Kubernetes-native inference abstraction with revisions and autoscaling integrations. | Abstraction may hide runtime-specific knobs you need for large LLM tuning. |
+| [vLLM](/docs/llm-on-kubernetes/vllm-kubernetes) | High-throughput text generation, OpenAI-compatible serving, efficient KV cache. | You still need deployment, routing, auth, autoscaling, and telemetry around it. |
+| KServe | Kubernetes-native inference abstraction with revisions and autoscaling integrations. | Abstraction may hide runtime-specific knobs needed for large LLM tuning. |
 | Ray Serve | Python-native distributed serving, complex pipelines, multi-model orchestration. | Ray cluster operations become part of platform scope. |
 | Triton | Optimized inference server, model repository patterns, multi-framework serving. | LLM-specific serving ergonomics may require more integration work. |
 
@@ -37,13 +40,16 @@ No single runtime is best for every LLM workload. Choose based on batching, mode
 - Use **Ray Serve** when the serving graph includes Python logic, multi-step pipelines, or distributed orchestration.
 - Use **Triton** when standardized inference server operations and model repository control are more important than LLM-specific simplicity.
 
+For the most common platform decision, start with [KServe vs Ray Serve](/docs/llm-on-kubernetes/kserve-vs-ray-serve).
+
 ## Platform requirements around every option
 
 - Gateway auth, quotas, and tenant routing.
 - Immutable model and runtime versions.
-- GPU-aware scheduling.
+- GPU-aware scheduling with a defined [GPU node pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools) contract.
 - Autoscaling signals beyond CPU.
 - SLO dashboards for TTFT, output throughput, queue wait, and error classes.
+- Clear rollback unit: model artifact, runtime image, serving config, or endpoint resource.
 
 ## Failure modes
 
@@ -52,3 +58,9 @@ No single runtime is best for every LLM workload. Choose based on batching, mode
 - Autoscaling increases replicas but capacity remains bottlenecked by shared vector DB or reranker.
 - One route mixes interactive and batch traffic, destroying tail latency.
 
+## Related pages
+
+- [vLLM On Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes)
+- [KServe vs Ray Serve](/docs/llm-on-kubernetes/kserve-vs-ray-serve)
+- [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools)
+- [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)

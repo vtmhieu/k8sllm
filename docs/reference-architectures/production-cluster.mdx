@@ -6,7 +6,7 @@ tags:
   - kubernetes
   - production
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://kubernetes.io/docs/concepts/overview/components/"
   - "https://kubernetes.io/docs/concepts/architecture/"
@@ -20,7 +20,7 @@ diagram_ids:
 
 ## Intent
 
-Tách rõ control plane, worker pools, platform control, và shared services. Mục tiêu là giảm blast radius, làm capacity planning dễ hơn, và giữ platform services có ownership rõ.
+Separate the control plane, worker pools, platform control plane, and shared services. The goal is to reduce blast radius, make capacity planning explicit, and keep platform services tied to clear ownership.
 
 ## Key decisions
 
@@ -36,4 +36,3 @@ Tách rõ control plane, worker pools, platform control, và shared services. M�
 - Critical add-ons have resource requests and PDBs.
 - GPU workloads cannot accidentally land on general nodes.
 - Shared services have dashboards and runbooks.
-

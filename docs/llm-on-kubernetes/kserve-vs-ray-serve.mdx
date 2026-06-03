@@ -1,0 +1,82 @@
+---
+title: KServe vs Ray Serve
+description: Compare KServe and Ray Serve for LLM serving on Kubernetes by ownership model, CRDs, serving graph complexity, autoscaling, rollout behavior, and team fit.
+tags:
+  - kserve
+  - ray-serve
+  - model-serving
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-04
+sources:
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/llmisvc/llmisvc-overview"
+  - "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html"
+  - "https://docs.ray.io/en/latest/cluster/kubernetes/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# KServe vs Ray Serve
+
+KServe and Ray Serve solve different platform problems. KServe is a Kubernetes-native inference abstraction for teams that want a consistent serving API. Ray Serve is a Python-native distributed serving system for teams that need programmable serving graphs, multi-step pipelines, and Ray cluster capabilities.
+
+## Short decision
+
+| Use case | Better starting point |
+| --- | --- |
+| Standard model endpoint lifecycle across many teams | KServe |
+| Platform-managed inference API with CRDs and revisions | KServe |
+| Complex Python serving graph with preprocessing, retrieval, reranking, and generation | Ray Serve |
+| Distributed model or pipeline logic that already depends on Ray | Ray Serve |
+| Organization wants Kubernetes resources as the primary contract | KServe |
+| ML team wants Python application code as the primary contract | Ray Serve |
+
+## Platform comparison
+
+| Dimension | KServe | Ray Serve |
+| --- | --- | --- |
+| Primary contract | Kubernetes CRDs such as inference resources. | Python deployments managed by Ray Serve and often run on KubeRay. |
+| Ownership model | Platform team can standardize the inference surface. | ML/application team often owns more of the serving graph. |
+| Serving graph | Best when endpoint patterns are consistent. | Strong for custom DAGs and multi-step model pipelines. |
+| Autoscaling | Kubernetes-native integration path and inference abstractions. | Ray Serve autoscaling plus Ray cluster operations. |
+| Rollouts | Model endpoint lifecycle can align with Kubernetes resource management. | Application code and Ray Serve deployment lifecycle must be managed carefully. |
+| Operational scope | KServe controllers, runtimes, networking, and policy. | Ray cluster lifecycle, Ray Serve config, workers, runtime environments, and Kubernetes integration. |
+
+## KServe is a strong fit when
+
+- The platform team needs one inference API for many teams and model types.
+- Model serving must be governed with Kubernetes resources, policy, and GitOps.
+- Teams need a standard path for revisions, traffic, autoscaling, and runtime selection.
+- The organization prefers a platform abstraction over each team building its own serving stack.
+
+## Ray Serve is a strong fit when
+
+- The serving path includes Python logic that is more than a single model call.
+- The application needs retrieval, reranking, routing, generation, and post-processing as one programmable graph.
+- The team already uses Ray for distributed workloads or wants Ray cluster capabilities.
+- Model serving needs application-level orchestration more than a standardized endpoint abstraction.
+
+## Senior review questions
+
+| Question | Why it matters |
+| --- | --- |
+| Who owns the serving contract? | KServe favors platform-owned contracts; Ray Serve favors application-owned serving logic. |
+| Is the workload a simple endpoint or a serving graph? | Serving graphs usually push toward Ray Serve. |
+| How will autoscaling be debugged? | Both systems need clear metrics for queue wait, replica count, worker health, and request latency. |
+| What is the rollback unit? | Decide whether rollback is a Kubernetes resource revision, a Ray Serve deployment, a model artifact, or all three. |
+| Can SREs operate the runtime without reading model code? | This decides how much abstraction the platform must provide. |
+
+## Failure modes
+
+- KServe hides runtime-specific knobs that a large LLM needs for memory or batching tuning.
+- Ray Serve becomes a second platform if Ray cluster operations are not owned explicitly.
+- Autoscaling improves replica count but not user latency because the bottleneck is model load, retrieval, or GPU memory.
+- Rollback restores the endpoint but not the exact model artifact, prompt template, or runtime image.
+
+## Related pages
+
+- [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options)
+- [vLLM On Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes)
+- [RAG On Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes)
+- [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)

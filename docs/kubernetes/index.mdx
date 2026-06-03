@@ -6,7 +6,7 @@ tags:
   - control-plane
   - workloads
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://kubernetes.io/docs/concepts/"
   - "https://kubernetes.io/docs/concepts/overview/components/"
@@ -17,15 +17,15 @@ diagram_ids:
 
 # Kubernetes Core
 
-Kubernetes là một distributed control system. Người dùng gửi desired state vào API server; controllers liên tục reconcile actual state về desired state; scheduler quyết định placement; kubelet thực thi trên node.
+Kubernetes is a distributed control system. Users submit desired state to the API server, controllers continuously reconcile actual state toward desired state, the scheduler decides placement, and kubelet executes work on each node.
 
-## Mental model cần giữ
+## Mental model to keep
 
-- **API là contract**: mọi object, policy, và automation nên đi qua Kubernetes API hoặc một abstraction có lifecycle rõ.
-- **Controllers là vòng lặp**: lỗi thường đến từ reconcile loop không idempotent, finalizer kẹt, hoặc dependency thiếu readiness.
-- **Scheduler là capacity brain**: resource requests, taints, affinity, topology spread, và priority quyết định cluster có dùng tài nguyên đúng không.
-- **Networking là policy surface**: Service discovery, ingress, egress, NetworkPolicy, DNS, và service mesh ảnh hưởng trực tiếp tới blast radius.
-- **Storage là state contract**: StorageClass, PVC, backup, restore, và topology phải được review như data architecture.
+- **API is the contract**: objects, policy, and automation should flow through the Kubernetes API or through an abstraction with a clear lifecycle.
+- **Controllers are loops**: failures often come from non-idempotent reconciliation, stuck finalizers, or dependencies without readiness signals.
+- **Scheduler is the capacity brain**: resource requests, taints, affinity, topology spread, and priority decide whether the cluster uses capacity correctly.
+- **Networking is a policy surface**: service discovery, ingress, egress, NetworkPolicy, DNS, and service mesh directly shape blast radius.
+- **Storage is a state contract**: StorageClass, PVCs, backup, restore, and topology need the same review discipline as data architecture.
 
 ## Production reading order
 
@@ -42,7 +42,7 @@ Kubernetes là một distributed control system. Người dùng gửi desired st
 
 | Area | Question |
 | --- | --- |
-| API | Có object nào bypass GitOps hoặc admission policy không? |
-| Scheduling | Workloads critical có priority, topology spread, PDB, và resource requests đúng không? |
-| Network | Default deny có được áp dụng theo namespace không? |
-| Storage | Restore path đã test bằng workload thật chưa? |
+| API | Can any object bypass GitOps or admission policy? |
+| Scheduling | Do critical workloads have correct priority, topology spread, PDBs, and resource requests? |
+| Network | Is default deny enforced by namespace where isolation matters? |
+| Storage | Has the restore path been tested with a real workload? |

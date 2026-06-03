@@ -45,7 +45,9 @@ const sidebars = {
       link: { type: 'doc', id: 'llm-on-kubernetes/index' },
       items: [
         'llm-on-kubernetes/gpu-node-pools',
+        'llm-on-kubernetes/vllm-kubernetes',
         'llm-on-kubernetes/model-serving-options',
+        'llm-on-kubernetes/kserve-vs-ray-serve',
         'llm-on-kubernetes/inference-benchmarking-cost-model',
         'llm-on-kubernetes/rag-on-kubernetes',
         'llm-on-kubernetes/rag-failure-modes-evaluation',

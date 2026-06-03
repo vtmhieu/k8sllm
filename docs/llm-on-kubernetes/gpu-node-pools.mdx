@@ -1,13 +1,15 @@
 ---
-title: GPU Node Pools
-description: GPU scheduling and node-pool design for LLM workloads on Kubernetes.
+title: GPU Node Pool Kubernetes
+description: Senior guide to GPU node pool design, scheduling, taints, labels, autoscaling, and capacity safety for LLM workloads on Kubernetes.
 tags:
   - gpu
   - scheduling
   - llm
+  - kubernetes
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
+  - "https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/"
   - "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/"
   - "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
   - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
@@ -16,20 +18,23 @@ diagram_ids:
   - "llm-inference-stack"
 ---
 
-# GPU Node Pools
+# GPU Node Pool Kubernetes
 
-GPU nodes should be treated as a separate capacity class. They have different cost, scheduling constraints, startup time, failure modes, and security requirements.
+GPU node pools should be treated as a separate Kubernetes capacity class. They have different cost, scheduling constraints, startup time, failure modes, and security requirements from general worker nodes. A production LLM platform needs an explicit scheduling contract before it tunes model throughput.
+
+![LLM inference stack on Kubernetes architecture](/img/architectures/llm-inference-stack.svg)
 
 ## Baseline design
 
 | Control | Recommendation |
 | --- | --- |
-| Taints | Taint GPU nodes so only GPU workloads land there. |
-| Tolerations | Require explicit toleration from approved workloads. |
-| Node labels | Label accelerator type, memory, MIG profile, zone, and lifecycle. |
-| Requests | Request GPU resources explicitly through the device plugin. |
-| Affinity | Pin workloads to compatible model and memory profiles. |
-| System workloads | Keep core system pods off GPU pools unless required. |
+| Taints | Taint GPU nodes so only approved GPU workloads land there. |
+| Tolerations | Require explicit toleration from model-serving and batch-inference workloads. |
+| Node labels | Label accelerator type, memory, MIG profile, topology, zone, and lifecycle. |
+| GPU requests | Request `nvidia.com/gpu` explicitly through the device plugin. |
+| Affinity | Pin workloads to compatible model, memory, and topology profiles. |
+| System workloads | Keep general platform agents off GPU pools unless they are required for GPU operation. |
+| Capacity buffer | Keep warm headroom for interactive workloads instead of scaling only after queue pressure. |
 
 ## Example scheduling contract
 
@@ -56,12 +61,43 @@ spec:
               nvidia.com/gpu: "1"
 ```
 
+## Node pool taxonomy
+
+| Pool type | Use when | Design concern |
+| --- | --- | --- |
+| Interactive inference | User-facing chat, agents, or APIs. | Warm capacity, low queue wait, strict latency SLOs. |
+| Batch inference | Offline generation, evaluation, data labeling, or synthetic data. | Throughput per GPU hour and deadline windows. |
+| Embedding and reranking | RAG retrieval and ranking services. | Smaller models may need different GPU or CPU profiles. |
+| Experimentation | Model trials and benchmark jobs. | Quotas and isolation prevent experiments from starving production. |
+
+## Scheduling policy
+
+- Use taints and tolerations to prevent accidental placement on GPU nodes.
+- Use node selectors or node affinity to match model memory requirements to GPU profiles.
+- Use topology spread and zone labels when replicas need failure-domain separation.
+- Use priority classes carefully so critical serving workloads can recover during contention.
+- Use namespace quotas or admission policy to stop unbounded GPU requests.
+
+## Autoscaling implications
+
+GPU autoscaling is slower and more expensive than normal pod scaling. A new node may need provisioning time, driver readiness, runtime daemon health, image pulls, and model loading before it can serve traffic.
+
+| Scaling signal | Use for |
+| --- | --- |
+| Queue wait | Interactive latency protection. |
+| Active sequences | Runtime saturation and batching pressure. |
+| GPU memory | Placement safety and cache pressure. |
+| Tokens/sec | Throughput per replica and cost model. |
+| Model load time | Cold-start budget and warm-pool sizing. |
+
 ## Failure modes
 
 - GPU node scales up but model loading takes longer than user-facing SLO.
 - Workload lands on incompatible GPU memory profile.
 - General workloads consume CPU and memory on GPU nodes, reducing inference capacity.
 - Autoscaler cannot provision because node selectors do not match any node group.
+- A small model and a large model share a pool and create unpredictable fragmentation.
+- Batch jobs consume all accelerators before interactive serving traffic arrives.
 
 ## Metrics
 
@@ -70,3 +106,8 @@ spec:
 - Queue wait and active sequences per replica.
 - Cost per generated token and cost per request class.
 
+## Related pages
+
+- [vLLM On Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes)
+- [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
+- [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options)

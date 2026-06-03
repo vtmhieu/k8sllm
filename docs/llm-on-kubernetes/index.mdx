@@ -1,15 +1,17 @@
 ---
 title: LLM On Kubernetes
-description: How to run LLM workloads on Kubernetes with GPU scheduling, model serving, RAG, and cost controls.
+description: Senior guide to Kubernetes LLM infrastructure with GPU node pools, vLLM, KServe, Ray Serve, RAG, benchmarking, and cost controls.
 tags:
   - llm
   - gpu
   - ai-infrastructure
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://docs.vllm.ai/"
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
   - "https://kserve.github.io/website/"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
   - "https://docs.ray.io/en/latest/serve/"
   - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
 diagram_ids:
@@ -19,7 +21,7 @@ diagram_ids:
 
 # LLM On Kubernetes
 
-LLM workloads stress Kubernetes in unusual ways: GPU capacity is scarce, model startup is slow, latency has multiple phases, and request cost varies by token count. Treat LLM serving as a platform capability with its own SLOs.
+LLM workloads stress Kubernetes in unusual ways: GPU capacity is scarce, model startup is slow, latency has multiple phases, and request cost varies by token count. Treat LLM on Kubernetes as a platform capability with its own SLOs, capacity model, security boundary, and release process.
 
 ![LLM inference stack on Kubernetes architecture](/img/architectures/llm-inference-stack.svg)
 
@@ -27,17 +29,24 @@ LLM workloads stress Kubernetes in unusual ways: GPU capacity is scarce, model s
 
 | Capability | Why it matters |
 | --- | --- |
-| GPU node pools | Keeps accelerator scheduling explicit and protects general workloads. |
+| GPU node pools | Keep accelerator scheduling explicit and protect general workloads. |
 | Model runtime | Handles batching, KV cache, streaming, and model loading. |
 | Serving abstraction | Routes traffic, manages revisions, exposes autoscaling hooks. |
 | RAG services | Adds retrieval, metadata policy, and evaluation loop. |
 | Telemetry | Measures TTFT, throughput, queue wait, GPU saturation, and cost. |
 
-## Start here
+## SEO pillar guides
 
-- [GPU Node Pools](/docs/llm-on-kubernetes/gpu-node-pools)
-- [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options)
-- [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
-- [RAG On Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes)
-- [RAG Failure Modes And Evaluation](/docs/llm-on-kubernetes/rag-failure-modes-evaluation)
-- [Inference Scaling And Cost](/docs/llm-on-kubernetes/inference-scaling-cost)
+| Guide | Use it to decide |
+| --- | --- |
+| [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools) | How to isolate and schedule accelerator capacity. |
+| [vLLM On Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes) | How to run vLLM as the model runtime layer. |
+| [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options) | How to choose vLLM, KServe, Ray Serve, or Triton. |
+| [KServe vs Ray Serve](/docs/llm-on-kubernetes/kserve-vs-ray-serve) | Which serving abstraction fits the team and workload. |
+| [RAG On Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes) | How to operate ingestion, retrieval, generation, and evaluation. |
+| [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model) | How to measure latency phases and unit economics. |
+| [Inference Scaling And Cost](/docs/llm-on-kubernetes/inference-scaling-cost) | How to scale beyond CPU metrics. |
+
+## Operating principle
+
+Do not choose a model-serving runtime before defining the platform contract around it: GPU placement, traffic policy, model artifact ownership, rollout and rollback, telemetry, and cost reporting. Runtime benchmarks are only useful when they include the Kubernetes gateway, autoscaling, and observability path that production users will actually hit.

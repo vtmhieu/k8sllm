@@ -6,7 +6,7 @@ tags:
   - platform-engineering
   - llm
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://kubernetes.io/docs/"
   - "https://kubernetes.io/docs/concepts/"
@@ -19,33 +19,33 @@ diagram_ids:
 
 # Kubernetes + LLM Platform Guide
 
-Site này dành cho engineers đã biết Kubernetes ở mức cơ bản và muốn thiết kế, vận hành, hoặc audit một production platform có AI workloads. Nội dung viết bằng tiếng Việt ngắn gọn, giữ nguyên thuật ngữ kỹ thuật tiếng Anh khi thuật ngữ đó chính xác hơn.
+This site is for engineers who already understand Kubernetes basics and need to design, operate, or audit a production platform with AI workloads. The focus is senior platform engineering: control planes, worker pools, policy, observability, GPU scheduling, model serving, RAG, and cost-aware operations.
 
-## Cách học
+## How to learn
 
-1. Bắt đầu với [Kubernetes Core](/docs/kubernetes) để thống nhất mental model về control plane, workloads, networking, storage.
-2. Đi qua [Production Best Practices](/docs/best-practices) để biến primitives thành baseline vận hành.
-3. Dùng [Platform Services](/docs/platform-services) để chọn service theo capability, không chọn theo hype.
-4. Học [LLM On Kubernetes](/docs/llm-on-kubernetes) như một capacity, latency, GPU scheduling, và cost problem.
-5. Dùng [Reference Architectures](/docs/reference-architectures) như blueprint khi review thiết kế.
+1. Start with [Kubernetes Core](/docs/kubernetes) to align on the control plane, workloads, networking, and storage model.
+2. Use [Production Best Practices](/docs/best-practices) to turn primitives into operational baselines.
+3. Use [Platform Services](/docs/platform-services) to choose services by capability, not hype.
+4. Learn [LLM On Kubernetes](/docs/llm-on-kubernetes) as a capacity, latency, GPU scheduling, and cost problem.
+5. Use [Reference Architectures](/docs/reference-architectures) as blueprints for design reviews.
 
-## Nguyên tắc biên tập
+## Editorial principles
 
-- Mỗi bài phải trả lời được: quyết định nào cần đưa ra, failure mode chính là gì, metric nào chứng minh hệ thống hoạt động tốt.
-- Source chính ưu tiên official docs. Blog và vendor article chỉ dùng để bổ sung case study, không dùng làm source of truth cho core behavior.
-- Mỗi architecture diagram phải thể hiện boundary, data flow, ownership, và điểm vận hành quan trọng.
+- Every guide should explain the decision being made, the main failure modes, and the metrics that prove the system is healthy.
+- Official docs are the source of truth. Vendor blogs can support examples, but they should not override API behavior or security guarantees.
+- Every architecture diagram should make boundaries, data flow, ownership, and operating concerns visible.
 
 ## Production platform overview
 
 ![Production Kubernetes cluster architecture](/img/architectures/production-cluster.svg)
 
-Một Kubernetes platform tốt không chỉ là cluster chạy được workload. Nó phải có control plane ổn định, worker pools tách chức năng, policy rõ, telemetry đủ, và delivery flow có khả năng rollback.
+A strong Kubernetes platform is more than a cluster that can run workloads. It needs a reliable control plane, separated worker pools, explicit policy, enough telemetry to debug incidents, and a delivery flow that can roll back safely.
 
-## Review checklist ngắn
+## Short review checklist
 
-| Câu hỏi | Tín hiệu tốt |
+| Question | Healthy signal |
 | --- | --- |
-| Ai sở hữu cluster baseline? | Platform team có policy, versioning, và change process. |
-| Workload scale theo metric nào? | CPU/memory chỉ là baseline; queue, RPS, token latency, hoặc business metric được dùng khi phù hợp. |
-| Security exception xử lý thế nào? | Có expiry, approval, audit trail, và policy-as-code. |
-| LLM serving có SLO riêng không? | Có TTFT, tokens/sec, queue wait, GPU memory, và cost/request. |
+| Who owns the cluster baseline? | The platform team owns policy, versioning, and change review. |
+| Which metric drives workload scale? | CPU and memory are a baseline; queue depth, RPS, token latency, or business metrics are used when they are better signals. |
+| How are security exceptions handled? | Exceptions have expiry, approval, audit trail, and policy-as-code coverage. |
+| Does LLM serving have its own SLO? | TTFT, tokens/sec, queue wait, GPU memory, and cost/request are tracked by route class. |

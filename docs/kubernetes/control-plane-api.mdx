@@ -6,7 +6,7 @@ tags:
   - api-server
   - control-plane
 difficulty: senior
-last_reviewed: 2026-06-02
+last_reviewed: 2026-06-04
 sources:
   - "https://kubernetes.io/docs/concepts/overview/components/"
   - "https://kubernetes.io/docs/reference/using-api/"
@@ -17,7 +17,7 @@ diagram_ids:
 
 # Control Plane And API
 
-Control plane là nơi quyết định Kubernetes có vận hành được như một platform hay chỉ là một cụm máy chạy containers. API server là cổng duy nhất nên mọi policy quan trọng cần được enforce ở đây hoặc quanh đây.
+The control plane determines whether Kubernetes behaves like a platform or only like a cluster running containers. The API server is the central gate, so the most important policy decisions should be enforced there or directly around it.
 
 ## Components
 
@@ -48,4 +48,3 @@ Control plane là nơi quyết định Kubernetes có vận hành được như 
 - Admission webhook latency and rejection rate.
 - etcd fsync duration, leader changes, database size.
 - Controller work queue depth and retry rate.
-
