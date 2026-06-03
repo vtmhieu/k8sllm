@@ -1,7 +1,29 @@
 // @ts-check
 
-const siteUrl = process.env.DOCUSAURUS_SITE_URL || 'https://k8sllm.online';
+const siteUrl = process.env.DOCUSAURUS_SITE_URL || 'https://www.k8sllm.online';
 const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/';
+const siteDescription =
+  'A senior platform engineering guide for Kubernetes, production services, observability, security, GitOps, and LLM workloads on Kubernetes.';
+const siteStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Kubernetes + LLM Platform Guide',
+  alternateName: 'K8s + LLM Guide',
+  url: 'https://www.k8sllm.online/',
+  description: siteDescription,
+  inLanguage: 'vi',
+  about: [
+    'Kubernetes',
+    'Platform engineering',
+    'LLM infrastructure',
+    'vLLM',
+    'KServe',
+    'Ray Serve',
+    'Observability',
+    'Kubernetes security',
+  ],
+  sameAs: ['https://github.com/vtmhieu/k8sllm'],
+};
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -29,6 +51,16 @@ const config = {
       onBrokenMarkdownLinks: 'warn',
     },
   },
+
+  headTags: [
+    {
+      tagName: 'script',
+      attributes: {
+        type: 'application/ld+json',
+      },
+      innerHTML: JSON.stringify(siteStructuredData),
+    },
+  ],
 
   presets: [
     [
@@ -61,9 +93,13 @@ const config = {
       },
       metadata: [
         {
+          name: 'description',
+          content: siteDescription,
+        },
+        {
           name: 'keywords',
           content:
-            'Kubernetes, LLM, platform engineering, vLLM, KServe, Ray Serve, observability, security, GitOps',
+            'Kubernetes, LLM, Kubernetes LLM, LLM on Kubernetes, platform engineering, vLLM, KServe, Ray Serve, observability, security, GitOps',
         },
       ],
       navbar: {
