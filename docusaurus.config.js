@@ -1,6 +1,11 @@
 // @ts-check
 
-const siteUrl = process.env.DOCUSAURUS_SITE_URL || 'https://www.k8sllm.online';
+const canonicalSiteUrl = 'https://www.k8sllm.online';
+const normalizeSiteUrl = (value) => {
+  const siteUrl = (value || canonicalSiteUrl).replace(/\/+$/, '');
+  return siteUrl === 'https://k8sllm.online' ? canonicalSiteUrl : siteUrl;
+};
+const siteUrl = normalizeSiteUrl(process.env.DOCUSAURUS_SITE_URL);
 const baseUrl = process.env.DOCUSAURUS_BASE_URL || '/';
 const siteDescription =
   'A senior platform engineering guide for Kubernetes, production services, observability, security, GitOps, and LLM workloads on Kubernetes.';
@@ -9,7 +14,7 @@ const siteStructuredData = {
   '@type': 'WebSite',
   name: 'Kubernetes + LLM Platform Guide',
   alternateName: 'K8s + LLM Guide',
-  url: 'https://www.k8sllm.online/',
+  url: `${siteUrl}/`,
   description: siteDescription,
   inLanguage: 'vi',
   about: [

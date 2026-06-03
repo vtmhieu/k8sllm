@@ -166,6 +166,8 @@ DOCUSAURUS_SITE_URL=https://www.k8sllm.online
 DOCUSAURUS_BASE_URL=/
 ```
 
+`docusaurus.config.js` also normalizes the old apex value `https://k8sllm.online` to the canonical `https://www.k8sllm.online` so stale Vercel environment values do not leak into canonical or Open Graph tags.
+
 Analytics:
 
 - `@vercel/analytics` is installed.
