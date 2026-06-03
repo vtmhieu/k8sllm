@@ -117,7 +117,7 @@ The planned canonical domain is:
 https://k8sllm.online/
 ```
 
-Do not add `static/CNAME` or change production config until the domain is purchased and DNS is editable. Until then, keep the GitHub Pages URL active:
+Do not add `static/CNAME`, change production config, or set **Custom domain** in GitHub Pages until the domain is purchased and DNS is editable. If the GitHub Pages custom domain is set too early, GitHub will redirect the working `github.io` URL to an unresolved domain. Until then, keep the GitHub Pages URL active:
 
 ```text
 https://vtmhieu.github.io/k8sllm/
