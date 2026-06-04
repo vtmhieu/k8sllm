@@ -19,7 +19,7 @@ https://github.com/vtmhieu/k8sllm
 - Kubernetes Core: control plane, workloads, scheduling, networking, storage.
 - Production Best Practices: scaling, security, observability, backup and disaster recovery.
 - Platform Services: traffic, GitOps, policy, secrets, supply chain, observability stack.
-- LLM On Kubernetes: GPU node pools, model serving, RAG, inference scaling and cost.
+- LLM on Kubernetes: GPU node pools, model serving, RAG, inference scaling and cost.
 - Reference Architectures: six SVG architecture diagrams with explanatory pages.
 - K8sLLM Platform Walkthrough: a local Remotion MP4 explainer embedded on the homepage.
 - GitHub Actions build validation and Vercel production deployment.
@@ -30,7 +30,7 @@ https://github.com/vtmhieu/k8sllm
 1. Kubernetes Core: build a reliable mental model of API, control plane, scheduling, networking, and storage.
 2. Production Best Practices: turn cluster primitives into scaling, security, observability, and recovery baselines.
 3. Platform Services: choose ingress, GitOps, policy, secrets, supply chain, and telemetry services by capability.
-4. LLM On Kubernetes: design GPU pools, serving runtimes, RAG systems, and inference cost controls.
+4. LLM on Kubernetes: design GPU pools, serving runtimes, RAG systems, and inference cost controls.
 5. Reference Architectures: use the diagrams as review checklists for real platform designs.
 
 ## Source of truth policy

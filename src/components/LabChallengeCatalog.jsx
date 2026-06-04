@@ -4,7 +4,7 @@ import Link from '@docusaurus/Link';
 const challenges = [
   {
     id: 'vllm-inference',
-    title: 'vLLM inference challenge',
+    title: 'vLLM Inference Challenge',
     href: '/docs/labs/vllm-inference-lab',
     topic: 'Model serving',
     difficulty: 'Hard',
@@ -16,7 +16,7 @@ const challenges = [
   },
   {
     id: 'rag-retrieval',
-    title: 'RAG retrieval challenge',
+    title: 'RAG Retrieval Challenge',
     href: '/docs/labs/rag-retrieval-lab',
     topic: 'RAG',
     difficulty: 'Medium',
@@ -28,7 +28,7 @@ const challenges = [
   },
   {
     id: 'production-readiness',
-    title: 'Production readiness challenge',
+    title: 'Production Readiness Challenge',
     href: '/docs/labs/production-readiness-lab',
     topic: 'Production',
     difficulty: 'Hard',
@@ -40,7 +40,7 @@ const challenges = [
   },
   {
     id: 'observability',
-    title: 'LLM observability challenge',
+    title: 'LLM Observability Challenge',
     href: '/docs/labs/observability-lab',
     topic: 'Observability',
     difficulty: 'Medium',
@@ -123,8 +123,9 @@ export default function LabChallengeCatalog() {
           <small>completed in this browser</small>
         </div>
         <p>
-          Choose a challenge, run it in your own environment, then mark progress locally.
-          No account, backend, or hosted sandbox is required for this version.
+          Choose a challenge, run it in your own cluster, then mark progress
+          locally. This version is static, private to your browser, and ready
+          for teams that want practice before hosted sandboxes exist.
         </p>
       </div>
 
@@ -156,6 +157,10 @@ export default function LabChallengeCatalog() {
           ))}
         </div>
       </div>
+
+      <p className="challenge-catalog__result-count">
+        Showing {visibleChallenges.length} of {challenges.length} challenges.
+      </p>
 
       <div className="challenge-grid">
         {visibleChallenges.map((challenge) => {
@@ -191,6 +196,15 @@ export default function LabChallengeCatalog() {
             </article>
           );
         })}
+        {visibleChallenges.length === 0 ? (
+          <div className="challenge-empty" role="status">
+            <span>No matching challenge</span>
+            <p>
+              Clear one filter or switch difficulty. New GPU, observability,
+              and RAG drills will be added as the lab track expands.
+            </p>
+          </div>
+        ) : null}
       </div>
     </section>
   );

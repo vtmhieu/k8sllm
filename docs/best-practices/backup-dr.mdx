@@ -1,5 +1,5 @@
 ---
-title: Backup And Disaster Recovery
+title: Backup and Disaster Recovery
 description: Kubernetes backup and disaster recovery baseline for control plane, workloads, and platform services.
 tags:
   - backup
@@ -15,7 +15,7 @@ diagram_ids:
   - "production-cluster"
 ---
 
-# Backup And Disaster Recovery
+# Backup and Disaster Recovery
 
 Disaster recovery is not a tool. It is an agreement about data loss, downtime, restore order, and who can execute the runbook.
 
@@ -50,4 +50,3 @@ Disaster recovery is not a tool. It is an agreement about data loss, downtime, r
 - Backup tool has cluster credentials but no tested restore process.
 - Object storage bucket is in the same failure domain as the cluster.
 - Restore succeeds technically but application data is inconsistent.
-

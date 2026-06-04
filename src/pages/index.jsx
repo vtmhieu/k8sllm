@@ -17,22 +17,22 @@ const tracks = [
     detail: 'Scaling, security, observability, backup, and incident-ready operations.',
   },
   {
-    label: 'LLM On Kubernetes',
+    label: 'LLM on Kubernetes',
     href: '/docs/llm-on-kubernetes',
     detail: 'GPU node pools, vLLM, KServe, Ray Serve, RAG, and inference economics.',
   },
 ];
 
 const signals = [
-  'Design for failure domains before tuning replicas.',
-  'Prefer explicit platform contracts over tool sprawl.',
-  'Treat LLM serving on Kubernetes as a latency, capacity, and GPU economics problem.',
+  'Separate system, app, and GPU capacity before tuning replicas.',
+  'Make serving contracts explicit before adding runtime choices.',
+  'Treat LLM inference as a latency, placement, and GPU economics system.',
 ];
 
 const heroStats = [
   { value: '30+', label: 'production topics' },
   { value: '6', label: 'reference architectures' },
-  { value: '4', label: 'field labs' },
+  { value: '4', label: 'challenge labs' },
 ];
 
 const llmPillars = [
@@ -57,7 +57,7 @@ const llmPillars = [
     detail: 'Design accelerator pools with taints, quotas, autoscaling, and failure isolation.',
   },
   {
-    label: 'RAG On Kubernetes',
+    label: 'RAG on Kubernetes',
     href: '/docs/llm-on-kubernetes/rag-on-kubernetes',
     detail: 'Operate ingestion, retrieval, generation, and evaluation as one production system.',
   },
@@ -65,17 +65,17 @@ const llmPillars = [
 
 const labs = [
   {
-    label: 'vLLM inference lab',
+    label: 'vLLM inference challenge',
     href: '/docs/labs/vllm-inference-lab',
     detail: 'Deploy a GPU-backed OpenAI-compatible endpoint and verify TTFT, queueing, and health.',
   },
   {
-    label: 'RAG evaluation lab',
+    label: 'RAG retrieval challenge',
     href: '/docs/labs/rag-retrieval-lab',
     detail: 'Build the ingestion-to-answer loop with retrieval quality checks and failure drills.',
   },
   {
-    label: 'Production readiness lab',
+    label: 'Production readiness challenge',
     href: '/docs/labs/production-readiness-lab',
     detail: 'Run security, observability, rollback, and cost checks before a model goes live.',
   },
@@ -141,9 +141,98 @@ function TrackLink({ label, href, detail, index }) {
   );
 }
 
+function HeroTopology() {
+  return (
+    <aside className={styles.heroVisual} aria-label="Kubernetes LLM platform topology">
+      <div className={styles.visualHeader}>
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+        <strong>k8sllm production topology</strong>
+      </div>
+      <div className={styles.topologyShell}>
+        <div className={styles.topologyMap}>
+          <div className={styles.topologyLayer}>
+            <span className={styles.layerLabel}>Ingress plane</span>
+            <div className={styles.serviceNode}>Gateway</div>
+            <div className={styles.serviceNode}>Auth and quota</div>
+          </div>
+
+          <div className={styles.topologyLayer}>
+            <span className={styles.layerLabel}>Serving plane</span>
+            <div className={styles.serviceNode}>KServe</div>
+            <div className={styles.serviceNode}>Ray Serve</div>
+            <div className={styles.serviceNode}>vLLM runtime</div>
+          </div>
+
+          <div className={styles.poolGrid} aria-label="Node pool layout">
+            <div className={styles.nodePool}>
+              <span>system pool</span>
+              <div className={styles.nodeRack}>
+                <span aria-hidden="true" />
+                <span aria-hidden="true" />
+                <span aria-hidden="true" />
+              </div>
+            </div>
+            <div className={styles.nodePool}>
+              <span>app pool</span>
+              <div className={styles.nodeRack}>
+                <span aria-hidden="true" />
+                <span aria-hidden="true" />
+                <span aria-hidden="true" />
+              </div>
+            </div>
+            <div className={clsx(styles.nodePool, styles.gpuNodePool)}>
+              <span>GPU pool</span>
+              <div className={styles.nodeRack}>
+                <span aria-hidden="true" />
+                <span aria-hidden="true" />
+                <span aria-hidden="true" />
+              </div>
+            </div>
+          </div>
+
+          <svg className={styles.flowOverlay} viewBox="0 0 720 520" role="img" aria-label="Request flow from gateway to model runtime and telemetry">
+            <path d="M84 112 C180 112 190 188 286 188" />
+            <path d="M414 188 C496 188 512 304 600 304" />
+            <path d="M600 354 C524 438 348 444 132 424" />
+          </svg>
+        </div>
+
+        <div className={styles.telemetryStrip} aria-label="LLM operating signals">
+          <div>
+            <span>TTFT</span>
+            <strong>1.8s</strong>
+          </div>
+          <div>
+            <span>tokens/sec</span>
+            <strong>128</strong>
+          </div>
+          <div>
+            <span>GPU util</span>
+            <strong>74%</strong>
+          </div>
+          <div>
+            <span>queue wait</span>
+            <strong>420ms</strong>
+          </div>
+        </div>
+
+        <div className={styles.runbookPanel}>
+          <p>Readiness gate</p>
+          <ol>
+            <li>GPU pool is tainted, quota-bound, and isolated</li>
+            <li>Runtime exposes health, metrics, and token latency</li>
+            <li>Rollback path is tested before traffic shift</li>
+          </ol>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 export default function Home() {
   const productionClusterImage = useBaseUrl('/img/architectures/production-cluster.svg');
-  const llmStackImage = useBaseUrl('/img/architectures/llm-inference-stack.svg');
   const architectureVideo = useBaseUrl('/videos/k8sllm-architecture.mp4');
   const architecturePoster = useBaseUrl('/img/video/k8sllm-architecture-poster.png');
   const architectureCaptions = useBaseUrl('/videos/k8sllm-architecture.vtt');
@@ -178,17 +267,18 @@ export default function Home() {
             <p className={styles.kicker}>K8sLLM production AI infrastructure guide</p>
             <h1>Kubernetes + LLM Platform Guide</h1>
             <p className={styles.lead}>
-              K8sLLM teaches how to design, scale, secure, and operate LLM
-              workloads on Kubernetes. Use this K8s LLM guide for GPU node
-              pools, model serving, RAG, observability, rollout controls, and
-              cost-aware platform patterns.
+              K8sLLM is a practical field guide for designing, scaling,
+              securing, and operating LLM workloads on Kubernetes. It connects
+              cluster primitives to GPU node pools, model serving, RAG,
+              observability, rollout controls, and cost-aware platform
+              decisions.
             </p>
             <div className={styles.heroActions}>
               <Link className={styles.primaryAction} to="/docs/k8s-llm">
-                Start the K8s LLM guide
+                Start with K8s LLM
               </Link>
               <Link className={styles.secondaryAction} to="/docs/labs">
-                Open the labs
+                Open challenge labs
               </Link>
               <Link className={styles.secondaryAction} to="/docs/llm-on-kubernetes/model-serving-options">
                 Compare serving options
@@ -204,25 +294,7 @@ export default function Home() {
             </div>
           </div>
 
-          <aside className={styles.heroVisual} aria-label="LLM platform command center preview">
-            <div className={styles.visualHeader}>
-              <span aria-hidden="true" />
-              <span aria-hidden="true" />
-              <span aria-hidden="true" />
-              <strong>k8sllm production review</strong>
-            </div>
-            <div className={styles.visualBody}>
-              <img src={llmStackImage} alt="LLM inference stack on Kubernetes architecture" />
-              <div className={styles.runbookPanel}>
-                <p>Readiness gate</p>
-                <ol>
-                  <li>GPU pool isolated and quota-bound</li>
-                  <li>Runtime exposes health, metrics, and token latency</li>
-                  <li>Rollback path tested before traffic shift</li>
-                </ol>
-              </div>
-            </div>
-          </aside>
+          <HeroTopology />
         </section>
 
         <section className={styles.videoSection}>
@@ -286,15 +358,15 @@ export default function Home() {
 
         <section className={styles.labSection}>
           <div className={styles.labIntro}>
-            <p className={styles.kicker}>Hands-on lab track</p>
-            <h2>Turn the guide into cluster exercises.</h2>
+            <p className={styles.kicker}>Challenge lab track</p>
+            <h2>Turn the guide into Kubernetes LLM challenges.</h2>
             <p>
               Labs are written as field runbooks: objective, platform contract,
               commands, validation signals, and failure drills. They are static
               docs you can run in your own Kubernetes environment.
             </p>
             <Link className={styles.textAction} to="/docs/labs">
-              Browse all labs
+              Browse challenge catalog
             </Link>
           </div>
           <div className={styles.labGrid}>

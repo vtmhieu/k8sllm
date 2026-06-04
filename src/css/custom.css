@@ -7,7 +7,7 @@
   --ifm-color-primary-lighter: #2dd4bf;
   --ifm-color-primary-lightest: #99f6e4;
   --ifm-background-color: #f8faf9;
-  --ifm-font-family-base: "Aptos", "IBM Plex Sans", "Satoshi", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ifm-font-family-base: "Satoshi", "Geist", "Aptos", "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ifm-font-family-monospace: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --ifm-heading-font-weight: 820;
   --ifm-heading-letter-spacing: 0;
@@ -47,6 +47,12 @@ body {
 .navbar__link:hover,
 .navbar__link--active {
   color: #0f766e;
+}
+
+.navbar__link:active,
+.button:active,
+a:active {
+  transform: translateY(1px);
 }
 
 .menu__link {
@@ -254,8 +260,10 @@ body {
 
 .challenge-catalog__summary span,
 .challenge-catalog__filters span,
+.challenge-catalog__result-count,
 .challenge-card__meta span,
-.challenge-card dt {
+.challenge-card dt,
+.challenge-empty span {
   color: #0f766e;
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.74rem;
@@ -340,6 +348,17 @@ body {
   transform: translateY(1px) scale(0.99);
 }
 
+.challenge-catalog__filters button:focus-visible,
+.challenge-card__actions a:focus-visible,
+.challenge-card__actions button:focus-visible {
+  outline: 2px solid #0f766e;
+  outline-offset: 3px;
+}
+
+.challenge-catalog__result-count {
+  margin: 0 0 12px;
+}
+
 .challenge-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -351,6 +370,23 @@ body {
   display: flex;
   flex-direction: column;
   padding: 22px;
+}
+
+.challenge-empty {
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 28px;
+  border: 1px dashed rgba(15, 23, 42, 0.2);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.challenge-empty p {
+  max-width: 54ch;
+  margin: 12px 0 0;
+  color: var(--k8sllm-muted);
+  line-height: 1.6;
 }
 
 .challenge-card__meta {
@@ -470,7 +506,8 @@ html[data-theme='dark'] .challenge-catalog__summary strong {
 
 html[data-theme='dark'] .challenge-card p,
 html[data-theme='dark'] .challenge-catalog__summary > p,
-html[data-theme='dark'] .challenge-catalog__summary small {
+html[data-theme='dark'] .challenge-catalog__summary small,
+html[data-theme='dark'] .challenge-empty p {
   color: #c5d7d3;
 }
 
@@ -479,6 +516,11 @@ html[data-theme='dark'] .challenge-card__actions button,
 html[data-theme='dark'] .challenge-card__actions a {
   background: rgba(255, 255, 255, 0.075);
   color: #eef7f3;
+}
+
+html[data-theme='dark'] .challenge-empty {
+  border-color: rgba(153, 246, 228, 0.24);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 @media (max-width: 760px) {

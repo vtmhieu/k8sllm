@@ -42,7 +42,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'LLM On Kubernetes',
+      label: 'LLM on Kubernetes',
       link: { type: 'doc', id: 'llm-on-kubernetes/index' },
       items: [
         'llm-on-kubernetes/gpu-node-pools',

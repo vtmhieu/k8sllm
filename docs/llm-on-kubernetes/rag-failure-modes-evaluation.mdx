@@ -1,5 +1,5 @@
 ---
-title: RAG Failure Modes And Evaluation
+title: RAG Failure Modes and Evaluation
 description: Failure modes and evaluation strategy for production RAG systems on Kubernetes.
 tags:
   - rag
@@ -15,7 +15,7 @@ diagram_ids:
   - "rag-platform"
 ---
 
-# RAG Failure Modes And Evaluation
+# RAG Failure Modes and Evaluation
 
 Production RAG fails in more ways than model hallucination. Retrieval, metadata policy, context assembly, and evaluation drift are often the real source of bad answers.
 
@@ -48,4 +48,3 @@ Production RAG fails in more ways than model hallucination. Retrieval, metadata 
 ## Release gate
 
 Do not release a RAG change unless it passes curated evaluation sets, unauthorized-document tests, latency thresholds, and rollback readiness for the previous index version.
-

@@ -1,5 +1,5 @@
 ---
-title: Workloads And Scheduling
+title: Workloads and Scheduling
 description: Workload primitives, placement rules, and scheduling controls for reliable Kubernetes platforms.
 tags:
   - kubernetes
@@ -15,7 +15,7 @@ diagram_ids:
   - "production-cluster"
 ---
 
-# Workloads And Scheduling
+# Workloads and Scheduling
 
 Most production failures are not caused by choosing the wrong workload primitive. They come from missing readiness semantics, weak resource contracts, or placement rules that hide failure domains.
 
@@ -54,4 +54,3 @@ Do not tune autoscaling before requests and probes are trustworthy. Bad requests
 - Rollout deadlock because readiness never becomes true and maxUnavailable is too strict.
 - Zone outage impact because topology spread was not configured.
 - Node drain blocked by overly strict PDBs.
-

@@ -13,7 +13,7 @@ const siteStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Kubernetes + LLM Platform Guide',
-  alternateName: ['K8sLLM', 'K8s LLM', 'K8s + LLM Guide'],
+  alternateName: ['K8sLLM', 'K8s LLM', 'Kubernetes LLM Guide'],
   url: `${siteUrl}/`,
   description: siteDescription,
   inLanguage: 'en',
@@ -105,7 +105,7 @@ const config = {
         },
       ],
       navbar: {
-        title: 'K8s + LLM Guide',
+        title: 'K8sLLM',
         logo: {
           alt: 'Kubernetes LLM Platform Guide mark',
           src: 'img/brand-mark.svg',
@@ -129,8 +129,8 @@ const config = {
               { label: 'K8s LLM Guide', to: '/docs/k8s-llm' },
               { label: 'Kubernetes Core', to: '/docs/kubernetes' },
               { label: 'Production Best Practices', to: '/docs/best-practices' },
-              { label: 'LLM On Kubernetes', to: '/docs/llm-on-kubernetes' },
-              { label: 'Hands-on Labs', to: '/docs/labs' },
+              { label: 'LLM on Kubernetes', to: '/docs/llm-on-kubernetes' },
+              { label: 'Challenge Labs', to: '/docs/labs' },
             ],
           },
           {

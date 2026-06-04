@@ -1,5 +1,5 @@
 ---
-title: Ingress, Gateway, And Service Mesh
+title: Ingress, Gateway, and Service Mesh
 description: How to choose traffic management layers for Kubernetes platforms.
 tags:
   - ingress
@@ -15,7 +15,7 @@ diagram_ids:
   - "production-cluster"
 ---
 
-# Ingress, Gateway, And Service Mesh
+# Ingress, Gateway, and Service Mesh
 
 Traffic tools should be selected by ownership model and control needs. A small platform can start with ingress. A multi-team platform may need Gateway API. A service mesh should be justified by runtime traffic controls, not by fashion.
 
@@ -41,4 +41,3 @@ Traffic tools should be selected by ownership model and control needs. A small p
 - Teams create conflicting host and path routes.
 - Mesh policy blocks traffic because identity labels changed.
 - Retries amplify downstream failure.
-

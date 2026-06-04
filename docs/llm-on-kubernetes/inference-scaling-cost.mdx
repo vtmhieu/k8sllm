@@ -1,5 +1,5 @@
 ---
-title: Inference Scaling And Cost
+title: Inference Scaling and Cost
 description: LLM inference scaling signals, latency phases, and cost controls on Kubernetes.
 tags:
   - inference
@@ -15,7 +15,7 @@ diagram_ids:
   - "llm-inference-stack"
 ---
 
-# Inference Scaling And Cost
+# Inference Scaling and Cost
 
 LLM scaling cannot be reduced to CPU utilization. The user experiences latency phases: routing, queue wait, prefill, time to first token, decoding, and stream completion.
 
@@ -53,4 +53,3 @@ LLM scaling cannot be reduced to CPU utilization. The user experiences latency p
 - Interactive traffic shares queue with long batch generations.
 - Context window growth silently increases cost.
 - GPU memory becomes the bottleneck while CPU-based HPA shows low pressure.
-
