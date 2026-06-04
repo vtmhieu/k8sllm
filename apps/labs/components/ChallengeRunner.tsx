@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import type { LabChallenge, LabCheck, LabStep } from '@k8sllm/lab-content';
+import { LabTerminal } from '@/components/LabTerminal';
 import { trackLabEvent } from '@/lib/analytics';
 import {
   getChallengeProgress,
@@ -164,6 +165,8 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
             </h2>
             <p className="mt-4 max-w-3xl text-slate-300">{activeStep.objective}</p>
           </header>
+
+          <LabTerminal challenge={challenge} step={activeStep} />
 
           <Panel title="Commands">
             <div className="grid gap-3">

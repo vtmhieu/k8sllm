@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Analytics } from '@vercel/analytics/react';
+import '@xterm/xterm/css/xterm.css';
 import './globals.css';
 import { TopNav } from '@/components/TopNav';
 

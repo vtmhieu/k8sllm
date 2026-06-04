@@ -19,7 +19,8 @@ export default function LabsHomePage() {
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
             K8sLLM Labs turns Kubernetes LLM architecture into interactive operator challenges:
-            paste terminal evidence, unlock hints, validate readiness, and track progress locally.
+            type commands in a simulated terminal, inspect realistic Kubernetes output, unlock hints,
+            validate readiness, and track progress locally.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -46,7 +47,7 @@ export default function LabsHomePage() {
         <div className="shell-grid border border-white/10 bg-white/[0.045] p-5 shadow-diffusion">
           <div className="grid gap-3">
             <LabFlowRow left="Pull architecture guide" right="Choose challenge" />
-            <LabFlowRow left="Run kubectl or curl" right="Paste terminal output" />
+            <LabFlowRow left="Type kubectl or curl" right="Inspect simulated output" />
             <LabFlowRow left="Regex check passes" right="Step completed" />
             <LabFlowRow left="Open hint if blocked" right="Reveal solution if needed" />
           </div>
