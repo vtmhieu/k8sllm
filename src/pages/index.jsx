@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import Head from '@docusaurus/Head';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
@@ -80,6 +81,57 @@ const labs = [
   },
 ];
 
+const scenes = [
+  {
+    time: '0-8s',
+    title: 'Production LLM Infrastructure on Kubernetes',
+    detail:
+      'The opening map frames LLM serving as a platform engineering problem, not just a model deployment.',
+  },
+  {
+    time: '8-18s',
+    title: 'LLM workloads break normal Kubernetes assumptions',
+    detail:
+      'GPU capacity, token latency, queue wait, model rollout, and tenant isolation become first-order design concerns.',
+  },
+  {
+    time: '18-32s',
+    title: 'Reference Architecture: Production Cluster',
+    detail:
+      'Control plane, system pool, app pool, GPU pool, GitOps, policy, backup, and observability are separated by responsibility.',
+  },
+  {
+    time: '32-48s',
+    title: 'Reference Architecture: LLM Inference Stack',
+    detail:
+      'Gateway policy, runtime behavior, GPU placement, inference metrics, and cost signals are shown as one serving path.',
+  },
+  {
+    time: '48-60s',
+    title: 'Serving Choice: KServe or Ray Serve?',
+    detail:
+      'KServe fits standardized platform APIs, while Ray Serve fits programmable Python-native serving graphs.',
+  },
+  {
+    time: '60-78s',
+    title: 'Reference Architecture: RAG Platform',
+    detail:
+      'The RAG map separates ingestion quality from online serving latency and access-controlled retrieval.',
+  },
+  {
+    time: '78-90s',
+    title: 'Operate it like a platform',
+    detail:
+      'GitOps change flow and observability signals make LLM infrastructure reviewable, measurable, and reversible.',
+  },
+  {
+    time: '90-100s',
+    title: 'K8sLLM',
+    detail:
+      'The final map connects production cluster design, GPU node pools, model serving, RAG, observability, GitOps, cost, and reliability.',
+  },
+];
+
 function TrackLink({ label, href, detail, index }) {
   return (
     <Link className={styles.trackLink} to={href} style={{ '--index': index }}>
@@ -95,12 +147,31 @@ export default function Home() {
   const architectureVideo = useBaseUrl('/videos/k8sllm-architecture.mp4');
   const architecturePoster = useBaseUrl('/img/video/k8sllm-architecture-poster.png');
   const architectureCaptions = useBaseUrl('/videos/k8sllm-architecture.vtt');
+  const videoStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: 'K8sLLM Platform Walkthrough',
+    description:
+      'A 100-second platform walkthrough for Kubernetes LLM infrastructure, covering GPU node pools, model serving, RAG, observability, GitOps, and production operations.',
+    thumbnailUrl: ['https://www.k8sllm.online/img/video/k8sllm-architecture-poster.png'],
+    uploadDate: '2026-06-04',
+    duration: 'PT1M40S',
+    contentUrl: 'https://www.k8sllm.online/videos/k8sllm-architecture.mp4',
+    embedUrl: 'https://www.k8sllm.online/',
+    inLanguage: 'en',
+  };
 
   return (
     <Layout
       title="Kubernetes + LLM Platform Guide"
       description="K8sLLM is a senior platform engineering guide for Kubernetes LLM infrastructure, GPU node pools, model serving, RAG, and production platform services."
     >
+      <Head>
+        <meta property="og:type" content="website" />
+        <meta property="og:video" content="https://www.k8sllm.online/videos/k8sllm-architecture.mp4" />
+        <meta property="og:video:type" content="video/mp4" />
+        <script type="application/ld+json">{JSON.stringify(videoStructuredData)}</script>
+      </Head>
       <main className={styles.page}>
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
@@ -156,24 +227,22 @@ export default function Home() {
 
         <section className={styles.videoSection}>
           <div className={styles.videoCopy}>
-            <p className={styles.kicker}>Architecture explainer</p>
-            <h2>Watch the Kubernetes LLM platform map in 100 seconds.</h2>
+            <p className={styles.kicker}>Platform walkthrough</p>
+            <h2>K8sLLM Platform Walkthrough</h2>
             <p>
               This code-generated Remotion video explains the production path
               from cluster isolation and GPU pools to model serving, RAG,
               GitOps, observability, and cost-aware operations.
             </p>
-            <Link className={styles.textAction} to="/video">
-              Open the full video page
-            </Link>
+            <span className={styles.videoMeta}>100 seconds · 8 architecture scenes · captions included</span>
           </div>
-          <div className={styles.videoFrame}>
+          <div className={styles.videoFrame} aria-label="K8sLLM Platform Walkthrough video player">
             <video
               controls
               playsInline
               preload="metadata"
               poster={architecturePoster}
-              aria-label="K8sLLM architecture explainer video"
+              aria-label="K8sLLM Platform Walkthrough video"
             >
               <source src={architectureVideo} type="video/mp4" />
               <track
@@ -184,6 +253,22 @@ export default function Home() {
                 default
               />
             </video>
+          </div>
+        </section>
+
+        <section className={styles.sceneSection}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.kicker}>What the video covers</p>
+            <h2>Eight architecture scenes for production LLM platforms.</h2>
+          </div>
+          <div className={styles.sceneGrid}>
+            {scenes.map((scene) => (
+              <article className={styles.sceneCard} key={scene.title}>
+                <span>{scene.time}</span>
+                <h3>{scene.title}</h3>
+                <p>{scene.detail}</p>
+              </article>
+            ))}
           </div>
         </section>
 

@@ -332,11 +332,75 @@
   box-shadow: 0 30px 90px rgba(15, 35, 33, 0.18);
 }
 
+.videoFrame::before {
+  content: 'K8sLLM Platform Walkthrough';
+  display: block;
+  min-height: 38px;
+  padding: 10px 12px 0;
+  border-bottom: 1px solid rgba(153, 246, 228, 0.16);
+  color: #99f6e4;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.82rem;
+}
+
 .videoFrame video {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   background: #030807;
+}
+
+.videoMeta {
+  display: inline-flex;
+  margin-top: 22px;
+  color: #0f766e;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.sceneSection {
+  width: min(1200px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 18px 0 72px;
+}
+
+.sceneGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sceneCard {
+  min-height: 224px;
+  padding: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  color: #111816;
+  backdrop-filter: blur(12px);
+}
+
+.sceneCard span {
+  display: inline-flex;
+  margin-bottom: 20px;
+  color: #0f766e;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sceneCard h3 {
+  margin: 0;
+  color: #111816;
+  font-size: 1.08rem;
+  line-height: 1.18;
+}
+
+.sceneCard p {
+  margin: 14px 0 0;
+  color: #52625f;
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
 .sectionHeader {
@@ -630,6 +694,10 @@
     grid-template-columns: 1fr;
   }
 
+  .sceneGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .trackLink:nth-child(2n),
   .trackLink:nth-child(2n):hover {
     transform: none;
@@ -645,7 +713,8 @@
   .trackSection,
   .operatingModel,
   .labSection,
-  .videoSection {
+  .videoSection,
+  .sceneSection {
     width: min(100% - 28px, 760px);
   }
 
@@ -691,5 +760,9 @@
 
   .labCard span {
     grid-row: auto;
+  }
+
+  .sceneGrid {
+    grid-template-columns: 1fr;
   }
 }

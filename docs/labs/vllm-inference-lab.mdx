@@ -1,6 +1,6 @@
 ---
-title: vLLM Inference Lab
-description: Hands-on vLLM Kubernetes lab for GPU scheduling, model cache, OpenAI-compatible serving, probes, metrics, and failure drills.
+title: vLLM Inference Challenge
+description: Challenge-style vLLM Kubernetes lab for GPU scheduling, model cache, OpenAI-compatible serving, probes, metrics, and failure drills.
 tags:
   - labs
   - vllm
@@ -18,13 +18,19 @@ diagram_ids:
   - "llm-inference-stack"
 ---
 
-# vLLM Inference Lab
+# vLLM Inference Challenge
 
-This lab builds the minimum production contract around vLLM on Kubernetes: GPU placement, model artifact access, runtime flags, health checks, token latency, and rollback readiness.
-
-:::tip Lab outcome
-By the end, you should be able to explain why the pod was scheduled on a GPU node, how the model was loaded, how traffic reaches the runtime, and which signal proves user-facing latency is acceptable.
+:::tip Challenge outcome
+Deploy a GPU-backed vLLM endpoint and prove why it scheduled on GPU capacity, when it became ready, how traffic reaches it, and which metrics describe user-facing latency.
 :::
+
+## Objective
+
+Build the minimum production contract around vLLM on Kubernetes: GPU placement, model artifact access, runtime flags, health checks, token latency, and rollback readiness.
+
+## Scenario
+
+Your platform team needs to expose one OpenAI-compatible model endpoint for an internal product team. The endpoint must run only on GPU nodes, report readiness only after model load, and produce enough telemetry to debug TTFT and queue wait.
 
 ## Prerequisites
 
@@ -36,22 +42,21 @@ By the end, you should be able to explain why the pod was scheduled on a GPU nod
 | Model access | A model available from a registry, object store, or mounted cache. |
 | Telemetry | Access to pod logs and metrics scraping. |
 
-## Step 1: create the serving namespace
+## Tasks
+
+1. Create and label a serving namespace.
+2. Deploy a vLLM runtime with explicit GPU requests, node selector, and toleration.
+3. Expose the runtime through a ClusterIP Service.
+4. Run one short prompt and one longer generation request.
+5. Capture the readiness state, startup duration, TTFT, tokens/sec, queue wait, and GPU memory signal.
 
 ```bash
 kubectl create namespace llm-serving
 kubectl label namespace llm-serving workload-class=llm
-```
-
-Validate:
-
-```bash
 kubectl get namespace llm-serving --show-labels
 ```
 
-## Step 2: define the GPU scheduling contract
-
-Use explicit GPU requests, a node selector, and a toleration. Adjust the label and toleration to your cluster.
+Use this workload as the starting manifest and adjust labels, model name, and resource values to your cluster:
 
 ```yaml
 apiVersion: apps/v1
@@ -109,17 +114,7 @@ spec:
               port: http
             initialDelaySeconds: 180
             periodSeconds: 20
-```
-
-Review questions:
-
-- Which label proves this workload can only land on GPU capacity?
-- Which team owns the node labels and tolerations?
-- What happens if the model needs two GPUs instead of one?
-
-## Step 3: expose the runtime
-
-```yaml
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -134,18 +129,14 @@ spec:
       targetPort: http
 ```
 
-Validate inside the cluster:
+## Validation commands
 
 ```bash
+kubectl -n llm-serving get pod -o wide
+kubectl -n llm-serving describe pod -l app=vllm-openai
+kubectl -n llm-serving logs -l app=vllm-openai --tail=80
 kubectl -n llm-serving port-forward svc/vllm-openai 8000:8000
 curl -s http://127.0.0.1:8000/v1/models
-```
-
-## Step 4: run a latency probe
-
-Use one small request and one longer generation request. Capture time to first token if your client supports streaming measurement.
-
-```bash
 curl -s http://127.0.0.1:8000/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -d '{
@@ -156,7 +147,22 @@ curl -s http://127.0.0.1:8000/v1/chat/completions \
   }'
 ```
 
-## Validation signals
+## Self-check checklist
+
+- The pod lands only on a GPU node.
+- The workload requests `nvidia.com/gpu`.
+- Readiness stays false until vLLM can serve.
+- The Service reaches the OpenAI-compatible endpoint.
+- Startup time and model load behavior are visible in logs.
+- TTFT, tokens/sec, queue wait, and GPU memory are captured or explicitly marked as missing.
+
+## Hints
+
+- If the pod is pending, inspect node labels, taints, tolerations, and available GPU capacity.
+- If readiness never passes, check model download, cache mount, runtime flags, and GPU memory.
+- If latency is unstable, compare short prompts with long prompts before changing autoscaling.
+
+## Expected signals
 
 | Signal | Healthy result |
 | --- | --- |
@@ -166,14 +172,9 @@ curl -s http://127.0.0.1:8000/v1/chat/completions \
 | Latency | TTFT and tokens/sec are measured by model and route. |
 | Saturation | GPU memory, KV cache pressure, and queue wait are visible. |
 
-## Failure drills
+## Failure drill
 
-| Drill | Expected learning |
-| --- | --- |
-| Remove the node selector | Confirm policy catches accidental scheduling drift. |
-| Reduce memory request | Observe whether eviction, OOM, or slow startup happens first. |
-| Send burst traffic | Find the saturation point before production users do. |
-| Block model download | Verify startup failure is obvious in logs and alerts. |
+Remove the node selector or toleration, then redeploy. The expected learning is whether platform policy catches accidental scheduling drift before a model server lands on the wrong capacity.
 
 ## Related guides
 
@@ -181,4 +182,3 @@ curl -s http://127.0.0.1:8000/v1/chat/completions \
 - [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools)
 - [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
 - [LLM inference reference architecture](/docs/reference-architectures/llm-inference-stack)
-

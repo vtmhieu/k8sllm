@@ -1,6 +1,6 @@
 ---
-title: Production Readiness Lab
-description: Kubernetes LLM production readiness lab covering security, rollback, quota, cost, observability, and launch review.
+title: Production Readiness Challenge
+description: Challenge-style Kubernetes LLM production readiness lab covering security, rollback, quota, cost, observability, and launch review.
 tags:
   - labs
   - production
@@ -19,81 +19,49 @@ diagram_ids:
   - "llm-inference-stack"
 ---
 
-# Production Readiness Lab
+# Production Readiness Challenge
 
-This lab is a launch review for Kubernetes LLM workloads. Use it before exposing a model endpoint to real users or before approving a new runtime in the platform.
-
-:::tip Lab outcome
-The goal is not to pass every check. The goal is to find which risks are accepted, which are blocked, and which team owns each follow-up.
+:::tip Challenge outcome
+Make a launch decision: approve, approve with conditions, or block. The useful output is a clear risk list with owners, not a perfect score.
 :::
 
-## Readiness matrix
+## Objective
 
-| Area | Check | Pass signal |
-| --- | --- | --- |
-| Security | Namespace has RBAC, NetworkPolicy, and secret ownership. | Workload cannot access unrelated namespaces or secrets. |
-| Scheduling | GPU placement is explicit. | Pod cannot land on general-purpose nodes. |
-| Rollout | New model can be shifted and rolled back. | Previous revision remains deployable. |
-| Observability | User, runtime, and GPU signals are visible. | Incident triage can start from dashboards and traces. |
-| Cost | Unit cost is estimated. | Requests can be grouped by model, route, tenant, or workload class. |
+Run a production readiness review for a Kubernetes LLM workload before exposing it to real users or approving a new serving runtime in the platform.
 
-## Step 1: verify namespace boundaries
+## Scenario
+
+A model endpoint passed a functional demo. Before production traffic, the platform team must verify namespace isolation, quota, rollback, telemetry, cost ownership, and launch decision criteria.
+
+## Prerequisites
+
+| Item | Requirement |
+| --- | --- |
+| Workload | Existing model server deployment or equivalent test workload. |
+| Access | Permission to inspect RBAC, NetworkPolicy, quotas, pods, rollout history, and logs. |
+| Telemetry | Dashboard, metrics endpoint, or trace/log access. |
+| Owner map | Known workload owner, rollback owner, and SLO owner. |
+
+## Tasks
+
+1. Verify namespace boundaries and service account permissions.
+2. Verify resource requests, GPU limits, ResourceQuota, and LimitRange.
+3. Confirm a rollback path exists and works.
+4. Validate launch telemetry for user latency, runtime saturation, GPU pressure, and cost.
+5. Write a launch decision with accepted exceptions and owners.
+
+## Validation commands
 
 ```bash
 kubectl auth can-i get secrets --namespace default
 kubectl auth can-i list pods --namespace llm-serving
 kubectl -n llm-serving get networkpolicy
-```
-
-Review questions:
-
-- Which service account runs the model server?
-- Can it read secrets outside its namespace?
-- Is ingress limited to the gateway or service mesh path?
-
-## Step 2: verify resource and quota policy
-
-```bash
 kubectl -n llm-serving get resourcequota
 kubectl -n llm-serving get limitrange
 kubectl -n llm-serving describe pod -l app=vllm-openai
-```
-
-Healthy result:
-
-- CPU and memory requests are present.
-- GPU limits are explicit.
-- The namespace has a quota that prevents surprise accelerator consumption.
-
-## Step 3: test rollback
-
-Use the same release mechanism your platform uses in production.
-
-```bash
 kubectl -n llm-serving rollout history deployment/vllm-openai
 kubectl -n llm-serving rollout status deployment/vllm-openai
 ```
-
-Failure drill:
-
-1. Deploy a revision with an invalid model name.
-2. Confirm readiness fails.
-3. Roll back.
-4. Confirm the previous model endpoint serves again.
-
-## Step 4: validate launch telemetry
-
-Before launch, each request path should produce enough data to debug a poor answer or a slow response.
-
-| Metric or trace | Why it matters |
-| --- | --- |
-| Time to first token | User-perceived responsiveness. |
-| Tokens per second | Runtime throughput under real prompt sizes. |
-| Queue wait | Saturation signal before GPU metrics become obvious. |
-| GPU memory | Capacity and KV cache pressure. |
-| Cost per request | Financial impact by model and tenant. |
-
-## Step 5: launch decision
 
 Use this launch decision format:
 
@@ -106,10 +74,38 @@ SLO owner:
 Review date:
 ```
 
+## Self-check checklist
+
+- Workload cannot access unrelated namespaces or secrets.
+- GPU placement is explicit and quota-bound.
+- Previous revision remains deployable.
+- Dashboards or queries expose TTFT, tokens/sec, queue wait, GPU memory, and pod restarts.
+- Cost can be grouped by model, route, tenant, or workload class.
+- Exceptions have owner and review date.
+
+## Hints
+
+- Do not approve a launch only because pods are ready.
+- A rollback that has never been tested is a guess.
+- If cost per request is unknown, launch volume limits should be conservative.
+
+## Expected signals
+
+| Area | Healthy signal |
+| --- | --- |
+| Security | Namespace has RBAC, NetworkPolicy, and secret ownership. |
+| Scheduling | Pod cannot land on general-purpose nodes. |
+| Rollout | Previous revision remains deployable. |
+| Observability | Incident triage can start from dashboards and traces. |
+| Cost | Requests can be grouped by model, route, tenant, or workload class. |
+
+## Failure drill
+
+Deploy a revision with an invalid model name, confirm readiness fails, roll back, and confirm the previous model endpoint serves again.
+
 ## Related guides
 
 - [Security hardening checklist](/docs/best-practices/security-hardening-checklist)
 - [Production scaling decision guide](/docs/best-practices/production-scaling-decision-guide)
 - [Observability baseline](/docs/best-practices/observability-baseline)
 - [LLM inference stack](/docs/reference-architectures/llm-inference-stack)
-

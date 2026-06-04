@@ -21,7 +21,7 @@ https://github.com/vtmhieu/k8sllm
 - Platform Services: traffic, GitOps, policy, secrets, supply chain, observability stack.
 - LLM On Kubernetes: GPU node pools, model serving, RAG, inference scaling and cost.
 - Reference Architectures: six SVG architecture diagrams with explanatory pages.
-- Architecture Video: a local Remotion MP4 explainer embedded on the homepage and `/video`.
+- K8sLLM Platform Walkthrough: a local Remotion MP4 explainer embedded on the homepage.
 - GitHub Actions build validation and Vercel production deployment.
 - Vercel Web Analytics for page-view and visitor measurement.
 
@@ -59,9 +59,9 @@ Serve the production build locally:
 npm run serve
 ```
 
-## Architecture video
+## K8sLLM Platform Walkthrough
 
-The architecture explainer video is generated locally with Remotion from:
+The homepage walkthrough video is generated locally with Remotion from:
 
 ```text
 remotion-k8sllm-video/
@@ -83,6 +83,8 @@ static/videos/k8sllm-architecture.mp4
 ```
 
 After regenerating the video, copy the new MP4 into `static/videos/` before deploying.
+
+The old `/video` URL redirects to `/` because the homepage is now the single public video surface.
 
 ## Repository workflow
 
@@ -133,7 +135,6 @@ https://www.k8sllm.online/
 https://www.k8sllm.online/docs/kubernetes
 https://www.k8sllm.online/docs/llm-on-kubernetes
 https://www.k8sllm.online/docs/reference-architectures
-https://www.k8sllm.online/video
 https://www.k8sllm.online/img/architectures/llm-inference-stack.svg
 https://www.k8sllm.online/videos/k8sllm-architecture.mp4
 https://www.k8sllm.online/sitemap.xml

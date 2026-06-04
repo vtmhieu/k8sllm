@@ -118,7 +118,6 @@ const config = {
           { to: '/docs/llm-on-kubernetes', label: 'LLM', position: 'left' },
           { to: '/docs/labs', label: 'Labs', position: 'left' },
           { to: '/docs/reference-architectures', label: 'Architectures', position: 'left' },
-          { to: '/video', label: 'Video', position: 'left' },
         ],
       },
       footer: {
@@ -132,7 +131,6 @@ const config = {
               { label: 'Production Best Practices', to: '/docs/best-practices' },
               { label: 'LLM On Kubernetes', to: '/docs/llm-on-kubernetes' },
               { label: 'Hands-on Labs', to: '/docs/labs' },
-              { label: 'Architecture Video', to: '/video' },
             ],
           },
           {

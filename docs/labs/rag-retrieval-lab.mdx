@@ -1,6 +1,6 @@
 ---
-title: RAG Retrieval Lab
-description: Hands-on RAG on Kubernetes lab for ingestion, vector retrieval, metadata filters, answer quality, and failure drills.
+title: RAG Retrieval Challenge
+description: Challenge-style RAG on Kubernetes lab for ingestion, vector retrieval, metadata filters, answer quality, and failure drills.
 tags:
   - labs
   - rag
@@ -17,38 +17,43 @@ diagram_ids:
   - "rag-platform"
 ---
 
-# RAG Retrieval Lab
+# RAG Retrieval Challenge
 
-This lab focuses on the platform mechanics behind RAG: ingestion, chunking, embedding, vector persistence, metadata filters, retrieval quality, prompt assembly, and answer evaluation.
-
-:::tip Lab outcome
-You should finish with a RAG path that can explain why a document was retrieved, which metadata policy was applied, and whether the generated answer used the retrieved context correctly.
+:::tip Challenge outcome
+Finish with a RAG path that can explain why a document was retrieved, which metadata policy was applied, and whether the generated answer used the retrieved context correctly.
 :::
 
-## Minimal architecture
+## Objective
 
-<div className="lab-flow" aria-label="RAG platform flow">
-  <span>Document source</span>
-  <span>Ingestion job</span>
-  <span>Chunk and normalize</span>
-  <span>Embedding worker</span>
-  <span>Vector database</span>
-  <span>RAG API</span>
-  <span>LLM runtime</span>
-  <span>Evaluation log</span>
-</div>
+Validate the platform mechanics behind RAG: ingestion, chunking, embedding, vector persistence, metadata filters, retrieval quality, prompt assembly, and answer evaluation.
 
-## Step 1: define the namespaces
+## Scenario
+
+Your platform hosts internal engineering docs. A team reports that answers are sometimes stale and sometimes cite documents from the wrong product area. You need to prove the ingestion and online serving planes are testable before tuning the model.
+
+## Prerequisites
+
+| Item | Requirement |
+| --- | --- |
+| Cluster | Kubernetes namespace for RAG services and jobs. |
+| Vector database | Any reachable vector store or a mock service with deterministic records. |
+| Test documents | At least three small documents with metadata. |
+| Evaluation cases | Queries with expected source documents and expected refusal behavior. |
+| LLM endpoint | A model endpoint or mock generation endpoint. |
+
+## Tasks
+
+1. Define separate namespaces for `rag-system` and `llm-serving`.
+2. Run ingestion as an explicit Kubernetes Job.
+3. Define retrieval quality cases before changing chunk size, embedding model, or top-k.
+4. Validate metadata filters for product area, tenant, and classification.
+5. Record answer quality and citation behavior for known queries.
 
 ```bash
 kubectl create namespace rag-system
 kubectl create namespace llm-serving
 kubectl label namespace rag-system data-class=knowledge
 ```
-
-## Step 2: create the ingestion contract
-
-Start with a Kubernetes Job so ingestion is explicit, retryable, and reviewable.
 
 ```yaml
 apiVersion: batch/v1
@@ -77,21 +82,15 @@ spec:
               memory: 4Gi
 ```
 
-Use this as a platform review artifact even if your real ingestion system is more advanced.
+## Validation commands
 
-## Step 3: define retrieval quality cases
+```bash
+kubectl -n rag-system get job,pod
+kubectl -n rag-system logs job/docs-ingestion
+kubectl -n rag-system describe job docs-ingestion
+```
 
-Create a small evaluation set before tuning chunk size or vector search parameters.
-
-| Query | Expected source | Expected behavior |
-| --- | --- | --- |
-| How should GPU node pools be isolated? | GPU scheduling guide | Mentions taints, selectors, quotas, and capacity ownership. |
-| When should Ray Serve be preferred? | KServe vs Ray Serve guide | Explains graph complexity and Python application ownership. |
-| What signals matter for LLM latency? | Benchmarking guide | Separates TTFT, queue wait, tokens/sec, and cost/request. |
-
-## Step 4: validate metadata filters
-
-Metadata filtering is a security and relevance boundary. Test it directly.
+Use a direct retrieval request shape like this, even if your real API differs:
 
 ```json
 {
@@ -105,22 +104,22 @@ Metadata filtering is a security and relevance boundary. Test it directly.
 }
 ```
 
-Healthy result:
+## Self-check checklist
 
+- Ingestion creates a versioned index or records the equivalent version metadata.
 - Retrieved chunks match the requested product area.
-- Restricted documents do not appear.
-- The answer cites or logs the source chunk IDs.
+- Restricted documents do not appear in public queries.
+- Answers cite or log source chunk IDs.
+- A stale index can be detected from ingestion lag or index version.
+- Known evaluation cases can be rerun after retrieval changes.
 
-## Step 5: run failure drills
+## Hints
 
-| Drill | What to observe |
-| --- | --- |
-| Remove one important source document | Does the answer become uncertain, or does it invent details? |
-| Change metadata on a restricted document | Does policy block retrieval? |
-| Increase top-k too far | Does answer quality drop because irrelevant chunks enter the prompt? |
-| Kill the vector database pod | Does the API fail closed with a clear user-facing response? |
+- Treat metadata filters as a security boundary, not only a relevance feature.
+- Tune retrieval before prompt wording. Bad context usually produces bad answers.
+- Keep a small fixed evaluation set so chunking and embedding changes can be compared.
 
-## Validation signals
+## Expected signals
 
 | Signal | Healthy result |
 | --- | --- |
@@ -129,6 +128,10 @@ Healthy result:
 | Context use | The answer reflects retrieved context rather than general model memory. |
 | Policy enforcement | Metadata filters prevent unauthorized retrieval. |
 | Evaluation history | Changes to chunking or embeddings can be compared over time. |
+
+## Failure drill
+
+Change metadata on a restricted document so it looks public, then run the known query again. The expected learning is whether access policy exists outside fragile document tags.
 
 ## Related guides
 

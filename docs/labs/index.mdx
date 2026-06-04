@@ -19,34 +19,13 @@ diagram_ids:
   - "rag-platform"
 ---
 
+import LabChallengeCatalog from '@site/src/components/LabChallengeCatalog';
+
 # Kubernetes LLM Labs
 
-The labs turn the guide into operator exercises. They are not a hosted sandbox. They are field runbooks you can run in your own cluster, adapt to a platform review, or use as interview-grade design drills.
+The labs turn the guide into operator challenges. They are not hosted sandboxes yet. They are field runbooks you can run in your own cluster, adapt to a platform review, or use as interview-grade design drills.
 
-Each lab has the same contract: objective, prerequisites, hands-on tasks, validation signals, failure drills, and links back to the deeper guide.
-
-<div className="lab-board">
-  <a className="lab-tile" href="/docs/labs/vllm-inference-lab">
-    <span>01</span>
-    <strong>vLLM inference lab</strong>
-    <small>Deploy a GPU-backed OpenAI-compatible endpoint and validate token latency.</small>
-  </a>
-  <a className="lab-tile" href="/docs/labs/rag-retrieval-lab">
-    <span>02</span>
-    <strong>RAG retrieval lab</strong>
-    <small>Operate ingestion, vector search, retrieval quality, and answer evaluation.</small>
-  </a>
-  <a className="lab-tile" href="/docs/labs/production-readiness-lab">
-    <span>03</span>
-    <strong>Production readiness lab</strong>
-    <small>Check security, rollback, quota, cost, and observability before launch.</small>
-  </a>
-  <a className="lab-tile" href="/docs/labs/observability-lab">
-    <span>04</span>
-    <strong>Observability lab</strong>
-    <small>Build the signals that make LLM incidents debuggable.</small>
-  </a>
-</div>
+<LabChallengeCatalog />
 
 ## Lab prerequisites
 
@@ -61,12 +40,20 @@ Each lab has the same contract: objective, prerequisites, hands-on tasks, valida
 ## How to use the labs
 
 1. Read the related architecture guide before applying manifests.
-2. Run the baseline task without optimization.
-3. Capture metrics before changing runtime flags or autoscaling policy.
+2. Run the challenge scenario without optimization.
+3. Capture the validation signals before changing runtime flags or policy.
 4. Trigger one failure drill.
-5. Write down which signal detected the failure first.
+5. Mark the challenge status in the catalog and write down which signal detected the failure first.
 
 New labs should follow the [Content Review Checklist](/docs/content-review-checklist): objective, prerequisites, manifests or commands, validation signals, failure drills, and expected signals.
+
+## Roadmap direction
+
+| Version | Capability | Why it comes next |
+| --- | --- | --- |
+| V1 | Static challenge catalog and local progress | This is backend-free, searchable, and fits the current Docusaurus site. |
+| V2 | Local sandbox kits with `kind`, `k3d`, Docker Compose, and downloadable manifests | This makes the labs reproducible without paying for hosted infrastructure. |
+| V3 | Hosted browser labs | This needs auth, abuse protection, sandbox lifecycle management, and an infrastructure budget. |
 
 ## Recommended path
 

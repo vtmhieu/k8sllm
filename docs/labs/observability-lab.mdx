@@ -1,6 +1,6 @@
 ---
-title: LLM Observability Lab
-description: Hands-on observability lab for Kubernetes LLM workloads covering latency, queueing, GPU saturation, traces, logs, and alerts.
+title: LLM Observability Challenge
+description: Challenge-style observability lab for Kubernetes LLM workloads covering latency, queueing, GPU saturation, traces, logs, and alerts.
 tags:
   - labs
   - observability
@@ -19,23 +19,37 @@ diagram_ids:
   - "llm-inference-stack"
 ---
 
-# LLM Observability Lab
+# LLM Observability Challenge
 
-This lab defines the minimum telemetry needed to debug LLM workloads on Kubernetes. Generic pod health is not enough. You need user-facing latency, runtime saturation, GPU pressure, and prompt-path context.
+:::tip Challenge outcome
+Produce a minimum signal model that lets an on-call engineer explain whether a slow answer came from the gateway, runtime, GPU capacity, RAG retrieval, or Kubernetes rollout state.
+:::
 
-## Signal model
+## Objective
 
-| Layer | Signals |
+Define and validate the telemetry needed to debug LLM workloads on Kubernetes. Generic pod health is not enough; the platform needs user-facing latency, runtime saturation, GPU pressure, and prompt-path context.
+
+## Scenario
+
+Users report intermittent slow answers. Pods look healthy. You need to build the observability checklist that separates user latency from runtime queueing, GPU pressure, retrieval latency, and rollout regressions.
+
+## Prerequisites
+
+| Item | Requirement |
 | --- | --- |
-| Gateway | RPS, errors, request size, route, tenant, status. |
-| Runtime | TTFT, tokens/sec, queue wait, active requests, batch size. |
-| GPU | Utilization, memory, temperature, allocation failures. |
-| RAG | Retrieval latency, top-k score, source count, evaluation result. |
-| Kubernetes | Restarts, throttling, OOM, scheduling delay, rollout state. |
+| Workload | LLM or mock inference workload with route labels. |
+| Metrics | Prometheus, Grafana, or equivalent metrics access. |
+| Logs | Runtime and gateway logs. |
+| Traces | OpenTelemetry or a documented trace attribute plan. |
+| Load source | A small script or client that can send repeated prompts. |
 
-## Step 1: define labels that will survive incidents
+## Tasks
 
-Every metric and trace should be attributable.
+1. Define stable labels that survive incidents.
+2. Map signals by layer: gateway, runtime, GPU, RAG, Kubernetes.
+3. Build or specify dashboard panels for TTFT, tokens/sec, queue wait, GPU memory, pod restarts, and RAG retrieval latency.
+4. Add trace attributes for model, route class, prompt size, completion size, cache hit, and RAG collection.
+5. Define alerts on symptoms, not only resources.
 
 ```yaml
 metadata:
@@ -47,19 +61,16 @@ metadata:
     workload.k8sllm.io/team: platform-ai
 ```
 
-## Step 2: create an incident dashboard checklist
+## Validation commands
 
-| Panel | Question it should answer |
-| --- | --- |
-| TTFT by route | Are users waiting before the first token? |
-| Tokens/sec by model | Is generation throughput degraded? |
-| Queue wait | Is the runtime saturated before GPU utilization is obvious? |
-| GPU memory | Is KV cache or model load pressure rising? |
-| Pod restarts | Did Kubernetes instability cause the symptom? |
+```bash
+kubectl -n llm-serving get pod --show-labels
+kubectl -n llm-serving logs -l app=vllm-openai --tail=120
+kubectl -n llm-serving top pod
+kubectl -n llm-serving rollout status deployment/vllm-openai
+```
 
-## Step 3: add trace attributes
-
-Trace spans should carry enough context to link application behavior to runtime behavior.
+Trace attributes should carry this shape or an equivalent:
 
 ```text
 llm.model=mistral-7b
@@ -71,22 +82,34 @@ rag.collection=platform-guides
 rag.top_k=5
 ```
 
-## Step 4: alert on symptoms, not only resources
+## Self-check checklist
 
-| Alert | Trigger idea |
+- Metrics can answer whether TTFT or tokens/sec changed.
+- Queue wait is visible separately from GPU utilization.
+- GPU memory and allocation failures are visible.
+- Prompt size and route class are attached to traces or logs.
+- Rollout state is visible next to latency signals.
+- Alerts target user symptoms before resource graphs become obvious.
+
+## Hints
+
+- Start with questions an on-call engineer must answer, then choose metrics.
+- Do not rely on GPU utilization alone; queue wait can rise first.
+- Keep high-cardinality prompt text out of labels. Use token counts and route classes instead.
+
+## Expected signals
+
+| Layer | Healthy signal |
 | --- | --- |
-| Slow first token | TTFT p95 above SLO for the interactive route. |
-| Saturated runtime | Queue wait rising while active requests remain high. |
-| GPU memory pressure | Memory close to limit for sustained window. |
-| RAG stale content | Ingestion lag beyond review policy. |
-| Rollout regression | New revision increases errors or latency before full traffic shift. |
+| Gateway | RPS, errors, request size, route, tenant, status. |
+| Runtime | TTFT, tokens/sec, queue wait, active requests, batch size. |
+| GPU | Utilization, memory, temperature, allocation failures. |
+| RAG | Retrieval latency, top-k score, source count, evaluation result. |
+| Kubernetes | Restarts, throttling, OOM, scheduling delay, rollout state. |
 
-## Failure drills
+## Failure drill
 
-1. Send burst traffic and watch queue wait.
-2. Increase prompt length and watch TTFT.
-3. Restart the runtime pod and watch dashboard recovery.
-4. Break vector database connectivity and verify the RAG API fails clearly.
+Send burst traffic and increase prompt length at the same time. The expected learning is whether the platform can separate queue saturation from prompt-size latency.
 
 ## Related guides
 
@@ -94,4 +117,3 @@ rag.top_k=5
 - [Observability stack](/docs/platform-services/observability-stack)
 - [Observability pipeline architecture](/docs/reference-architectures/observability-pipeline)
 - [Inference benchmarking and cost model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
-
