@@ -2,10 +2,17 @@
   "name": "k8sllm",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "description": "A senior platform engineering knowledge site for Kubernetes, production best practices, and LLM workloads on Kubernetes.",
   "scripts": {
     "start": "docusaurus start --host 127.0.0.1",
     "build": "docusaurus build",
+    "build:docs": "docusaurus build",
+    "dev:labs": "npm run dev --workspace @k8sllm/labs",
+    "build:labs": "npm run build --workspace @k8sllm/labs",
     "serve": "docusaurus serve --host 127.0.0.1",
     "clear": "docusaurus clear"
   },

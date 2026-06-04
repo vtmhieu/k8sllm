@@ -1,0 +1,7 @@
+{
+  "name": "@k8sllm/lab-content",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "types": "index.d.ts"
+}

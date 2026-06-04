@@ -1,160 +1,85 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import Link from '@docusaurus/Link';
+import React, { useMemo, useState } from 'react';
+import { challenges, labProduct, productPaths } from '@k8sllm/lab-content';
 
-const challenges = [
-  {
-    id: 'vllm-inference',
-    title: 'vLLM Inference Challenge',
-    href: '/docs/labs/vllm-inference-lab',
-    topic: 'Model serving',
-    difficulty: 'Hard',
-    time: '75 min',
-    environment: 'GPU Kubernetes cluster',
-    prerequisite: 'GPU scheduling basics',
-    summary:
-      'Deploy a GPU-backed OpenAI-compatible endpoint and prove scheduling, health, TTFT, queueing, and rollback readiness.',
-  },
-  {
-    id: 'rag-retrieval',
-    title: 'RAG Retrieval Challenge',
-    href: '/docs/labs/rag-retrieval-lab',
-    topic: 'RAG',
-    difficulty: 'Medium',
-    time: '60 min',
-    environment: 'Kubernetes namespace',
-    prerequisite: 'Basic retrieval pipeline',
-    summary:
-      'Operate ingestion, metadata filters, vector retrieval, answer evaluation, and failure drills for production RAG.',
-  },
-  {
-    id: 'production-readiness',
-    title: 'Production Readiness Challenge',
-    href: '/docs/labs/production-readiness-lab',
-    topic: 'Production',
-    difficulty: 'Hard',
-    time: '50 min',
-    environment: 'Existing LLM workload',
-    prerequisite: 'RBAC, rollout, telemetry',
-    summary:
-      'Run a launch review across security, quota, rollout, observability, cost, and ownership before live traffic.',
-  },
-  {
-    id: 'observability',
-    title: 'LLM Observability Challenge',
-    href: '/docs/labs/observability-lab',
-    topic: 'Observability',
-    difficulty: 'Medium',
-    time: '45 min',
-    environment: 'Metrics and logs stack',
-    prerequisite: 'Prometheus or equivalent',
-    summary:
-      'Build the signal model needed to debug user latency, runtime saturation, GPU pressure, traces, logs, and alerts.',
-  },
-];
-
-const topics = ['All topics', ...Array.from(new Set(challenges.map((challenge) => challenge.topic)))];
-const difficulties = ['All difficulty', 'Medium', 'Hard'];
-const statusLabels = {
-  not_started: 'Not started',
-  in_progress: 'In progress',
-  completed: 'Completed',
-};
-const nextStatus = {
-  not_started: 'in_progress',
-  in_progress: 'completed',
-  completed: 'not_started',
-};
+const allTopics = 'All topics';
+const allDifficulties = 'All difficulty';
+const allPaths = 'All paths';
 
 export default function LabChallengeCatalog() {
-  const [topic, setTopic] = useState('All topics');
-  const [difficulty, setDifficulty] = useState('All difficulty');
-  const [progress, setProgress] = useState({});
+  const [topic, setTopic] = useState(allTopics);
+  const [difficulty, setDifficulty] = useState(allDifficulties);
+  const [path, setPath] = useState(allPaths);
 
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem('k8sllm.labProgress');
-      setProgress(raw ? JSON.parse(raw) : {});
-    } catch {
-      setProgress({});
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem('k8sllm.labProgress', JSON.stringify(progress));
-    } catch {
-      // Progress is an enhancement. The catalog works without localStorage.
-    }
-  }, [progress]);
+  const topics = useMemo(
+    () => [allTopics, ...Array.from(new Set(challenges.map((challenge) => challenge.topic)))],
+    [],
+  );
+  const difficulties = useMemo(
+    () => [
+      allDifficulties,
+      ...Array.from(new Set(challenges.map((challenge) => challenge.difficulty))),
+    ],
+    [],
+  );
 
   const visibleChallenges = useMemo(
     () =>
       challenges.filter((challenge) => {
-        const topicMatch = topic === 'All topics' || challenge.topic === topic;
+        const topicMatch = topic === allTopics || challenge.topic === topic;
         const difficultyMatch =
-          difficulty === 'All difficulty' || challenge.difficulty === difficulty;
-        return topicMatch && difficultyMatch;
+          difficulty === allDifficulties || challenge.difficulty === difficulty;
+        const pathMatch = path === allPaths || challenge.roadmapIds.includes(path);
+        return topicMatch && difficultyMatch && pathMatch;
       }),
-    [topic, difficulty],
+    [difficulty, path, topic],
   );
 
-  const completedCount = challenges.filter(
-    (challenge) => progress[challenge.id] === 'completed',
-  ).length;
-
-  const updateProgress = (challengeId) => {
-    setProgress((current) => {
-      const currentStatus = current[challengeId] || 'not_started';
-      return {
-        ...current,
-        [challengeId]: nextStatus[currentStatus],
-      };
-    });
-  };
+  const guidedChecks = challenges.reduce(
+    (total, challenge) =>
+      total +
+      challenge.steps.reduce((stepTotal, step) => stepTotal + step.checks.length, 0),
+    0,
+  );
 
   return (
     <section className="challenge-catalog" aria-label="K8sLLM challenge catalog">
       <div className="challenge-catalog__summary">
         <div>
-          <span>Roadmap progress</span>
-          <strong>
-            {completedCount}/{challenges.length}
-          </strong>
-          <small>completed in this browser</small>
+          <span>Interactive MVP</span>
+          <strong>{challenges.length}</strong>
+          <small>free browser-guided challenges</small>
         </div>
         <p>
-          Choose a challenge, run it in your own cluster, then mark progress
-          locally. This version is static, private to your browser, and ready
-          for teams that want practice before hosted sandboxes exist.
+          K8sLLM Labs is moving from static runbooks into an interactive lab product at{' '}
+          <a href={labProduct.labsBaseUrl}>labs.k8sllm.online</a>. V1 uses browser-side checks,
+          local progress, hints, and solution reveal tracking. Hosted sandboxes and paid lab packs
+          come later after auth, abuse controls, and infrastructure cost limits are designed.
         </p>
       </div>
 
       <div className="challenge-catalog__filters" aria-label="Challenge filters">
+        <FilterGroup label="Topic" values={topics} value={topic} onChange={setTopic} />
+        <FilterGroup
+          label="Difficulty"
+          values={difficulties}
+          value={difficulty}
+          onChange={setDifficulty}
+        />
+        <FilterGroup
+          label="Path"
+          values={[allPaths, ...productPaths.map((item) => item.id)]}
+          value={path}
+          onChange={setPath}
+          labels={{
+            [allPaths]: allPaths,
+            ...Object.fromEntries(productPaths.map((item) => [item.id, item.title])),
+          }}
+        />
         <div>
-          <span>Topic</span>
-          {topics.map((item) => (
-            <button
-              className={item === topic ? 'is-active' : ''}
-              key={item}
-              type="button"
-              onClick={() => setTopic(item)}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-        <div>
-          <span>Difficulty</span>
-          {difficulties.map((item) => (
-            <button
-              className={item === difficulty ? 'is-active' : ''}
-              key={item}
-              type="button"
-              onClick={() => setDifficulty(item)}
-            >
-              {item}
-            </button>
-          ))}
+          <span>Lab signal</span>
+          <button type="button" className="is-active">
+            {guidedChecks} guided checks
+          </button>
         </div>
       </div>
 
@@ -163,49 +88,66 @@ export default function LabChallengeCatalog() {
       </p>
 
       <div className="challenge-grid">
-        {visibleChallenges.map((challenge) => {
-          const status = progress[challenge.id] || 'not_started';
-          return (
-            <article className="challenge-card" key={challenge.id}>
-              <div className="challenge-card__meta">
-                <span>{challenge.topic}</span>
-                <span>{challenge.difficulty}</span>
+        {visibleChallenges.map((challenge) => (
+          <article className="challenge-card" key={challenge.id}>
+            <div className="challenge-card__meta">
+              <span>{challenge.topic}</span>
+              <span>{challenge.difficulty}</span>
+              <span>{challenge.duration}</span>
+              <span>{challenge.free ? 'Free' : 'Premium'}</span>
+            </div>
+            <h3>{challenge.title}</h3>
+            <p>{challenge.summary}</p>
+            <dl>
+              <div>
+                <dt>Persona</dt>
+                <dd>{challenge.persona}</dd>
               </div>
-              <h3>{challenge.title}</h3>
-              <p>{challenge.summary}</p>
-              <dl>
-                <div>
-                  <dt>Time</dt>
-                  <dd>{challenge.time}</dd>
-                </div>
-                <div>
-                  <dt>Environment</dt>
-                  <dd>{challenge.environment}</dd>
-                </div>
-                <div>
-                  <dt>Prerequisite</dt>
-                  <dd>{challenge.prerequisite}</dd>
-                </div>
-              </dl>
-              <div className="challenge-card__actions">
-                <Link to={challenge.href}>Start challenge</Link>
-                <button type="button" onClick={() => updateProgress(challenge.id)}>
-                  {statusLabels[status]}
-                </button>
+              <div>
+                <dt>Tools</dt>
+                <dd>{challenge.tools.join(', ')}</dd>
               </div>
-            </article>
-          );
-        })}
+              <div>
+                <dt>Checks</dt>
+                <dd>
+                  {challenge.steps.reduce((total, step) => total + step.checks.length, 0)}
+                </dd>
+              </div>
+            </dl>
+            <div className="challenge-card__actions">
+              <a href={challenge.appHref}>Open interactive challenge</a>
+              <a href={challenge.docsHref}>Read guide</a>
+            </div>
+          </article>
+        ))}
         {visibleChallenges.length === 0 ? (
           <div className="challenge-empty" role="status">
             <span>No matching challenge</span>
             <p>
-              Clear one filter or switch difficulty. New GPU, observability,
-              and RAG drills will be added as the lab track expands.
+              Clear one filter or switch paths. New GPU, observability, RAG, security, and cost
+              challenges can be added from the shared lab metadata file.
             </p>
           </div>
         ) : null}
       </div>
     </section>
+  );
+}
+
+function FilterGroup({ label, values, value, onChange, labels = {} }) {
+  return (
+    <div>
+      <span>{label}</span>
+      {values.map((item) => (
+        <button
+          className={item === value ? 'is-active' : ''}
+          key={item}
+          type="button"
+          onClick={() => onChange(item)}
+        >
+          {labels[item] || item}
+        </button>
+      ))}
+    </div>
   );
 }

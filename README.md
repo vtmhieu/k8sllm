@@ -21,6 +21,7 @@ https://github.com/vtmhieu/k8sllm
 - Platform Services: traffic, GitOps, policy, secrets, supply chain, observability stack.
 - LLM on Kubernetes: GPU node pools, model serving, RAG, inference scaling and cost.
 - Reference Architectures: six SVG architecture diagrams with explanatory pages.
+- K8sLLM Labs: a separate Next.js app for interactive challenge checks, hints, local progress, and future premium lab packs.
 - K8sLLM Platform Walkthrough: a local Remotion MP4 explainer embedded on the homepage.
 - GitHub Actions build validation and Vercel production deployment.
 - Vercel Web Analytics for page-view and visitor measurement.
@@ -57,6 +58,54 @@ Serve the production build locally:
 
 ```bash
 npm run serve
+```
+
+## Interactive labs app
+
+The interactive lab product lives in:
+
+```text
+apps/labs/
+```
+
+Shared challenge metadata lives in:
+
+```text
+packages/lab-content/
+```
+
+Run the labs app locally:
+
+```bash
+npm run dev:labs
+```
+
+Build the labs app:
+
+```bash
+npm run build:labs
+```
+
+V1 is backend-free:
+
+- progress is stored in browser `localStorage`;
+- checks run in the browser against pasted terminal output;
+- hints, solution reveal, and challenge status are tracked locally;
+- premium CTAs are non-blocking placeholders.
+
+Deploy `labs.k8sllm.online` as a second Vercel project from the same repository:
+
+```text
+Framework Preset: Next.js
+Install Command: npm install
+Build Command: npm run build:labs
+Domain: labs.k8sllm.online
+```
+
+Keep `www.k8sllm.online` as the SEO/docs site. The docs lab pages should link to the matching interactive challenge route, for example:
+
+```text
+https://labs.k8sllm.online/challenges/vllm-inference
 ```
 
 ## K8sLLM Platform Walkthrough

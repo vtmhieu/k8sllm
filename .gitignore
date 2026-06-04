@@ -1,6 +1,9 @@
 node_modules/
 .docusaurus/
 build/
+.next/
+**/.next/
+out/
 .playwright-cli/
 npm-debug.log*
 yarn-debug.log*

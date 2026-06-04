@@ -23,7 +23,7 @@ import LabChallengeCatalog from '@site/src/components/LabChallengeCatalog';
 
 # Kubernetes LLM Labs
 
-The labs turn the guide into operator challenges. They are not hosted sandboxes yet. They are field runbooks you can run in your own cluster, adapt to a platform review, or use as interview-grade design drills.
+The labs turn the guide into operator challenges. The docs remain free, indexable runbooks. The interactive version lives at [labs.k8sllm.online](https://labs.k8sllm.online), where you can start guided checks, paste terminal output, unlock hints, reveal solutions, and track anonymous progress in your browser.
 
 <LabChallengeCatalog />
 
@@ -40,10 +40,10 @@ The labs turn the guide into operator challenges. They are not hosted sandboxes 
 ## How to use the labs
 
 1. Read the related architecture guide before applying manifests.
-2. Run the challenge scenario without optimization.
-3. Capture the validation signals before changing runtime flags or policy.
-4. Trigger one failure drill.
-5. Mark the challenge status in the catalog and write down which signal detected the failure first.
+2. Open the matching interactive challenge at [labs.k8sllm.online/challenges](https://labs.k8sllm.online/challenges).
+3. Run the challenge scenario in your own cluster or mock environment.
+4. Paste command output into the guided checks and use hints only when blocked.
+5. Trigger one failure drill and record which signal detected the failure first.
 
 New labs should follow the [Content Review Checklist](/docs/content-review-checklist): objective, prerequisites, manifests or commands, validation signals, failure drills, and expected signals.
 
@@ -51,10 +51,10 @@ New labs should follow the [Content Review Checklist](/docs/content-review-check
 
 | Version | Capability | Why it comes next |
 | --- | --- | --- |
-| V1 | Static challenge catalog and local progress | This is backend-free, searchable, and fits the current Docusaurus site. |
+| V1 | Guided checks, hints, local progress, and static docs | This is backend-free, searchable, and useful before hosted sandboxes exist. |
 | V2 | Local sandbox kits with `kind`, `k3d`, Docker Compose, and downloadable manifests | This makes the labs reproducible without paying for hosted infrastructure. |
 | V3 | Hosted browser labs | This needs auth, abuse protection, sandbox lifecycle management, and an infrastructure budget. |
 
 ## Recommended path
 
-Start with [K8s LLM: Kubernetes LLM Platform Guide](/docs/k8s-llm), continue to [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools), run the [vLLM Inference Challenge](/docs/labs/vllm-inference-lab), then move to [RAG on Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes) and the [RAG Retrieval Challenge](/docs/labs/rag-retrieval-lab).
+Start with [K8s LLM: Kubernetes LLM Platform Guide](/docs/k8s-llm), continue to [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools), run the [vLLM Inference Challenge](https://labs.k8sllm.online/challenges/vllm-inference), then move to [RAG on Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes) and the [RAG Retrieval Challenge](https://labs.k8sllm.online/challenges/rag-retrieval).
