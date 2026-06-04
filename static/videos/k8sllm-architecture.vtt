@@ -1,0 +1,25 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:08.000
+Running LLMs is not just deploying a model. It is a platform engineering problem.
+
+00:00:08.000 --> 00:00:18.000
+LLM platforms must control latency, GPU placement, cost, security, and rollback.
+
+00:00:18.000 --> 00:00:32.000
+A production cluster separates system services, app workloads, and GPU inference capacity.
+
+00:00:32.000 --> 00:00:48.000
+The inference stack separates gateway behavior, autoscaling, model runtime, GPU capacity, and telemetry.
+
+00:00:48.000 --> 00:01:00.000
+KServe is strong for standardized platform APIs. Ray Serve is strong for programmable serving graphs.
+
+00:01:00.000 --> 00:01:18.000
+Production RAG has two lifecycles: ingestion quality and online serving latency.
+
+00:01:18.000 --> 00:01:30.000
+GitOps makes change reviewable. Observability makes production behavior visible.
+
+00:01:30.000 --> 00:01:40.000
+Design the platform before scaling the model.

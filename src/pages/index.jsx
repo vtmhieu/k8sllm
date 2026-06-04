@@ -92,6 +92,9 @@ function TrackLink({ label, href, detail, index }) {
 export default function Home() {
   const productionClusterImage = useBaseUrl('/img/architectures/production-cluster.svg');
   const llmStackImage = useBaseUrl('/img/architectures/llm-inference-stack.svg');
+  const architectureVideo = useBaseUrl('/videos/k8sllm-architecture.mp4');
+  const architecturePoster = useBaseUrl('/img/video/k8sllm-architecture-poster.png');
+  const architectureCaptions = useBaseUrl('/videos/k8sllm-architecture.vtt');
 
   return (
     <Layout
@@ -149,6 +152,39 @@ export default function Home() {
               </div>
             </div>
           </aside>
+        </section>
+
+        <section className={styles.videoSection}>
+          <div className={styles.videoCopy}>
+            <p className={styles.kicker}>Architecture explainer</p>
+            <h2>Watch the Kubernetes LLM platform map in 100 seconds.</h2>
+            <p>
+              This code-generated Remotion video explains the production path
+              from cluster isolation and GPU pools to model serving, RAG,
+              GitOps, observability, and cost-aware operations.
+            </p>
+            <Link className={styles.textAction} to="/video">
+              Open the full video page
+            </Link>
+          </div>
+          <div className={styles.videoFrame}>
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              poster={architecturePoster}
+              aria-label="K8sLLM architecture explainer video"
+            >
+              <source src={architectureVideo} type="video/mp4" />
+              <track
+                src={architectureCaptions}
+                kind="captions"
+                srcLang="en"
+                label="English"
+                default
+              />
+            </video>
+          </div>
         </section>
 
         <section className={styles.trackSection}>
