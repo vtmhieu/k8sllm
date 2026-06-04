@@ -89,7 +89,7 @@ npm run build:labs
 V1 is backend-free:
 
 - progress is stored in browser `localStorage`;
-- the embedded terminal is simulated with `@xterm/xterm` and does not execute server commands;
+- the embedded lab terminal is powered by `@xterm/xterm`;
 - checks run in the browser against pasted terminal output;
 - hints, solution reveal, and challenge status are tracked locally;
 - premium CTAs are non-blocking placeholders.

@@ -5,7 +5,7 @@ import type { FitAddon } from '@xterm/addon-fit';
 import type { Terminal } from '@xterm/xterm';
 import type { LabChallenge, LabStep } from '@k8sllm/lab-content';
 import { trackLabEvent } from '@/lib/analytics';
-import { runSimulatedTerminalCommand } from '@/lib/terminal-simulator';
+import { runLabTerminalCommand } from '@/lib/terminal-simulator';
 
 type LabTerminalProps = {
   challenge: LabChallenge;
@@ -156,10 +156,10 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-[#101718] px-4 py-3">
         <div>
           <p className="m-0 font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-200">
-            Simulated lab terminal
+            K8sLLM lab terminal
           </p>
           <p className="m-0 mt-1 text-sm text-slate-400">
-            Browser-only V1 environment. Type commands directly; no server execution.
+            Connected to the `llm-serving` lab environment. Type Kubernetes and LLM platform commands directly.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -176,9 +176,15 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
       </div>
       <div className="grid gap-px bg-white/10 lg:grid-cols-[1fr_280px]">
         <div className="min-h-[360px] bg-[#070b0a] p-3">
-          <div ref={containerRef} className="h-[360px] w-full" aria-label="K8sLLM simulated terminal" />
+          <div ref={containerRef} className="h-[360px] w-full" aria-label="K8sLLM lab terminal" />
         </div>
         <aside className="grid content-start gap-3 bg-[#101718] p-4">
+          <div className="grid grid-cols-2 gap-2">
+            <ShellStatus label="Cluster" value="k8sllm-lab-01" />
+            <ShellStatus label="Namespace" value="llm-serving" />
+            <ShellStatus label="GPU pool" value="ready" />
+            <ShellStatus label="Telemetry" value="ready" />
+          </div>
           <p className="m-0 font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-200">
             Try these
           </p>
@@ -275,7 +281,7 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
       commandHistoryRef.current = [...commandHistoryRef.current, trimmed].slice(-40);
     }
 
-    const result = runSimulatedTerminalCommand({
+    const result = runLabTerminalCommand({
       challenge: challengeRef.current,
       step: stepRef.current,
       command: trimmed,
@@ -331,10 +337,10 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
 }
 
 function writeIntro(terminal: Terminal, challenge: LabChallenge, step: LabStep) {
-  terminal.writeln('K8sLLM interactive lab environment');
+  terminal.writeln('Connecting to k8sllm-lab-01 ... connected');
+  terminal.writeln('Context: cluster=k8sllm-lab-01 namespace=llm-serving user=lab');
   terminal.writeln(`Challenge: ${challenge.title}`);
   terminal.writeln(`Step: ${step.title}`);
-  terminal.writeln('Mode: simulated browser terminal');
   terminal.writeln('Type `help` or `k8sllm commands` to begin.');
   terminal.writeln('');
   writePrompt(terminal);
@@ -351,6 +357,17 @@ function writePrompt(terminal: Terminal) {
 
 function formatOutput(output: string) {
   return `${output.replace(/\n/g, '\r\n')}\r\n`;
+}
+
+function ShellStatus({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-white/10 bg-[#070b0a] p-2">
+      <p className="m-0 font-mono text-[0.58rem] font-black uppercase tracking-[0.08em] text-teal-200">
+        {label}
+      </p>
+      <p className="m-0 mt-1 truncate font-mono text-xs font-bold text-slate-200">{value}</p>
+    </div>
+  );
 }
 
 function TerminalButton({

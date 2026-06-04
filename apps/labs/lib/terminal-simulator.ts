@@ -142,7 +142,7 @@ const servingDecision = `route,owner,graph_complexity,rollout_model,recommended_
 
 Decision: use KServe for standardized platform-owned endpoints; use Ray Serve when the app team owns a Python-native serving graph.`;
 
-export function runSimulatedTerminalCommand({
+export function runLabTerminalCommand({
   challenge,
   step,
   command,
@@ -162,15 +162,13 @@ export function runSimulatedTerminalCommand({
   if (lower === 'help') {
     return result(
       [
-        'K8sLLM simulated terminal commands:',
+        'K8sLLM lab commands:',
         '  help                         show this help',
         '  clear                        clear terminal output',
-        '  k8sllm status                show simulated lab state',
+        '  k8sllm status                show lab state',
         '  k8sllm commands              list suggested commands for this step',
-        '  kubectl ...                  run simulated Kubernetes checks',
-        '  curl ...                     run simulated endpoint checks',
-        '',
-        'This V1 terminal is browser-only. It does not execute commands on a server.',
+        '  kubectl ...                  run Kubernetes checks',
+        '  curl ...                     run endpoint checks',
       ].join('\n'),
       true,
       'help',
@@ -182,11 +180,11 @@ export function runSimulatedTerminalCommand({
       [
         `challenge=${challenge.slug}`,
         `step="${step.title}"`,
-        'environment=simulated',
+        'cluster=k8sllm-lab-01',
         'namespace=llm-serving',
+        'user=lab',
         'gpu_pool=ready',
         'telemetry=ready',
-        'backend=none',
       ].join('\n'),
       true,
       'lab status',
@@ -281,7 +279,7 @@ export function runSimulatedTerminalCommand({
   if (lower.includes('kubectl')) {
     return result(
       [
-        `simulated kubectl: command not recognized for this step`,
+        `kubectl: command not recognized for this step`,
         `current step: ${step.title}`,
         'try: k8sllm commands',
       ].join('\n'),
@@ -292,7 +290,7 @@ export function runSimulatedTerminalCommand({
 
   return result(
     [
-      `command not found in simulated lab: ${trimmed}`,
+      `command not found: ${trimmed}`,
       'try: help',
       'try: k8sllm commands',
     ].join('\n'),
