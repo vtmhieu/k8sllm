@@ -4,6 +4,7 @@
 const sidebars = {
   docs: [
     'intro',
+    'k8s-llm',
     {
       type: 'category',
       label: 'Kubernetes Core',
@@ -78,6 +79,7 @@ const sidebars = {
         'reference-architectures/rag-platform',
       ],
     },
+    'about-k8sllm',
     'content-review-checklist',
   ],
 };

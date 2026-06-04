@@ -1,0 +1,83 @@
+---
+title: About K8sLLM
+description: Editorial intent, source-of-truth policy, review cadence, and trust model for the K8sLLM Kubernetes LLM platform guide.
+tags:
+  - about
+  - editorial
+  - source-of-truth
+difficulty: senior
+last_reviewed: 2026-06-04
+sources:
+  - "https://developers.google.com/search/docs/fundamentals/creating-helpful-content"
+  - "https://developers.google.com/search/docs/fundamentals/seo-starter-guide"
+  - "https://kubernetes.io/docs/"
+  - "https://docs.vllm.ai/"
+  - "https://kserve.github.io/website/"
+  - "https://docs.ray.io/en/latest/serve/"
+diagram_ids:
+  - "production-cluster"
+---
+
+# About K8sLLM
+
+K8sLLM is an independent Kubernetes LLM platform guide for senior engineers who need to design, scale, secure, and operate AI workloads on Kubernetes.
+
+The site is written for practical platform decisions. It avoids beginner-only definitions and focuses on operating model, ownership, failure modes, metrics, and tradeoffs that matter in production reviews.
+
+## Editorial intent
+
+K8sLLM exists to help platform teams answer concrete questions:
+
+- How should GPU node pools be isolated, scheduled, and scaled?
+- When should a team use vLLM directly, KServe, Ray Serve, Triton, or a custom deployment path?
+- What does a production RAG platform need beyond a vector database?
+- Which signals prove an LLM endpoint is healthy under real user traffic?
+- Which security controls should exist before exposing model endpoints?
+
+## Source-of-truth policy
+
+Official project documentation is the source anchor for technical claims:
+
+| Area | Preferred source |
+| --- | --- |
+| Kubernetes APIs and behavior | Kubernetes documentation |
+| GPU scheduling | Kubernetes GPU scheduling docs and NVIDIA GPU Operator docs |
+| vLLM serving | vLLM documentation |
+| KServe inference resources | KServe documentation |
+| Ray Serve and KubeRay | Ray documentation |
+| SEO and indexing practices | Google Search Central documentation |
+
+Vendor blogs, benchmark posts, and community examples can support operational context, but they should not override official API behavior, security guidance, or lifecycle documentation.
+
+## Review cadence
+
+| Content type | Review trigger |
+| --- | --- |
+| Kubernetes core pages | Kubernetes minor-version adoption, API deprecation, or platform baseline change. |
+| Security pages | Policy exception, incident review, admission-controller change, or secrets-management change. |
+| LLM serving pages | Runtime upgrade, new model family, GPU profile change, or serving abstraction change. |
+| RAG pages | Retrieval pipeline change, vector database change, evaluation method change, or data governance update. |
+| Labs | New manifest pattern, changed CLI behavior, changed metrics contract, or failed learner validation. |
+
+## Content quality bar
+
+Every substantial page should include:
+
+- A clear decision or operating problem.
+- Platform ownership boundaries.
+- Failure modes.
+- Metrics or validation signals.
+- Links to related guides, labs, or reference architectures.
+- Sources that point to official documentation when available.
+
+The working checklist is maintained in [Content Review Checklist](/docs/content-review-checklist). Labs link back to that checklist so new exercises stay useful, measurable, and reviewable.
+
+## What K8sLLM is not
+
+K8sLLM is not a managed service, a hosted sandbox, or a product benchmark leaderboard. It is a static learning and architecture guide. The labs are runbooks that readers can adapt to their own clusters.
+
+## Popularity roadmap
+
+The first growth goal is organic Google traffic for `k8s llm`, `Kubernetes LLM`, `LLM on Kubernetes`, `vLLM Kubernetes`, `KServe vs Ray Serve`, `GPU node pool Kubernetes`, and `RAG on Kubernetes`.
+
+The site will prioritize one deep article per week and one new lab every two weeks. Each article should include a decision table, internal links to at least two related pages, and source anchors to official docs.

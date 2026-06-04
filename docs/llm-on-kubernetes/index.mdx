@@ -23,6 +23,8 @@ diagram_ids:
 
 LLM workloads stress Kubernetes in unusual ways: GPU capacity is scarce, model startup is slow, latency has multiple phases, and request cost varies by token count. Treat LLM on Kubernetes as a platform capability with its own SLOs, capacity model, security boundary, and release process.
 
+If you arrived through the keyword `k8s llm`, start with [K8s LLM: Kubernetes LLM Platform Guide](/docs/k8s-llm), then use this section for deeper runtime and operating decisions.
+
 ![LLM inference stack on Kubernetes architecture](/img/architectures/llm-inference-stack.svg)
 
 ## Core capabilities
@@ -39,6 +41,7 @@ LLM workloads stress Kubernetes in unusual ways: GPU capacity is scarce, model s
 
 | Guide | Use it to decide |
 | --- | --- |
+| [K8s LLM: Kubernetes LLM Platform Guide](/docs/k8s-llm) | How the Kubernetes LLM platform pieces fit together. |
 | [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools) | How to isolate and schedule accelerator capacity. |
 | [vLLM On Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes) | How to run vLLM as the model runtime layer. |
 | [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options) | How to choose vLLM, KServe, Ray Serve, or Triton. |

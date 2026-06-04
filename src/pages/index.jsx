@@ -36,6 +36,11 @@ const heroStats = [
 
 const llmPillars = [
   {
+    label: 'K8s LLM Guide',
+    href: '/docs/k8s-llm',
+    detail: 'Use the exact platform map for Kubernetes LLM infrastructure, teams, and learning paths.',
+  },
+  {
     label: 'vLLM Kubernetes',
     href: '/docs/llm-on-kubernetes/vllm-kubernetes',
     detail: 'Deploy the runtime contract around GPU placement, model cache, health, and metrics.',
@@ -91,20 +96,24 @@ export default function Home() {
   return (
     <Layout
       title="Kubernetes + LLM Platform Guide"
-      description="A senior platform engineering guide for Kubernetes LLM infrastructure, GPU node pools, model serving, RAG, and production platform services."
+      description="K8sLLM is a senior platform engineering guide for Kubernetes LLM infrastructure, GPU node pools, model serving, RAG, and production platform services."
     >
       <main className={styles.page}>
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
-            <p className={styles.kicker}>Production AI infrastructure field guide</p>
+            <p className={styles.kicker}>K8sLLM production AI infrastructure guide</p>
             <h1>Kubernetes + LLM Platform Guide</h1>
             <p className={styles.lead}>
-              Learn how to design, scale, secure, and operate LLM workloads on
-              Kubernetes with GPU node pools, model serving, RAG, observability,
-              rollout controls, and cost-aware platform patterns.
+              K8sLLM teaches how to design, scale, secure, and operate LLM
+              workloads on Kubernetes. Use this K8s LLM guide for GPU node
+              pools, model serving, RAG, observability, rollout controls, and
+              cost-aware platform patterns.
             </p>
             <div className={styles.heroActions}>
-              <Link className={styles.primaryAction} to="/docs/labs">
+              <Link className={styles.primaryAction} to="/docs/k8s-llm">
+                Start the K8s LLM guide
+              </Link>
+              <Link className={styles.secondaryAction} to="/docs/labs">
                 Open the labs
               </Link>
               <Link className={styles.secondaryAction} to="/docs/llm-on-kubernetes/model-serving-options">

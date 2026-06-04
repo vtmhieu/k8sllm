@@ -13,7 +13,7 @@ const siteStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Kubernetes + LLM Platform Guide',
-  alternateName: 'K8s + LLM Guide',
+  alternateName: ['K8sLLM', 'K8s LLM', 'K8s + LLM Guide'],
   url: `${siteUrl}/`,
   description: siteDescription,
   inLanguage: 'en',
@@ -100,7 +100,7 @@ const config = {
         {
           name: 'keywords',
           content:
-            'Kubernetes, LLM, Kubernetes LLM, LLM on Kubernetes, vLLM Kubernetes, KServe vs Ray Serve, GPU node pool Kubernetes, RAG on Kubernetes, platform engineering, observability, security, GitOps',
+            'K8sLLM, K8s LLM, Kubernetes, LLM, Kubernetes LLM, LLM on Kubernetes, vLLM Kubernetes, KServe vs Ray Serve, GPU node pool Kubernetes, RAG on Kubernetes, platform engineering, observability, security, GitOps',
         },
       ],
       navbar: {
@@ -110,6 +110,7 @@ const config = {
           src: 'img/brand-mark.svg',
         },
         items: [
+          { to: '/docs/k8s-llm', label: 'K8s LLM', position: 'left' },
           { to: '/docs/kubernetes', label: 'Kubernetes', position: 'left' },
           { to: '/docs/best-practices', label: 'Best Practices', position: 'left' },
           { to: '/docs/platform-services', label: 'Platform Services', position: 'left' },
@@ -124,6 +125,7 @@ const config = {
           {
             title: 'Learning paths',
             items: [
+              { label: 'K8s LLM Guide', to: '/docs/k8s-llm' },
               { label: 'Kubernetes Core', to: '/docs/kubernetes' },
               { label: 'Production Best Practices', to: '/docs/best-practices' },
               { label: 'LLM On Kubernetes', to: '/docs/llm-on-kubernetes' },
@@ -135,6 +137,8 @@ const config = {
             items: [
               { label: 'Platform Services', to: '/docs/platform-services' },
               { label: 'Reference Architectures', to: '/docs/reference-architectures' },
+              { label: 'About K8sLLM', to: '/docs/about-k8sllm' },
+              { label: 'Content Review Checklist', to: '/docs/content-review-checklist' },
             ],
           },
           {
