@@ -19,7 +19,7 @@ export default function ChallengesPage() {
         </h1>
         <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-300">
           Start with free guided labs. Each challenge has objectives, commands, expected signals,
-          paste-output validation, progressive hints, and solution reveal tracking.
+          paste-output validation, progressive hints, and a final readiness check.
         </p>
       </header>
       <ChallengeCatalogClient challenges={challenges} productPaths={productPaths} />

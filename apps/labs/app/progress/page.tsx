@@ -4,7 +4,7 @@ import { challenges } from '@/lib/content';
 export const metadata = {
   title: 'Progress',
   description:
-    'Anonymous local progress dashboard for Kubernetes LLM labs, challenge status, and completion tracking.',
+    'Private device progress dashboard for Kubernetes LLM labs, challenge status, and completion tracking.',
 };
 
 export default function ProgressPage() {
@@ -18,7 +18,7 @@ export default function ProgressPage() {
           Track Kubernetes LLM lab progress locally.
         </h1>
         <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-300">
-          This dashboard reads browser-local challenge status, completed steps, and blocked work.
+          This dashboard reads challenge status, completed steps, and blocked work saved on this device.
           Accounts and saved cloud progress are intentionally deferred until premium lab packs exist.
         </p>
       </header>

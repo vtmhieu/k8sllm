@@ -37,10 +37,10 @@ export function PremiumWaitlist() {
       <div className="grid gap-5 lg:grid-cols-[0.7fr_1fr] lg:items-end">
         <div>
           <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
-            Premium labs later
+            Advanced lab access
           </p>
           <h2 className="mt-3 max-w-xl text-3xl font-black leading-none tracking-tight text-white">
-            Advanced solutions, downloadable kits, and review worksheets will become the first paid product.
+            Get notified when downloadable kits, deeper scenarios, and review worksheets are ready.
           </h2>
         </div>
         <div className="grid gap-3">
@@ -63,12 +63,12 @@ export function PremiumWaitlist() {
               Save interest
             </button>
             <p className="m-0 max-w-xl text-sm leading-relaxed text-slate-400">
-              Stored locally in v1. When backend signup is added, this copy must be replaced with real consent and privacy handling.
+              For now this saves interest on this device. A real signup form will include consent and email delivery before launch.
             </p>
           </div>
           {saved ? (
             <p className="m-0 border border-teal-200/20 bg-teal-200/10 p-3 text-sm font-bold text-teal-100">
-              Interest saved in this browser.
+              Interest saved on this device.
             </p>
           ) : null}
         </div>

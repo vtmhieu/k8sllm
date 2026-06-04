@@ -20,6 +20,7 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
   const [progress, setProgress] = useState<ProgressStore>({});
   const [activeStepId, setActiveStepId] = useState(challenge.steps[0]?.id || '');
   const [checkMessages, setCheckMessages] = useState<Record<string, string>>({});
+  const [transitionMessage, setTransitionMessage] = useState('');
 
   useEffect(() => {
     const stored = loadProgress();
@@ -38,6 +39,16 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
 
   const challengeProgress = getChallengeProgress(progress, challenge.id);
   const activeStep = challenge.steps.find((step) => step.id === activeStepId) || challenge.steps[0];
+  const activeStepDone = activeStep
+    ? challengeProgress.completedSteps.includes(activeStep.id)
+    : false;
+  const activeStepIndex = activeStep
+    ? challenge.steps.findIndex((step) => step.id === activeStep.id)
+    : -1;
+  const nextUnfinishedStep = challenge.steps.find(
+    (step, index) =>
+      index > activeStepIndex && !challengeProgress.completedSteps.includes(step.id),
+  );
   const completedCount = challenge.steps.filter((step) =>
     challengeProgress.completedSteps.includes(step.id),
   ).length;
@@ -102,6 +113,11 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
       ? challengeProgress.completedSteps
       : [...challengeProgress.completedSteps, step.id];
     const allDone = completedSteps.length === challenge.steps.length;
+    const stepIndex = challenge.steps.findIndex((item) => item.id === step.id);
+    const nextStep =
+      challenge.steps.find(
+        (item, index) => index > stepIndex && !completedSteps.includes(item.id),
+      ) || challenge.steps.find((item) => !completedSteps.includes(item.id));
 
     updateProgress({
       status: allDone ? 'completed' : 'in_progress',
@@ -112,10 +128,25 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
       stepId: step.id,
       completedSteps: completedSteps.length,
     });
+
+    if (allDone) {
+      setTransitionMessage('Challenge complete. Review the expected signals and move to the roadmap when ready.');
+      return;
+    }
+
+    if (nextStep) {
+      setActiveStepId(nextStep.id);
+      setTransitionMessage(`${step.title} complete. Continue with ${nextStep.title}.`);
+    }
   };
 
   const markBlocked = () => {
     updateProgress({ status: 'blocked' });
+  };
+
+  const selectStep = (stepId: string) => {
+    setActiveStepId(stepId);
+    setTransitionMessage('');
   };
 
   return (
@@ -138,7 +169,7 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
               <button
                 key={step.id}
                 type="button"
-                onClick={() => setActiveStepId(step.id)}
+                onClick={() => selectStep(step.id)}
                 className={
                   step.id === activeStep?.id
                     ? 'border border-teal-200 bg-teal-200 px-3 py-3 text-left text-sm font-black text-[#111816]'
@@ -156,13 +187,25 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
 
       {activeStep ? (
         <section className="grid gap-5">
+          {transitionMessage ? (
+            <div className="border border-teal-200/30 bg-teal-200/[0.08] p-4 text-sm font-bold text-teal-100">
+              {transitionMessage}
+            </div>
+          ) : null}
           <header className="border border-white/10 bg-white/[0.045] p-6">
             <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
               Guided step
             </p>
-            <h2 className="mt-3 text-4xl font-black leading-none tracking-tight text-white">
-              {activeStep.title}
-            </h2>
+            <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
+              <h2 className="m-0 text-4xl font-black leading-none tracking-tight text-white">
+                {activeStep.title}
+              </h2>
+              {activeStepDone ? (
+                <span className="border border-teal-200/30 bg-teal-200/[0.08] px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-100">
+                  Step complete
+                </span>
+              ) : null}
+            </div>
             <p className="mt-4 max-w-3xl text-slate-300">{activeStep.objective}</p>
           </header>
 
@@ -236,10 +279,19 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={() => completeStep(activeStep)}
-              className="min-h-12 border border-teal-200/40 bg-teal-200 px-5 font-black text-[#111816] transition hover:bg-white"
+              onClick={() =>
+                activeStepDone && nextUnfinishedStep
+                  ? selectStep(nextUnfinishedStep.id)
+                  : completeStep(activeStep)
+              }
+              disabled={activeStepDone && !nextUnfinishedStep}
+              className="min-h-12 border border-teal-200/40 bg-teal-200 px-5 font-black text-[#111816] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Mark step complete
+              {activeStepDone
+                ? nextUnfinishedStep
+                  ? 'Go to next unfinished step'
+                  : 'Challenge complete'
+                : 'Mark step complete'}
             </button>
             <button
               type="button"
@@ -305,8 +357,21 @@ function CheckControl({
   };
 
   return (
-    <div className="border border-white/10 bg-[#101718] p-4">
-      <p className="m-0 text-sm font-bold text-white">{check.prompt}</p>
+    <div
+      className={
+        passed
+          ? 'border border-teal-200/30 bg-teal-200/[0.06] p-4'
+          : 'border border-white/10 bg-[#101718] p-4'
+      }
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <p className="m-0 text-sm font-bold text-white">{check.prompt}</p>
+        {passed ? (
+          <span className="border border-teal-200/30 px-2 py-1 font-mono text-[0.65rem] font-black uppercase tracking-[0.08em] text-teal-100">
+            Passed
+          </span>
+        ) : null}
+      </div>
       {check.type === 'paste_regex' ? (
         <div className="mt-3 grid gap-3">
           <textarea
@@ -320,7 +385,7 @@ function CheckControl({
             onClick={validatePaste}
             className="w-fit border border-teal-200/40 px-4 py-2 text-sm font-black text-teal-100 transition hover:bg-teal-200 hover:text-[#111816]"
           >
-            Check output
+            {passed ? 'Re-check output' : 'Check output'}
           </button>
         </div>
       ) : null}

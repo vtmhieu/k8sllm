@@ -23,7 +23,7 @@ import LabChallengeCatalog from '@site/src/components/LabChallengeCatalog';
 
 # Kubernetes LLM Labs
 
-The labs turn the guide into operator challenges. The docs remain free, indexable runbooks. The interactive version lives at [labs.k8sllm.online](https://labs.k8sllm.online), where you can type commands in a lab terminal, inspect Kubernetes output, unlock hints, reveal solutions, and track anonymous progress in your browser.
+The labs turn the guide into operator challenges. The docs remain free, indexable runbooks. The interactive version lives at [labs.k8sllm.online](https://labs.k8sllm.online), where you can type commands in a lab terminal, inspect Kubernetes output, unlock hints, reveal solutions, and keep private progress on your device.
 
 <LabChallengeCatalog />
 
@@ -47,13 +47,15 @@ The labs turn the guide into operator challenges. The docs remain free, indexabl
 
 New labs should follow the [Content Review Checklist](/docs/content-review-checklist): objective, prerequisites, manifests or commands, validation signals, failure drills, and expected signals.
 
-## Roadmap direction
+## Lab experience
 
-| Version | Capability | Why it comes next |
-| --- | --- | --- |
-| V1 | Lab terminal, guided checks, hints, local progress, and static docs | This is searchable, lightweight, and useful before hosted sandboxes exist. |
-| V2 | Local sandbox kits with `kind`, `k3d`, Docker Compose, and downloadable manifests | This makes the labs reproducible without paying for hosted infrastructure. |
-| V3 | Hosted browser labs | This needs auth, abuse protection, sandbox lifecycle management, and an infrastructure budget. |
+| Capability | Why it matters |
+| --- | --- |
+| Lab terminal | Practice Kubernetes and LLM platform commands in the flow of the challenge. |
+| Guided checks | Validate evidence such as GPU placement, model readiness, metrics, and policy boundaries. |
+| Progressive hints | Keep moving without turning every lab into a copy-paste answer sheet. |
+| Private device progress | Resume challenges on the same device without creating an account. |
+| Downloadable kits | Future lab packs can include manifests, failure drills, worksheets, and deeper solution reviews. |
 
 ## Recommended path
 

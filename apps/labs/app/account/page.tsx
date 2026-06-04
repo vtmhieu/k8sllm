@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { PremiumWaitlist } from '@/components/PremiumWaitlist';
 
 export const metadata = {
-  title: 'Account',
+  title: 'Early Access',
   description:
-    'K8sLLM Labs account placeholder for future saved progress, premium lab packs, and hosted sandbox access.',
+    'K8sLLM Labs early access for advanced Kubernetes LLM lab packs, downloadable kits, and review worksheets.',
 };
 
 export default function AccountPage() {
@@ -12,30 +12,30 @@ export default function AccountPage() {
     <main className="mx-auto grid w-[min(1160px,calc(100%-32px))] gap-8 py-12">
       <header>
         <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.12em] text-teal-200">
-          Account placeholder
+          Early access
         </p>
         <h1 className="mt-4 max-w-4xl text-6xl font-black leading-[0.9] tracking-tight text-white">
-          Free labs first. Accounts and paid packs later.
+          Free challenges now. Advanced platform labs next.
         </h1>
         <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-300">
-          V1 is intentionally anonymous and backend-free. The first sellable product should be
-          premium lab packs: advanced checks, downloadable manifests, full solutions, and architecture
-          review worksheets.
+          K8sLLM starts with guided public challenges. The next product layer is deeper lab packs:
+          advanced checks, downloadable manifests, full solution reviews, and architecture worksheets
+          for production AI infrastructure teams.
         </p>
       </header>
 
       <section className="grid gap-px border border-white/10 bg-white/10 md:grid-cols-3">
         <AccountPhase
-          title="V1"
-          body="Free guided checks, local progress, hints, and solution reveal tracking."
+          title="Free"
+          body="Guided checks, private device progress, hints, and production-focused readiness tasks."
         />
         <AccountPhase
-          title="V2"
-          body="Premium lab packs with downloadable kits, advanced scenarios, and review worksheets."
+          title="Pro"
+          body="Downloadable kits, advanced scenarios, complete solutions, and architecture review worksheets."
         />
         <AccountPhase
-          title="V3"
-          body="Hosted labs only after auth, abuse controls, sandbox lifecycle, and cost limits are designed."
+          title="Hosted"
+          body="Managed lab environments come after account, security, quota, and sandbox lifecycle controls."
         />
       </section>
 

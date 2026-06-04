@@ -23,8 +23,10 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
   const challengeRef = useRef(challenge);
   const commandHistoryRef = useRef<string[]>([]);
   const historyIndexRef = useRef<number | null>(null);
+  const runningRef = useRef(false);
   const lastOutputRef = useRef('');
   const [ready, setReady] = useState(false);
+  const [running, setRunning] = useState(false);
   const [lastOutput, setLastOutput] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -110,14 +112,14 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     };
   }, []);
 
-  const runSuggestedSequence = () => {
+  const runSuggestedSequence = async () => {
     const terminal = terminalRef.current;
     if (!terminal) {
       return;
     }
 
     for (const command of step.commands) {
-      runCommand(command, terminal, true);
+      await runCommand(command, terminal, true);
     }
   };
 
@@ -130,6 +132,8 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     currentLineRef.current = '';
     commandHistoryRef.current = [];
     historyIndexRef.current = null;
+    runningRef.current = false;
+    setRunning(false);
     lastOutputRef.current = '';
     setLastOutput('');
     setCopied(false);
@@ -163,8 +167,8 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <TerminalButton onClick={runSuggestedSequence} disabled={!ready}>
-            Run step commands
+          <TerminalButton onClick={() => void runSuggestedSequence()} disabled={!ready || running}>
+            {running ? 'Running' : 'Run step commands'}
           </TerminalButton>
           <TerminalButton onClick={copyLastOutput} disabled={!lastOutput}>
             {copied ? 'Copied' : 'Copy last output'}
@@ -174,8 +178,8 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
           </TerminalButton>
         </div>
       </div>
-      <div className="grid gap-px bg-white/10 lg:grid-cols-[1fr_280px]">
-        <div className="min-h-[360px] bg-[#070b0a] p-3">
+      <div className="grid gap-px bg-white/10 xl:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="min-h-[380px] min-w-0 bg-[#070b0a] p-3">
           <div ref={containerRef} className="h-[360px] w-full" aria-label="K8sLLM lab terminal" />
         </div>
         <aside className="grid content-start gap-3 bg-[#101718] p-4">
@@ -190,22 +194,25 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
           </p>
           <button
             type="button"
+            disabled={!ready || running}
             onClick={() => writeAndRun('help')}
-            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white"
+            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
           >
             help
           </button>
           <button
             type="button"
+            disabled={!ready || running}
             onClick={() => writeAndRun('k8sllm status')}
-            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white"
+            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
           >
             k8sllm status
           </button>
           <button
             type="button"
+            disabled={!ready || running}
             onClick={() => writeAndRun('k8sllm commands')}
-            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white"
+            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
           >
             k8sllm commands
           </button>
@@ -226,7 +233,7 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
       return;
     }
 
-    runCommand(command, terminal, true);
+    void runCommand(command, terminal, true);
   }
 
   function handleData(data: string) {
@@ -238,7 +245,7 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     if (data === '\r') {
       const command = currentLineRef.current;
       terminal.write('\r\n');
-      runCommand(command, terminal, false);
+      void runCommand(command, terminal, false);
       currentLineRef.current = '';
       historyIndexRef.current = null;
       return;
@@ -270,22 +277,47 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     }
   }
 
-  function runCommand(command: string, terminal: Terminal, echoCommand: boolean) {
+  async function runCommand(command: string, terminal: Terminal, echoCommand: boolean) {
+    if (runningRef.current) {
+      writeInfo(terminal, 'A command is already running. Wait for the prompt to return.');
+      writePrompt(terminal);
+      return;
+    }
+
     const trimmed = command.trim();
 
     if (echoCommand) {
-      terminal.write(prompt + trimmed + '\r\n');
+      clearCurrentLine(terminal);
+      currentLineRef.current = '';
+      terminal.write(trimmed + '\r\n');
     }
 
     if (trimmed) {
       commandHistoryRef.current = [...commandHistoryRef.current, trimmed].slice(-40);
     }
 
-    const result = runLabTerminalCommand({
-      challenge: challengeRef.current,
-      step: stepRef.current,
-      command: trimmed,
-    });
+    runningRef.current = true;
+    setRunning(true);
+    const startedAt = Date.now();
+    if (trimmed && trimmed !== 'clear') {
+      terminal.writeln('[running]');
+      await waitForCommand(trimmed);
+    }
+
+    const result =
+      trimmed.toLowerCase() === 'history'
+        ? {
+            output: commandHistoryRef.current
+              .map((item, index) => `${String(index + 1).padStart(4, ' ')}  ${item}`)
+              .join('\n'),
+            matched: true,
+            summary: 'history shown',
+          }
+        : runLabTerminalCommand({
+            challenge: challengeRef.current,
+            step: stepRef.current,
+            command: trimmed,
+          });
 
     trackLabEvent('terminal_command_run', {
       challengeId: challengeRef.current.id,
@@ -296,6 +328,8 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
 
     if (result.output === '__CLEAR__') {
       terminal.clear();
+      runningRef.current = false;
+      setRunning(false);
       writePrompt(terminal);
       return;
     }
@@ -306,6 +340,11 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
       setLastOutput(result.output);
     }
 
+    if (trimmed) {
+      terminal.writeln(`[exit ${result.matched ? '0' : '127'}] ${Date.now() - startedAt}ms`);
+    }
+    runningRef.current = false;
+    setRunning(false);
     writePrompt(terminal);
   }
 
@@ -357,6 +396,16 @@ function writePrompt(terminal: Terminal) {
 
 function formatOutput(output: string) {
   return `${output.replace(/\n/g, '\r\n')}\r\n`;
+}
+
+function waitForCommand(command: string) {
+  const normalized = command.trim().toLowerCase();
+  const baseDelay = normalized.startsWith('kubectl') || normalized.startsWith('curl') ? 520 : 260;
+  const variableDelay = Math.min(480, normalized.length * 4);
+
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, baseDelay + variableDelay);
+  });
 }
 
 function ShellStatus({ label, value }: { label: string; value: string }) {

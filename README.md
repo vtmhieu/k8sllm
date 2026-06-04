@@ -21,7 +21,7 @@ https://github.com/vtmhieu/k8sllm
 - Platform Services: traffic, GitOps, policy, secrets, supply chain, observability stack.
 - LLM on Kubernetes: GPU node pools, model serving, RAG, inference scaling and cost.
 - Reference Architectures: six SVG architecture diagrams with explanatory pages.
-- K8sLLM Labs: a separate Next.js app for interactive challenge checks, hints, local progress, and future premium lab packs.
+- K8sLLM Labs: a separate Next.js app for interactive challenge checks, hints, private device progress, and future premium lab packs.
 - K8sLLM Platform Walkthrough: a local Remotion MP4 explainer embedded on the homepage.
 - GitHub Actions build validation and Vercel production deployment.
 - Vercel Web Analytics for page-view and visitor measurement.
@@ -86,11 +86,11 @@ Build the labs app:
 npm run build:labs
 ```
 
-V1 is backend-free:
+Current lab app behavior:
 
-- progress is stored in browser `localStorage`;
+- progress is stored on the learner's device with `localStorage`;
 - the embedded lab terminal is powered by `@xterm/xterm`;
-- checks run in the browser against pasted terminal output;
+- checks run against pasted terminal output;
 - hints, solution reveal, and challenge status are tracked locally;
 - premium CTAs are non-blocking placeholders.
 

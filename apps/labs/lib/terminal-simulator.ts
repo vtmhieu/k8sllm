@@ -142,6 +142,19 @@ const servingDecision = `route,owner,graph_complexity,rollout_model,recommended_
 
 Decision: use KServe for standardized platform-owned endpoints; use Ray Serve when the app team owns a Python-native serving graph.`;
 
+const contextsOutput = `CURRENT   NAME             CLUSTER          AUTHINFO      NAMESPACE
+*         k8sllm-lab-01    k8sllm-lab-01    lab-user      llm-serving`;
+
+const namespacesOutput = `NAME              STATUS   AGE   LABELS
+default           Active   21d   kubernetes.io/metadata.name=default
+kube-system       Active   21d   kubernetes.io/metadata.name=kube-system
+llm-serving       Active   18m   kubernetes.io/metadata.name=llm-serving,owner=platform-ai,workload-class=llm
+observability     Active   21d   kubernetes.io/metadata.name=observability,owner=platform`;
+
+const versionOutput = `Client Version: v1.30.8
+Kustomize Version: v5.0.4
+Server Version: v1.30.8`;
+
 export function runLabTerminalCommand({
   challenge,
   step,
@@ -165,8 +178,11 @@ export function runLabTerminalCommand({
         'K8sLLM lab commands:',
         '  help                         show this help',
         '  clear                        clear terminal output',
+        '  history                      show recent commands',
         '  k8sllm status                show lab state',
         '  k8sllm commands              list suggested commands for this step',
+        '  kubectl config current-context',
+        '  kubectl get namespaces --show-labels',
         '  kubectl ...                  run Kubernetes checks',
         '  curl ...                     run endpoint checks',
       ].join('\n'),
@@ -189,6 +205,56 @@ export function runLabTerminalCommand({
       true,
       'lab status',
     );
+  }
+
+  if (lower === 'whoami') {
+    return result('lab', true, 'current user');
+  }
+
+  if (lower === 'pwd') {
+    return result('/home/lab/workspace', true, 'current directory');
+  }
+
+  if (lower === 'ls' || lower === 'ls -la') {
+    return result(
+      [
+        'README.md',
+        'manifests/',
+        'checks/',
+        'prometheus-queries/',
+        'failure-drills/',
+      ].join('\n'),
+      true,
+      'workspace listed',
+    );
+  }
+
+  if (lower === 'history') {
+    return result(
+      [
+        '1  kubectl config current-context',
+        '2  kubectl get namespaces --show-labels',
+        '3  k8sllm commands',
+      ].join('\n'),
+      true,
+      'history shown',
+    );
+  }
+
+  if (lower === 'kubectl config current-context') {
+    return result('k8sllm-lab-01', true, 'current context');
+  }
+
+  if (lower === 'kubectl config get-contexts') {
+    return result(contextsOutput, true, 'contexts listed');
+  }
+
+  if (lower === 'kubectl version --short' || lower === 'kubectl version') {
+    return result(versionOutput, true, 'kubectl version');
+  }
+
+  if (lower.includes('get namespaces') || lower.includes('get ns --show-labels')) {
+    return result(namespacesOutput, true, 'namespaces listed');
   }
 
   if (lower === 'k8sllm commands') {

@@ -41,7 +41,7 @@ export function RoadmapView({ roadmap, modules }: RoadmapViewProps) {
           </p>
           <strong className="mt-3 block font-mono text-5xl text-white">{percent}%</strong>
           <p className="mt-3 text-sm font-bold text-slate-300">
-            {completedChallenges} of {totalChallenges} challenges completed in this browser
+            {completedChallenges} of {totalChallenges} challenges completed on this device
           </p>
         </div>
         <div className="bg-[#111816]/88 p-6">

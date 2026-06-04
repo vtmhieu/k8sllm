@@ -59,11 +59,11 @@ export function ProgressDashboard({ challenges }: ProgressDashboardProps) {
       <div className="flex flex-wrap items-center justify-between gap-4 border border-white/10 bg-white/[0.045] p-5">
         <div>
           <h2 className="m-0 text-3xl font-black leading-none tracking-tight text-white">
-            Anonymous browser progress
+            Private device progress
           </h2>
           <p className="m-0 mt-3 max-w-2xl text-sm leading-relaxed text-slate-300">
-            Progress is local to this browser in v1. A paid product can later add accounts, saved
-            cloud progress, team reporting, and premium lab packs without changing the challenge model.
+            Your challenge status, completed steps, and blocked work stay on this device. Use reset
+            when you want to restart the lab track.
           </p>
         </div>
         <button
@@ -71,7 +71,7 @@ export function ProgressDashboard({ challenges }: ProgressDashboardProps) {
           onClick={resetProgress}
           className="min-h-11 border border-white/10 px-4 text-sm font-black text-slate-200 transition hover:border-amber-300/40 hover:bg-amber-300/10 hover:text-amber-100"
         >
-          Reset local progress
+          Reset progress
         </button>
       </div>
 

@@ -20,7 +20,7 @@ export default function LabsHomePage() {
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
             K8sLLM Labs turns Kubernetes LLM architecture into interactive operator challenges:
             type commands in a lab terminal, inspect Kubernetes output, unlock hints, validate
-            readiness, and track progress locally.
+            readiness, and keep private progress on this device.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -77,7 +77,7 @@ export default function LabsHomePage() {
             { label: 'Free challenges', value: String(challenges.filter((item) => item.free).length) },
             { label: 'Learning paths', value: String(productPaths.length) },
             { label: 'Guided checks', value: String(challenges.reduce((sum, item) => sum + item.steps.reduce((stepSum, step) => stepSum + step.checks.length, 0), 0)) },
-            { label: 'Storage model', value: 'local' },
+            { label: 'Progress', value: 'device' },
           ]}
         />
       </section>
