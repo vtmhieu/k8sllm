@@ -1,0 +1,115 @@
+---
+title: Production Readiness Lab
+description: Kubernetes LLM production readiness lab covering security, rollback, quota, cost, observability, and launch review.
+tags:
+  - labs
+  - production
+  - security
+  - observability
+  - cost
+difficulty: senior
+last_reviewed: 2026-06-04
+sources:
+  - "https://kubernetes.io/docs/concepts/security/"
+  - "https://kubernetes.io/docs/concepts/policy/resource-quotas/"
+  - "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
+  - "https://opentelemetry.io/docs/"
+diagram_ids:
+  - "production-cluster"
+  - "llm-inference-stack"
+---
+
+# Production Readiness Lab
+
+This lab is a launch review for Kubernetes LLM workloads. Use it before exposing a model endpoint to real users or before approving a new runtime in the platform.
+
+:::tip Lab outcome
+The goal is not to pass every check. The goal is to find which risks are accepted, which are blocked, and which team owns each follow-up.
+:::
+
+## Readiness matrix
+
+| Area | Check | Pass signal |
+| --- | --- | --- |
+| Security | Namespace has RBAC, NetworkPolicy, and secret ownership. | Workload cannot access unrelated namespaces or secrets. |
+| Scheduling | GPU placement is explicit. | Pod cannot land on general-purpose nodes. |
+| Rollout | New model can be shifted and rolled back. | Previous revision remains deployable. |
+| Observability | User, runtime, and GPU signals are visible. | Incident triage can start from dashboards and traces. |
+| Cost | Unit cost is estimated. | Requests can be grouped by model, route, tenant, or workload class. |
+
+## Step 1: verify namespace boundaries
+
+```bash
+kubectl auth can-i get secrets --namespace default
+kubectl auth can-i list pods --namespace llm-serving
+kubectl -n llm-serving get networkpolicy
+```
+
+Review questions:
+
+- Which service account runs the model server?
+- Can it read secrets outside its namespace?
+- Is ingress limited to the gateway or service mesh path?
+
+## Step 2: verify resource and quota policy
+
+```bash
+kubectl -n llm-serving get resourcequota
+kubectl -n llm-serving get limitrange
+kubectl -n llm-serving describe pod -l app=vllm-openai
+```
+
+Healthy result:
+
+- CPU and memory requests are present.
+- GPU limits are explicit.
+- The namespace has a quota that prevents surprise accelerator consumption.
+
+## Step 3: test rollback
+
+Use the same release mechanism your platform uses in production.
+
+```bash
+kubectl -n llm-serving rollout history deployment/vllm-openai
+kubectl -n llm-serving rollout status deployment/vllm-openai
+```
+
+Failure drill:
+
+1. Deploy a revision with an invalid model name.
+2. Confirm readiness fails.
+3. Roll back.
+4. Confirm the previous model endpoint serves again.
+
+## Step 4: validate launch telemetry
+
+Before launch, each request path should produce enough data to debug a poor answer or a slow response.
+
+| Metric or trace | Why it matters |
+| --- | --- |
+| Time to first token | User-perceived responsiveness. |
+| Tokens per second | Runtime throughput under real prompt sizes. |
+| Queue wait | Saturation signal before GPU metrics become obvious. |
+| GPU memory | Capacity and KV cache pressure. |
+| Cost per request | Financial impact by model and tenant. |
+
+## Step 5: launch decision
+
+Use this launch decision format:
+
+```text
+Decision: approve, approve with conditions, or block
+Primary risk:
+Accepted exceptions:
+Rollback owner:
+SLO owner:
+Review date:
+```
+
+## Related guides
+
+- [Security hardening checklist](/docs/best-practices/security-hardening-checklist)
+- [Production scaling decision guide](/docs/best-practices/production-scaling-decision-guide)
+- [Observability baseline](/docs/best-practices/observability-baseline)
+- [LLM inference stack](/docs/reference-architectures/llm-inference-stack)
+

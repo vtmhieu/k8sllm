@@ -27,7 +27,8 @@ This site is for engineers who already understand Kubernetes basics and need to 
 2. Use [Production Best Practices](/docs/best-practices) to turn primitives into operational baselines.
 3. Use [Platform Services](/docs/platform-services) to choose services by capability, not hype.
 4. Learn [LLM On Kubernetes](/docs/llm-on-kubernetes) as a capacity, latency, GPU scheduling, and cost problem.
-5. Use [Reference Architectures](/docs/reference-architectures) as blueprints for design reviews.
+5. Run [Kubernetes LLM Labs](/docs/labs) to turn concepts into cluster exercises.
+6. Use [Reference Architectures](/docs/reference-architectures) as blueprints for design reviews.
 
 ## Editorial principles
 
@@ -49,3 +50,7 @@ A strong Kubernetes platform is more than a cluster that can run workloads. It n
 | Which metric drives workload scale? | CPU and memory are a baseline; queue depth, RPS, token latency, or business metrics are used when they are better signals. |
 | How are security exceptions handled? | Exceptions have expiry, approval, audit trail, and policy-as-code coverage. |
 | Does LLM serving have its own SLO? | TTFT, tokens/sec, queue wait, GPU memory, and cost/request are tracked by route class. |
+
+## Lab track
+
+If you want a practical path, start with the [vLLM inference lab](/docs/labs/vllm-inference-lab), then run the [production readiness lab](/docs/labs/production-readiness-lab). The labs are static runbooks designed for your own cluster, not a hosted sandbox.

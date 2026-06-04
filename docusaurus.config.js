@@ -21,13 +21,13 @@ const siteStructuredData = {
     'Kubernetes',
     'Platform engineering',
     'LLM infrastructure',
+    'Kubernetes labs',
     'vLLM',
     'KServe',
     'Ray Serve',
     'Observability',
     'Kubernetes security',
   ],
-  sameAs: ['https://github.com/vtmhieu/k8sllm'],
 };
 
 /** @type {import('@docusaurus/types').Config} */
@@ -51,7 +51,6 @@ const config = {
   },
 
   markdown: {
-    mermaid: true,
     hooks: {
       onBrokenMarkdownLinks: 'warn',
     },
@@ -75,7 +74,6 @@ const config = {
         docs: {
           routeBasePath: 'docs',
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/vtmhieu/k8sllm/tree/main/',
         },
         blog: false,
         theme: {
@@ -84,8 +82,6 @@ const config = {
       }),
     ],
   ],
-
-  themes: ['@docusaurus/theme-mermaid'],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -118,12 +114,8 @@ const config = {
           { to: '/docs/best-practices', label: 'Best Practices', position: 'left' },
           { to: '/docs/platform-services', label: 'Platform Services', position: 'left' },
           { to: '/docs/llm-on-kubernetes', label: 'LLM', position: 'left' },
+          { to: '/docs/labs', label: 'Labs', position: 'left' },
           { to: '/docs/reference-architectures', label: 'Architectures', position: 'left' },
-          {
-            href: 'https://github.com/vtmhieu/k8sllm',
-            label: 'GitHub',
-            position: 'right',
-          },
         ],
       },
       footer: {
@@ -135,6 +127,7 @@ const config = {
               { label: 'Kubernetes Core', to: '/docs/kubernetes' },
               { label: 'Production Best Practices', to: '/docs/best-practices' },
               { label: 'LLM On Kubernetes', to: '/docs/llm-on-kubernetes' },
+              { label: 'Hands-on Labs', to: '/docs/labs' },
             ],
           },
           {

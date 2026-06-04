@@ -1,0 +1,137 @@
+---
+title: RAG Retrieval Lab
+description: Hands-on RAG on Kubernetes lab for ingestion, vector retrieval, metadata filters, answer quality, and failure drills.
+tags:
+  - labs
+  - rag
+  - vector-database
+  - kubernetes
+  - evaluation
+difficulty: senior
+last_reviewed: 2026-06-04
+sources:
+  - "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
+  - "https://kubernetes.io/docs/concepts/services-networking/service/"
+  - "https://opentelemetry.io/docs/"
+diagram_ids:
+  - "rag-platform"
+---
+
+# RAG Retrieval Lab
+
+This lab focuses on the platform mechanics behind RAG: ingestion, chunking, embedding, vector persistence, metadata filters, retrieval quality, prompt assembly, and answer evaluation.
+
+:::tip Lab outcome
+You should finish with a RAG path that can explain why a document was retrieved, which metadata policy was applied, and whether the generated answer used the retrieved context correctly.
+:::
+
+## Minimal architecture
+
+<div className="lab-flow" aria-label="RAG platform flow">
+  <span>Document source</span>
+  <span>Ingestion job</span>
+  <span>Chunk and normalize</span>
+  <span>Embedding worker</span>
+  <span>Vector database</span>
+  <span>RAG API</span>
+  <span>LLM runtime</span>
+  <span>Evaluation log</span>
+</div>
+
+## Step 1: define the namespaces
+
+```bash
+kubectl create namespace rag-system
+kubectl create namespace llm-serving
+kubectl label namespace rag-system data-class=knowledge
+```
+
+## Step 2: create the ingestion contract
+
+Start with a Kubernetes Job so ingestion is explicit, retryable, and reviewable.
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: docs-ingestion
+  namespace: rag-system
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ingest
+          image: ghcr.io/example/rag-ingest:0.1.0
+          env:
+            - name: SOURCE_PATH
+              value: /data/docs
+            - name: VECTOR_COLLECTION
+              value: platform-guides
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              memory: 4Gi
+```
+
+Use this as a platform review artifact even if your real ingestion system is more advanced.
+
+## Step 3: define retrieval quality cases
+
+Create a small evaluation set before tuning chunk size or vector search parameters.
+
+| Query | Expected source | Expected behavior |
+| --- | --- | --- |
+| How should GPU node pools be isolated? | GPU scheduling guide | Mentions taints, selectors, quotas, and capacity ownership. |
+| When should Ray Serve be preferred? | KServe vs Ray Serve guide | Explains graph complexity and Python application ownership. |
+| What signals matter for LLM latency? | Benchmarking guide | Separates TTFT, queue wait, tokens/sec, and cost/request. |
+
+## Step 4: validate metadata filters
+
+Metadata filtering is a security and relevance boundary. Test it directly.
+
+```json
+{
+  "query": "How do I debug inference latency?",
+  "filters": {
+    "audience": "platform-engineering",
+    "classification": "public",
+    "product_area": "llm-serving"
+  },
+  "top_k": 5
+}
+```
+
+Healthy result:
+
+- Retrieved chunks match the requested product area.
+- Restricted documents do not appear.
+- The answer cites or logs the source chunk IDs.
+
+## Step 5: run failure drills
+
+| Drill | What to observe |
+| --- | --- |
+| Remove one important source document | Does the answer become uncertain, or does it invent details? |
+| Change metadata on a restricted document | Does policy block retrieval? |
+| Increase top-k too far | Does answer quality drop because irrelevant chunks enter the prompt? |
+| Kill the vector database pod | Does the API fail closed with a clear user-facing response? |
+
+## Validation signals
+
+| Signal | Healthy result |
+| --- | --- |
+| Ingestion lag | The platform knows when content is stale. |
+| Retrieval precision | Expected source appears in the top results for known queries. |
+| Context use | The answer reflects retrieved context rather than general model memory. |
+| Policy enforcement | Metadata filters prevent unauthorized retrieval. |
+| Evaluation history | Changes to chunking or embeddings can be compared over time. |
+
+## Related guides
+
+- [RAG On Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes)
+- [RAG failure modes and evaluation](/docs/llm-on-kubernetes/rag-failure-modes-evaluation)
+- [RAG platform reference architecture](/docs/reference-architectures/rag-platform)

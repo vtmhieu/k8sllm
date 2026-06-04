@@ -1,0 +1,184 @@
+---
+title: vLLM Inference Lab
+description: Hands-on vLLM Kubernetes lab for GPU scheduling, model cache, OpenAI-compatible serving, probes, metrics, and failure drills.
+tags:
+  - labs
+  - vllm
+  - gpu
+  - kubernetes
+  - inference
+difficulty: senior
+last_reviewed: 2026-06-04
+sources:
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
+  - "https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html"
+  - "https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/"
+  - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# vLLM Inference Lab
+
+This lab builds the minimum production contract around vLLM on Kubernetes: GPU placement, model artifact access, runtime flags, health checks, token latency, and rollback readiness.
+
+:::tip Lab outcome
+By the end, you should be able to explain why the pod was scheduled on a GPU node, how the model was loaded, how traffic reaches the runtime, and which signal proves user-facing latency is acceptable.
+:::
+
+## Prerequisites
+
+| Item | Requirement |
+| --- | --- |
+| Cluster | Kubernetes with a GPU node pool. |
+| GPU runtime | NVIDIA device plugin or GPU Operator installed. |
+| Namespace | Dedicated namespace such as `llm-serving`. |
+| Model access | A model available from a registry, object store, or mounted cache. |
+| Telemetry | Access to pod logs and metrics scraping. |
+
+## Step 1: create the serving namespace
+
+```bash
+kubectl create namespace llm-serving
+kubectl label namespace llm-serving workload-class=llm
+```
+
+Validate:
+
+```bash
+kubectl get namespace llm-serving --show-labels
+```
+
+## Step 2: define the GPU scheduling contract
+
+Use explicit GPU requests, a node selector, and a toleration. Adjust the label and toleration to your cluster.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-openai
+  namespace: llm-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-openai
+  template:
+    metadata:
+      labels:
+        app: vllm-openai
+        model: mistral-7b
+    spec:
+      nodeSelector:
+        accelerator: nvidia
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: vllm
+          image: vllm/vllm-openai:latest
+          args:
+            - --model
+            - mistralai/Mistral-7B-Instruct-v0.2
+            - --served-model-name
+            - mistral-7b
+            - --host
+            - 0.0.0.0
+            - --port
+            - "8000"
+          ports:
+            - containerPort: 8000
+              name: http
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
+            requests:
+              cpu: "4"
+              memory: 24Gi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 180
+            periodSeconds: 20
+```
+
+Review questions:
+
+- Which label proves this workload can only land on GPU capacity?
+- Which team owns the node labels and tolerations?
+- What happens if the model needs two GPUs instead of one?
+
+## Step 3: expose the runtime
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-openai
+  namespace: llm-serving
+spec:
+  selector:
+    app: vllm-openai
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+```
+
+Validate inside the cluster:
+
+```bash
+kubectl -n llm-serving port-forward svc/vllm-openai 8000:8000
+curl -s http://127.0.0.1:8000/v1/models
+```
+
+## Step 4: run a latency probe
+
+Use one small request and one longer generation request. Capture time to first token if your client supports streaming measurement.
+
+```bash
+curl -s http://127.0.0.1:8000/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "mistral-7b",
+    "messages": [{"role": "user", "content": "Explain Kubernetes GPU scheduling in five sentences."}],
+    "temperature": 0.2,
+    "max_tokens": 180
+  }'
+```
+
+## Validation signals
+
+| Signal | Healthy result |
+| --- | --- |
+| Pod scheduling | Pod lands only on GPU nodes and consumes expected GPU count. |
+| Startup | Model load time is known and included in rollout timing. |
+| Health | Readiness stays false until the runtime can serve. |
+| Latency | TTFT and tokens/sec are measured by model and route. |
+| Saturation | GPU memory, KV cache pressure, and queue wait are visible. |
+
+## Failure drills
+
+| Drill | Expected learning |
+| --- | --- |
+| Remove the node selector | Confirm policy catches accidental scheduling drift. |
+| Reduce memory request | Observe whether eviction, OOM, or slow startup happens first. |
+| Send burst traffic | Find the saturation point before production users do. |
+| Block model download | Verify startup failure is obvious in logs and alerts. |
+
+## Related guides
+
+- [vLLM On Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes)
+- [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools)
+- [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
+- [LLM inference reference architecture](/docs/reference-architectures/llm-inference-stack)
+

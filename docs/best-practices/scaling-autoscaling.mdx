@@ -9,7 +9,8 @@ difficulty: senior
 last_reviewed: 2026-06-02
 sources:
   - "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
-  - "https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler"
+  - "https://kubernetes.io/docs/concepts/cluster-administration/node-autoscaling/"
+  - "https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/"
   - "https://keda.sh/docs/"
 diagram_ids:
   - "production-cluster"
@@ -52,4 +53,3 @@ Scaling is a control-loop design problem. You need to decide which layer scales,
 - Cluster autoscaler cannot add nodes because pod constraints do not match any node group.
 - GPU node pools scale slowly and cold-start model load dominates user latency.
 - Too many replicas overload downstream dependencies.
-

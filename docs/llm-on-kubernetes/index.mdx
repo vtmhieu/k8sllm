@@ -47,6 +47,15 @@ LLM workloads stress Kubernetes in unusual ways: GPU capacity is scarce, model s
 | [Inference Benchmarking And Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model) | How to measure latency phases and unit economics. |
 | [Inference Scaling And Cost](/docs/llm-on-kubernetes/inference-scaling-cost) | How to scale beyond CPU metrics. |
 
+## Hands-on labs
+
+| Lab | What you practice |
+| --- | --- |
+| [vLLM inference lab](/docs/labs/vllm-inference-lab) | GPU scheduling, runtime health, OpenAI-compatible serving, and latency checks. |
+| [RAG retrieval lab](/docs/labs/rag-retrieval-lab) | Ingestion, vector retrieval, metadata filters, answer quality, and failure drills. |
+| [Production readiness lab](/docs/labs/production-readiness-lab) | Launch checks for security, quota, rollback, observability, and cost. |
+| [LLM observability lab](/docs/labs/observability-lab) | TTFT, queue wait, GPU pressure, traces, labels, and alert design. |
+
 ## Operating principle
 
 Do not choose a model-serving runtime before defining the platform contract around it: GPU placement, traffic policy, model artifact ownership, rollout and rollback, telemetry, and cost reporting. Runtime benchmarks are only useful when they include the Kubernetes gateway, autoscaling, and observability path that production users will actually hit.

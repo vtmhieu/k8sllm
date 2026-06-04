@@ -1,0 +1,72 @@
+---
+title: Kubernetes LLM Labs
+description: Hands-on Kubernetes LLM labs for vLLM inference, RAG retrieval, observability, and production readiness.
+tags:
+  - labs
+  - kubernetes
+  - llm
+  - ai-infrastructure
+difficulty: senior
+last_reviewed: 2026-06-04
+sources:
+  - "https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/"
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
+  - "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html"
+  - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
+diagram_ids:
+  - "llm-inference-stack"
+  - "rag-platform"
+---
+
+# Kubernetes LLM Labs
+
+The labs turn the guide into operator exercises. They are not a hosted sandbox. They are field runbooks you can run in your own cluster, adapt to a platform review, or use as interview-grade design drills.
+
+Each lab has the same contract: objective, prerequisites, hands-on tasks, validation signals, failure drills, and links back to the deeper guide.
+
+<div className="lab-board">
+  <a className="lab-tile" href="/docs/labs/vllm-inference-lab">
+    <span>01</span>
+    <strong>vLLM inference lab</strong>
+    <small>Deploy a GPU-backed OpenAI-compatible endpoint and validate token latency.</small>
+  </a>
+  <a className="lab-tile" href="/docs/labs/rag-retrieval-lab">
+    <span>02</span>
+    <strong>RAG retrieval lab</strong>
+    <small>Operate ingestion, vector search, retrieval quality, and answer evaluation.</small>
+  </a>
+  <a className="lab-tile" href="/docs/labs/production-readiness-lab">
+    <span>03</span>
+    <strong>Production readiness lab</strong>
+    <small>Check security, rollback, quota, cost, and observability before launch.</small>
+  </a>
+  <a className="lab-tile" href="/docs/labs/observability-lab">
+    <span>04</span>
+    <strong>Observability lab</strong>
+    <small>Build the signals that make LLM incidents debuggable.</small>
+  </a>
+</div>
+
+## Lab prerequisites
+
+| Requirement | Why it matters |
+| --- | --- |
+| Kubernetes cluster access | You need namespace, workload, service, and log visibility. |
+| GPU node pool for inference labs | LLM serving exercises depend on accelerator scheduling and runtime health. |
+| Metrics stack | Prometheus, Grafana, OpenTelemetry, or equivalent telemetry makes validation concrete. |
+| GitOps or manifest workflow | Labs are easier to review when every change is versioned. |
+| Test prompts and evaluation cases | LLM workloads need behavior checks, not only pod readiness. |
+
+## How to use the labs
+
+1. Read the related architecture guide before applying manifests.
+2. Run the baseline task without optimization.
+3. Capture metrics before changing runtime flags or autoscaling policy.
+4. Trigger one failure drill.
+5. Write down which signal detected the failure first.
+
+## Recommended path
+
+Start with [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools), run the [vLLM inference lab](/docs/labs/vllm-inference-lab), then move to [RAG On Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes) and the [RAG retrieval lab](/docs/labs/rag-retrieval-lab).
+

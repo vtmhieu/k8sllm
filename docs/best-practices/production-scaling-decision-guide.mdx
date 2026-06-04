@@ -9,8 +9,8 @@ difficulty: senior
 last_reviewed: 2026-06-02
 sources:
   - "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
-  - "https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler"
-  - "https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler"
+  - "https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/"
+  - "https://kubernetes.io/docs/concepts/cluster-administration/node-autoscaling/"
   - "https://keda.sh/docs/"
 diagram_ids:
   - "production-cluster"
@@ -54,4 +54,3 @@ Do not rely on just-in-time scale-up for every class of traffic. Keep explicit b
 - Did scale-up overload a shared dependency?
 - Did scale-down evict useful warm capacity?
 - Did the autoscaler optimize infrastructure metrics while user SLO still burned?
-

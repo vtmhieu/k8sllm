@@ -56,6 +56,17 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Labs',
+      link: { type: 'doc', id: 'labs/index' },
+      items: [
+        'labs/vllm-inference-lab',
+        'labs/rag-retrieval-lab',
+        'labs/production-readiness-lab',
+        'labs/observability-lab',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Reference Architectures',
       link: { type: 'doc', id: 'reference-architectures/index' },
       items: [

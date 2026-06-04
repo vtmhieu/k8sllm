@@ -1,0 +1,97 @@
+---
+title: LLM Observability Lab
+description: Hands-on observability lab for Kubernetes LLM workloads covering latency, queueing, GPU saturation, traces, logs, and alerts.
+tags:
+  - labs
+  - observability
+  - opentelemetry
+  - prometheus
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-04
+sources:
+  - "https://opentelemetry.io/docs/"
+  - "https://prometheus.io/docs/introduction/overview/"
+  - "https://grafana.com/docs/"
+  - "https://docs.vllm.ai/en/latest/serving/metrics.html"
+diagram_ids:
+  - "observability-pipeline"
+  - "llm-inference-stack"
+---
+
+# LLM Observability Lab
+
+This lab defines the minimum telemetry needed to debug LLM workloads on Kubernetes. Generic pod health is not enough. You need user-facing latency, runtime saturation, GPU pressure, and prompt-path context.
+
+## Signal model
+
+| Layer | Signals |
+| --- | --- |
+| Gateway | RPS, errors, request size, route, tenant, status. |
+| Runtime | TTFT, tokens/sec, queue wait, active requests, batch size. |
+| GPU | Utilization, memory, temperature, allocation failures. |
+| RAG | Retrieval latency, top-k score, source count, evaluation result. |
+| Kubernetes | Restarts, throttling, OOM, scheduling delay, rollout state. |
+
+## Step 1: define labels that will survive incidents
+
+Every metric and trace should be attributable.
+
+```yaml
+metadata:
+  labels:
+    app.kubernetes.io/name: vllm-openai
+    app.kubernetes.io/part-of: llm-platform
+    workload.k8sllm.io/model: mistral-7b
+    workload.k8sllm.io/route-class: interactive
+    workload.k8sllm.io/team: platform-ai
+```
+
+## Step 2: create an incident dashboard checklist
+
+| Panel | Question it should answer |
+| --- | --- |
+| TTFT by route | Are users waiting before the first token? |
+| Tokens/sec by model | Is generation throughput degraded? |
+| Queue wait | Is the runtime saturated before GPU utilization is obvious? |
+| GPU memory | Is KV cache or model load pressure rising? |
+| Pod restarts | Did Kubernetes instability cause the symptom? |
+
+## Step 3: add trace attributes
+
+Trace spans should carry enough context to link application behavior to runtime behavior.
+
+```text
+llm.model=mistral-7b
+llm.route_class=interactive
+llm.prompt_tokens=812
+llm.completion_tokens=164
+llm.cache_hit=false
+rag.collection=platform-guides
+rag.top_k=5
+```
+
+## Step 4: alert on symptoms, not only resources
+
+| Alert | Trigger idea |
+| --- | --- |
+| Slow first token | TTFT p95 above SLO for the interactive route. |
+| Saturated runtime | Queue wait rising while active requests remain high. |
+| GPU memory pressure | Memory close to limit for sustained window. |
+| RAG stale content | Ingestion lag beyond review policy. |
+| Rollout regression | New revision increases errors or latency before full traffic shift. |
+
+## Failure drills
+
+1. Send burst traffic and watch queue wait.
+2. Increase prompt length and watch TTFT.
+3. Restart the runtime pod and watch dashboard recovery.
+4. Break vector database connectivity and verify the RAG API fails clearly.
+
+## Related guides
+
+- [Observability baseline](/docs/best-practices/observability-baseline)
+- [Observability stack](/docs/platform-services/observability-stack)
+- [Observability pipeline architecture](/docs/reference-architectures/observability-pipeline)
+- [Inference benchmarking and cost model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
+
