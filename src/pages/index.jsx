@@ -31,8 +31,47 @@ const signals = [
 
 const heroStats = [
   { value: '30+', label: 'production topics' },
-  { value: '6', label: 'reference architectures' },
-  { value: '4', label: 'challenge labs' },
+  { value: '12', label: 'interactive challenges' },
+  { value: '6', label: 'architecture maps' },
+];
+
+const pathCards = [
+  {
+    label: 'Serve models in production',
+    href: '/docs/llm-on-kubernetes/vllm-kubernetes',
+    detail: 'Design runtime contracts around vLLM, KServe, Ray Serve, probes, routing, and rollbacks.',
+    links: [
+      { label: 'vLLM Kubernetes', href: '/docs/llm-on-kubernetes/vllm-kubernetes' },
+      { label: 'KServe vs Ray Serve', href: '/docs/llm-on-kubernetes/kserve-vs-ray-serve' },
+    ],
+  },
+  {
+    label: 'Design GPU capacity',
+    href: '/docs/llm-on-kubernetes/gpu-node-pools',
+    detail: 'Plan accelerator pools with labels, taints, quotas, autoscaling buffers, and failure isolation.',
+    links: [
+      { label: 'GPU node pool guide', href: '/docs/llm-on-kubernetes/gpu-node-pools' },
+      { label: 'Scheduling lab', href: 'https://labs.k8sllm.online/challenges/gpu-node-pool-scheduling' },
+    ],
+  },
+  {
+    label: 'Build RAG on Kubernetes',
+    href: '/docs/llm-on-kubernetes/rag-on-kubernetes',
+    detail: 'Separate ingestion quality, tenant-aware retrieval, prompt assembly, generation, and evaluation.',
+    links: [
+      { label: 'RAG guide', href: '/docs/llm-on-kubernetes/rag-on-kubernetes' },
+      { label: 'RAG challenge', href: 'https://labs.k8sllm.online/challenges/rag-retrieval' },
+    ],
+  },
+  {
+    label: 'Prove production readiness',
+    href: '/docs/best-practices/security-hardening-checklist',
+    detail: 'Check security, observability, rollout, rollback, cost, and ownership before model traffic shifts.',
+    links: [
+      { label: 'Security checklist', href: '/docs/best-practices/security-hardening-checklist' },
+      { label: 'Readiness lab', href: 'https://labs.k8sllm.online/challenges/production-readiness' },
+    ],
+  },
 ];
 
 const llmPillars = [
@@ -66,19 +105,77 @@ const llmPillars = [
 const labs = [
   {
     label: 'vLLM inference challenge',
-    href: '/docs/labs/vllm-inference-lab',
-    detail: 'Deploy a GPU-backed OpenAI-compatible endpoint and verify TTFT, queueing, and health.',
+    href: 'https://labs.k8sllm.online/challenges/vllm-inference',
+    detail: 'Deploy a GPU-backed OpenAI-compatible endpoint and verify TTFT, queueing, placement, and health.',
+    difficulty: 'Hard',
+    duration: '75 min',
+    role: 'AI infra',
+    signals: 'GPU placement, TTFT, queue wait',
   },
   {
     label: 'RAG retrieval challenge',
-    href: '/docs/labs/rag-retrieval-lab',
-    detail: 'Build the ingestion-to-answer loop with retrieval quality checks and failure drills.',
+    href: 'https://labs.k8sllm.online/challenges/rag-retrieval',
+    detail: 'Validate tenant-aware retrieval, metadata filters, answer quality, and failure drills.',
+    difficulty: 'Medium',
+    duration: '60 min',
+    role: 'MLOps',
+    signals: 'tenant filters, citations, recall',
   },
   {
     label: 'Production readiness challenge',
-    href: '/docs/labs/production-readiness-lab',
-    detail: 'Run security, observability, rollback, and cost checks before a model goes live.',
+    href: 'https://labs.k8sllm.online/challenges/production-readiness',
+    detail: 'Run launch checks across security, observability, rollback, quota, and cost.',
+    difficulty: 'Hard',
+    duration: '50 min',
+    role: 'Platform lead',
+    signals: 'RBAC, quota, rollback, dashboards',
   },
+  {
+    label: 'LLM observability challenge',
+    href: 'https://labs.k8sllm.online/challenges/observability',
+    detail: 'Connect user latency to runtime queueing, token throughput, GPU pressure, traces, and logs.',
+    difficulty: 'Medium',
+    duration: '45 min',
+    role: 'SRE',
+    signals: 'TTFT, tokens/sec, GPU pressure',
+  },
+];
+
+const proofPoints = [
+  {
+    label: 'Architecture-first',
+    detail: 'Every topic starts with platform boundaries, ownership, failure modes, and operating signals.',
+  },
+  {
+    label: 'Hands-on validation',
+    detail: 'Interactive labs use terminal-style checks for Kubernetes output, GPU placement, runtime health, and policy evidence.',
+  },
+  {
+    label: 'Production scope',
+    detail: 'The guide covers GPU capacity, latency, cost, security, GitOps, observability, RAG, and rollback paths.',
+  },
+  {
+    label: 'Source anchored',
+    detail: 'Pages are tied to official Kubernetes, vLLM, KServe, Ray Serve, and NVIDIA GPU Operator documentation.',
+  },
+];
+
+const stackItems = [
+  'Kubernetes',
+  'vLLM',
+  'KServe',
+  'Ray Serve',
+  'RAG',
+  'Prometheus/Grafana',
+  'GitOps',
+  'policy-as-code',
+];
+
+const credibilityLinks = [
+  { label: 'About K8sLLM', href: '/docs/about-k8sllm' },
+  { label: 'Review checklist', href: '/docs/content-review-checklist' },
+  { label: 'Challenge labs', href: '/docs/labs' },
+  { label: 'Reference architectures', href: '/docs/reference-architectures' },
 ];
 
 const scenes = [
@@ -267,21 +364,20 @@ export default function Home() {
             <p className={styles.kicker}>K8sLLM production AI infrastructure guide</p>
             <h1>Kubernetes + LLM Platform Guide</h1>
             <p className={styles.lead}>
-              K8sLLM is a practical field guide for designing, scaling,
-              securing, and operating LLM workloads on Kubernetes. It connects
-              cluster primitives to GPU node pools, model serving, RAG,
-              observability, rollout controls, and cost-aware platform
-              decisions.
+              Learn to design, scale, secure, and operate LLM workloads on
+              Kubernetes. K8sLLM connects cluster primitives to GPU node pools,
+              model serving, RAG, observability, rollout controls, and
+              cost-aware platform decisions.
             </p>
             <div className={styles.heroActions}>
-              <Link className={styles.primaryAction} to="/docs/k8s-llm">
-                Start with K8s LLM
+              <Link className={styles.primaryAction} to="https://labs.k8sllm.online/challenges">
+                Start interactive labs
               </Link>
-              <Link className={styles.secondaryAction} to="/docs/labs">
-                Open challenge labs
-              </Link>
-              <Link className={styles.secondaryAction} to="/docs/llm-on-kubernetes/model-serving-options">
-                Compare serving options
+              <a className={styles.secondaryAction} href="#platform-walkthrough">
+                Watch platform walkthrough
+              </a>
+              <Link className={styles.textAction} to="/docs/k8s-llm">
+                Read K8s LLM platform map
               </Link>
             </div>
             <div className={styles.heroStats} aria-label="Site coverage">
@@ -297,7 +393,32 @@ export default function Home() {
           <HeroTopology />
         </section>
 
-        <section className={styles.videoSection}>
+        <section className={styles.pathSection}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.kicker}>Choose your path</p>
+            <h2>Start from the production problem you need to solve.</h2>
+          </div>
+          <div className={styles.pathGrid}>
+            {pathCards.map((path, index) => (
+              <article className={styles.pathCard} key={path.label} style={{ '--index': index }}>
+                <Link to={path.href} className={styles.pathMainLink}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{path.label}</strong>
+                  <small>{path.detail}</small>
+                </Link>
+                <div className={styles.pathLinks}>
+                  {path.links.map((link) => (
+                    <Link key={link.label} to={link.href}>
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.videoSection} id="platform-walkthrough">
           <div className={styles.videoCopy}>
             <p className={styles.kicker}>Platform walkthrough</p>
             <h2>K8sLLM Platform Walkthrough</h2>
@@ -325,6 +446,22 @@ export default function Home() {
                 default
               />
             </video>
+          </div>
+        </section>
+
+        <section className={styles.proofSection}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.kicker}>Why K8sLLM is different</p>
+            <h2>A practical platform guide, not a collection of toy tutorials.</h2>
+          </div>
+          <div className={styles.proofGrid}>
+            {proofPoints.map((point, index) => (
+              <article className={styles.proofCard} key={point.label} style={{ '--index': index }}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <h3>{point.label}</h3>
+                <p>{point.detail}</p>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -359,22 +496,30 @@ export default function Home() {
         <section className={styles.labSection}>
           <div className={styles.labIntro}>
             <p className={styles.kicker}>Challenge lab track</p>
-            <h2>Turn the guide into Kubernetes LLM challenges.</h2>
+            <h2>Practice the platform decisions in interactive challenges.</h2>
             <p>
-              Labs are written as field runbooks: objective, platform contract,
-              commands, validation signals, and failure drills. They are static
-              docs you can run in your own Kubernetes environment.
+              K8sLLM Labs turn each architecture decision into a guided
+              challenge with terminal-style commands, validation checks,
+              progressive hints, expected signals, and failure drills.
             </p>
-            <Link className={styles.textAction} to="/docs/labs">
-              Browse challenge catalog
+            <Link className={styles.textAction} to="https://labs.k8sllm.online/challenges/vllm-inference">
+              Start the vLLM challenge
             </Link>
           </div>
           <div className={styles.labGrid}>
             {labs.map((lab, index) => (
               <Link className={styles.labCard} to={lab.href} key={lab.label} style={{ '--index': index }}>
                 <span>0{index + 1}</span>
-                <strong>{lab.label}</strong>
-                <small>{lab.detail}</small>
+                <div>
+                  <strong>{lab.label}</strong>
+                  <small>{lab.detail}</small>
+                  <div className={styles.labMeta}>
+                    <em>{lab.difficulty}</em>
+                    <em>{lab.duration}</em>
+                    <em>{lab.role}</em>
+                  </div>
+                  <p>{lab.signals}</p>
+                </div>
               </Link>
             ))}
           </div>
@@ -413,6 +558,34 @@ export default function Home() {
                 <small>{pillar.detail}</small>
               </Link>
             ))}
+          </div>
+        </section>
+
+        <section className={styles.credibilitySection}>
+          <div>
+            <p className={styles.kicker}>Built as a product</p>
+            <h2>Built as a production AI infrastructure learning platform.</h2>
+            <p>
+              K8sLLM is designed to show the operating model behind modern AI
+              platforms: runtime selection, GPU scheduling, retrieval quality,
+              policy controls, GitOps delivery, telemetry, rollback, and
+              cost-aware reliability.
+            </p>
+          </div>
+          <div className={styles.credibilityPanel}>
+            <p>Stack coverage</p>
+            <div className={styles.stackGrid}>
+              {stackItems.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+            <div className={styles.credibilityLinks}>
+              {credibilityLinks.map((link) => (
+                <Link key={link.label} to={link.href}>
+                  {link.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
 

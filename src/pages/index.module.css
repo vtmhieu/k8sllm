@@ -424,12 +424,120 @@
 }
 
 .trackSection,
+.pathSection,
+.proofSection,
+.credibilitySection,
 .operatingModel,
 .labSection,
 .videoSection {
   width: min(1200px, calc(100% - 48px));
   margin: 0 auto;
   padding: 76px 0;
+}
+
+.pathSection {
+  padding-top: 18px;
+}
+
+.pathGrid,
+.proofGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pathCard,
+.proofCard {
+  min-height: 268px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(12px);
+  animation: rise 580ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--index) * 70ms);
+}
+
+.pathCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background 220ms ease;
+}
+
+.pathCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(15, 118, 110, 0.48);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 22px 70px rgba(15, 35, 33, 0.11);
+}
+
+.pathMainLink {
+  display: flex;
+  min-height: 204px;
+  flex: 1;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+  color: #111816;
+  text-decoration: none;
+}
+
+.pathMainLink:hover {
+  color: #111816;
+  text-decoration: none;
+}
+
+.pathMainLink span,
+.proofCard span {
+  color: #0f766e;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.82rem;
+  font-weight: 820;
+  font-variant-numeric: tabular-nums;
+}
+
+.pathMainLink strong {
+  max-width: 13ch;
+  color: #111816;
+  font-size: clamp(1.32rem, 2vw, 1.72rem);
+  font-weight: 880;
+  line-height: 1.02;
+}
+
+.pathMainLink small {
+  margin-top: auto;
+  color: #52625f;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.pathLinks {
+  display: grid;
+  gap: 1px;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+  background: rgba(15, 23, 42, 0.09);
+}
+
+.pathLinks a {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  background: rgba(255, 255, 255, 0.6);
+  color: #0f766e;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.pathLinks a:hover {
+  color: #111816;
+  text-decoration: none;
+  background: rgba(153, 246, 228, 0.22);
 }
 
 .videoSection {
@@ -495,6 +603,31 @@
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.84rem;
   line-height: 1.5;
+}
+
+.proofSection {
+  padding: 46px 0 34px;
+}
+
+.proofCard {
+  padding: 22px;
+  color: #111816;
+}
+
+.proofCard h3 {
+  max-width: 12ch;
+  margin: 34px 0 0;
+  color: #111816;
+  font-size: clamp(1.35rem, 2vw, 1.72rem);
+  font-weight: 860;
+  line-height: 1.03;
+}
+
+.proofCard p {
+  margin: 18px 0 0;
+  color: #52625f;
+  font-size: 0.93rem;
+  line-height: 1.58;
 }
 
 .sceneSection {
@@ -690,14 +823,46 @@
 }
 
 .labCard strong {
+  display: block;
   font-size: 1.16rem;
   line-height: 1.2;
 }
 
 .labCard small {
+  display: block;
+  margin-top: 8px;
   color: #c5d7d3;
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+.labMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.labMeta em {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border: 1px solid rgba(153, 246, 228, 0.2);
+  color: #99f6e4;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.labCard p {
+  margin: 12px 0 0;
+  color: #a6c7c1;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.76rem;
+  line-height: 1.45;
 }
 
 .operatingModel {
@@ -738,6 +903,110 @@
 
 .signalRow p {
   margin: 0;
+}
+
+.credibilitySection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.64fr) minmax(380px, 0.58fr);
+  gap: 48px;
+  align-items: stretch;
+  padding: 58px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background:
+    linear-gradient(135deg, rgba(17, 24, 22, 0.97), rgba(18, 55, 51, 0.95)),
+    #111816;
+  color: #eef7f3;
+  box-shadow: 0 32px 90px rgba(15, 35, 33, 0.18);
+}
+
+.credibilitySection h2 {
+  max-width: 720px;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2.2rem, 4.6vw, 4.25rem);
+  font-weight: 890;
+  line-height: 0.98;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.credibilitySection p:not(.kicker),
+.credibilityPanel p {
+  max-width: 62ch;
+  color: #c5d7d3;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.credibilitySection .kicker,
+.credibilityPanel p {
+  color: #99f6e4;
+}
+
+.credibilityPanel {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(153, 246, 228, 0.22);
+  background: rgba(255, 255, 255, 0.045);
+  padding: 22px;
+}
+
+.credibilityPanel p {
+  margin: 0 0 18px;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.74rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.stackGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.stackGrid span {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(153, 246, 228, 0.18);
+  background: rgba(3, 8, 7, 0.35);
+  padding: 0 12px;
+  color: #eef7f3;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+  font-weight: 760;
+}
+
+.credibilityLinks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 26px;
+  border: 1px solid rgba(153, 246, 228, 0.2);
+  background: rgba(153, 246, 228, 0.12);
+}
+
+.credibilityLinks a {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  background: rgba(17, 24, 22, 0.88);
+  padding: 0 13px;
+  color: #99f6e4;
+  font-size: 0.85rem;
+  font-weight: 780;
+  text-decoration: none;
+}
+
+.credibilityLinks a:hover {
+  color: #ffffff;
+  text-decoration: none;
+  background: rgba(15, 118, 110, 0.38);
 }
 
 .architectureSection {
@@ -821,6 +1090,7 @@
   .operatingModel,
   .labSection,
   .videoSection,
+  .credibilitySection,
   .architecturePreview {
     grid-template-columns: 1fr;
   }
@@ -838,6 +1108,8 @@
     grid-template-columns: 1fr;
   }
 
+  .pathGrid,
+  .proofGrid,
   .sceneGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -850,11 +1122,18 @@
   .labSection {
     padding: 36px;
   }
+
+  .credibilitySection {
+    padding: 36px;
+  }
 }
 
 @media (max-width: 640px) {
   .hero,
   .trackSection,
+  .pathSection,
+  .proofSection,
+  .credibilitySection,
   .operatingModel,
   .labSection,
   .videoSection,
@@ -896,7 +1175,8 @@
     margin-top: 14px;
   }
 
-  .labSection {
+  .labSection,
+  .credibilitySection {
     padding: 24px;
   }
 
@@ -908,7 +1188,11 @@
     grid-row: auto;
   }
 
-  .sceneGrid {
+  .pathGrid,
+  .proofGrid,
+  .sceneGrid,
+  .stackGrid,
+  .credibilityLinks {
     grid-template-columns: 1fr;
   }
 }
