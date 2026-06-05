@@ -1,14 +1,25 @@
 import Link from 'next/link';
 import { ChallengeCatalogClient } from '@/components/ChallengeCatalogClient';
+import { JsonLd } from '@/components/JsonLd';
 import { MetricStrip } from '@/components/MetricStrip';
 import { PremiumWaitlist } from '@/components/PremiumWaitlist';
 import { challenges, productPaths, roadmaps } from '@/lib/content';
+import { createPageMetadata } from '@/lib/seo';
+import { challengeCatalogJsonLd, websiteJsonLd } from '@/lib/structured-data';
+
+export const metadata = createPageMetadata({
+  title: 'K8sLLM Labs',
+  description:
+    'Interactive Kubernetes LLM labs for practicing vLLM, RAG, GPU node pools, observability, rollout checks, and production readiness.',
+  path: '/',
+});
 
 export default function LabsHomePage() {
   const roadmap = roadmaps[0];
 
   return (
     <main>
+      <JsonLd data={[websiteJsonLd(), challengeCatalogJsonLd(challenges)]} />
       <section className="mx-auto grid min-h-[calc(100vh-64px)] w-[min(1440px,calc(100%-32px))] gap-8 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
           <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.12em] text-teal-200">

@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ChallengeRunner } from '@/components/ChallengeRunner';
+import { JsonLd } from '@/components/JsonLd';
 import { challenges, getChallenge } from '@/lib/content';
+import { createPageMetadata } from '@/lib/seo';
+import { challengeBreadcrumbJsonLd, challengeJsonLd } from '@/lib/structured-data';
 
 type ChallengePageProps = {
   params: {
@@ -22,10 +25,11 @@ export function generateMetadata({ params }: ChallengePageProps): Metadata {
     };
   }
 
-  return {
+  return createPageMetadata({
     title: challenge.title,
     description: challenge.summary,
-  };
+    path: `/challenges/${challenge.slug}`,
+  });
 }
 
 export default function ChallengePage({ params }: ChallengePageProps) {
@@ -37,6 +41,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
   return (
     <main className="mx-auto grid w-[min(1440px,calc(100%-32px))] gap-8 py-12">
+      <JsonLd data={[challengeJsonLd(challenge), challengeBreadcrumbJsonLd(challenge)]} />
       <header className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-end">
         <div>
           <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.12em] text-teal-200">

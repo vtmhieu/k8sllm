@@ -1,11 +1,14 @@
 import { ProgressDashboard } from '@/components/ProgressDashboard';
 import { challenges } from '@/lib/content';
+import { createPageMetadata } from '@/lib/seo';
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: 'Progress',
   description:
     'Private device progress dashboard for Kubernetes LLM labs, challenge status, and completion tracking.',
-};
+  path: '/progress',
+  noIndex: true,
+});
 
 export default function ProgressPage() {
   return (

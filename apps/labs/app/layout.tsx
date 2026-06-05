@@ -3,22 +3,52 @@ import { Analytics } from '@vercel/analytics/react';
 import '@xterm/xterm/css/xterm.css';
 import './globals.css';
 import { TopNav } from '@/components/TopNav';
+import { labsDescription, labsOgImage, labsOrigin, labsSiteName } from '@/lib/seo';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://labs.k8sllm.online'),
+  metadataBase: new URL(labsOrigin),
   title: {
-    default: 'K8sLLM Labs',
+    default: labsSiteName,
     template: '%s | K8sLLM Labs',
   },
-  description:
-    'Interactive Kubernetes LLM labs with guided checks, hints, progress, and production platform challenges.',
+  applicationName: labsSiteName,
+  keywords: [
+    'Kubernetes LLM labs',
+    'K8s LLM labs',
+    'vLLM Kubernetes lab',
+    'RAG on Kubernetes lab',
+    'GPU node pool Kubernetes',
+    'MLOps labs',
+    'AI infrastructure labs',
+  ],
+  description: labsDescription,
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
-    title: 'K8sLLM Labs',
-    description:
-      'Guided Kubernetes LLM challenges for platform, DevOps, MLOps, and AI infrastructure engineers.',
-    url: 'https://labs.k8sllm.online',
-    siteName: 'K8sLLM Labs',
+    title: labsSiteName,
+    description: labsDescription,
+    url: '/',
+    siteName: labsSiteName,
     type: 'website',
+    images: [
+      {
+        url: labsOgImage,
+        width: 1200,
+        height: 630,
+        alt: 'K8sLLM Labs Kubernetes LLM challenge environment',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: labsSiteName,
+    description: labsDescription,
+    images: [labsOgImage],
   },
 };
 

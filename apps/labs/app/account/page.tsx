@@ -1,11 +1,14 @@
 import Link from 'next/link';
 import { PremiumWaitlist } from '@/components/PremiumWaitlist';
+import { createPageMetadata } from '@/lib/seo';
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: 'Early Access',
   description:
     'K8sLLM Labs early access for advanced Kubernetes LLM lab packs, downloadable kits, and review worksheets.',
-};
+  path: '/account',
+  noIndex: true,
+});
 
 export default function AccountPage() {
   return (
