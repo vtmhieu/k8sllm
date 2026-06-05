@@ -4,7 +4,7 @@
 
 :root {
   color-scheme: dark;
-  background: #101718;
+  background: #0e1013;
 }
 
 * {
@@ -18,13 +18,12 @@ html {
 body {
   margin: 0;
   background:
-    linear-gradient(135deg, rgba(15, 118, 110, 0.16), transparent 34rem),
-    linear-gradient(315deg, rgba(161, 98, 7, 0.11), transparent 30rem),
-    linear-gradient(90deg, rgba(153, 246, 228, 0.045) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(153, 246, 228, 0.04) 1px, transparent 1px),
-    #101718;
-  background-size: auto, auto, 42px 42px, 42px 42px, auto;
-  color: #eef7f3;
+    linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    radial-gradient(circle at 18% 0%, rgba(74, 222, 128, 0.055), transparent 24rem),
+    #0e1013;
+  background-size: 42px 42px, 42px 42px, auto, auto;
+  color: #e5e7eb;
   letter-spacing: 0;
   text-rendering: geometricPrecision;
 }
@@ -46,12 +45,12 @@ a:active {
 }
 
 ::selection {
-  background: rgba(153, 246, 228, 0.24);
+  background: rgba(74, 222, 128, 0.22);
 }
 
 .shell-grid {
   background-image:
-    linear-gradient(rgba(153, 246, 228, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(153, 246, 228, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
   background-size: 12px 12px;
 }

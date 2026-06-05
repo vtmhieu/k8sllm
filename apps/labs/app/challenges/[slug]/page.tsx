@@ -42,49 +42,47 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   const nextChallenge = getNextChallenge(challenge.id);
 
   return (
-    <main className="mx-auto grid w-[min(1440px,calc(100%-32px))] gap-8 py-12">
+    <main className="mx-auto grid w-[min(1480px,calc(100%-24px))] gap-4 py-6 md:w-[min(1480px,calc(100%-32px))]">
       <JsonLd data={[challengeJsonLd(challenge), challengeBreadcrumbJsonLd(challenge)]} />
-      <header className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-end">
+      <header className="grid gap-4 border border-white/10 bg-[#101214] p-5 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
-          <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.12em] text-teal-200">
+          <p className="m-0 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
             Interactive challenge
           </p>
-          <h1 className="mt-4 max-w-5xl text-6xl font-black leading-[0.9] tracking-tight text-white">
+          <h1 className="mt-3 max-w-5xl text-4xl font-black leading-none tracking-tight text-slate-100 md:text-5xl">
             {challenge.title}
           </h1>
-          <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-300">
+          <p className="mt-4 max-w-4xl text-base leading-relaxed text-slate-400">
             {challenge.summary}
           </p>
         </div>
-        <aside className="border border-white/10 bg-white/[0.045] p-5">
-          <dl className="grid gap-3 text-sm">
-            <InfoRow label="Difficulty" value={challenge.difficulty} />
-            <InfoRow label="Duration" value={challenge.duration} />
-            <InfoRow label="Persona" value={challenge.persona} />
-            <InfoRow label="Tools" value={challenge.tools.join(', ')} />
-          </dl>
-          <a
-            href={challenge.docsHref}
-            className="mt-5 flex min-h-11 items-center justify-center border border-white/10 px-4 text-sm font-black text-slate-200 transition hover:border-teal-200/40 hover:bg-white/5"
-          >
-            Read matching guide
-          </a>
-        </aside>
+        <a
+          href={challenge.docsHref}
+          className="inline-flex min-h-10 items-center justify-center border border-white/10 px-4 text-sm font-bold text-slate-300 transition hover:border-emerald-400/30 hover:bg-white/[0.04] hover:text-slate-100"
+        >
+          Read matching guide
+        </a>
       </header>
 
-      <section className="grid gap-3 border border-white/10 bg-white/[0.045] p-5">
-        <h2 className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
-          Prerequisites
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          {challenge.prerequisites.map((item) => (
-            <span
-              key={item}
-              className="border border-white/10 bg-[#101718] px-3 py-2 text-sm font-bold text-slate-200"
-            >
-              {item}
-            </span>
-          ))}
+      <section className="grid gap-px border border-white/10 bg-white/10 md:grid-cols-4">
+        <InfoCell label="Difficulty" value={challenge.difficulty} />
+        <InfoCell label="Duration" value={challenge.duration} />
+        <InfoCell label="Persona" value={challenge.persona} />
+        <InfoCell label="Tools" value={challenge.tools.join(', ')} />
+        <div className="bg-[#101214] p-4 md:col-span-4">
+          <p className="m-0 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            Prerequisites
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {challenge.prerequisites.map((item) => (
+              <span
+                key={item}
+                className="border border-white/10 bg-[#0d0f12] px-3 py-1.5 text-xs font-semibold text-slate-300"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -93,13 +91,13 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function InfoCell({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-[110px_1fr] gap-3 border-t border-white/10 pt-3 first:border-t-0 first:pt-0">
-      <dt className="font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-200">
+    <div className="bg-[#101214] p-4">
+      <p className="m-0 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
         {label}
-      </dt>
-      <dd className="m-0 font-bold text-slate-200">{value}</dd>
+      </p>
+      <p className="m-0 mt-2 truncate text-sm font-bold text-slate-200">{value}</p>
     </div>
   );
 }

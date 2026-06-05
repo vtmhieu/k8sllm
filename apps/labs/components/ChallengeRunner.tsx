@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import type { LabChallenge, LabCheck, LabStep } from '@k8sllm/lab-content';
 import { LabTerminal } from '@/components/LabTerminal';
@@ -32,13 +32,18 @@ export function ChallengeRunner({ challenge, nextChallenge }: ChallengeRunnerPro
       current.status === 'not_started'
         ? upsertChallengeProgress(stored, challenge.id, { status: 'in_progress' })
         : stored;
+    const refreshed = getChallengeProgress(next, challenge.id);
+    const firstUnfinishedStep =
+      challenge.steps.find((step) => !refreshed.completedSteps.includes(step.id)) ||
+      challenge.steps[0];
     setProgress(next);
+    setActiveStepId(firstUnfinishedStep?.id || '');
     saveProgress(next);
     trackLabEvent('challenge_start', {
       challengeId: challenge.id,
       challengeTitle: challenge.title,
     });
-  }, [challenge.id, challenge.title]);
+  }, [challenge.id, challenge.steps, challenge.title]);
 
   const challengeProgress = getChallengeProgress(progress, challenge.id);
   const activeStep = challenge.steps.find((step) => step.id === activeStepId) || challenge.steps[0];
@@ -159,6 +164,7 @@ export function ChallengeRunner({ challenge, nextChallenge }: ChallengeRunnerPro
 
   const markBlocked = () => {
     updateProgress({ status: 'blocked' });
+    setTransitionMessage('Marked blocked. Open a hint, inspect the expected signals, or reveal the solution.');
   };
 
   const selectStep = (stepId: string) => {
@@ -167,171 +173,310 @@ export function ChallengeRunner({ challenge, nextChallenge }: ChallengeRunnerPro
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[330px_1fr]">
-      <aside className="h-fit border border-white/10 bg-white/[0.045] p-5 lg:sticky lg:top-24">
-        <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
-          Challenge progress
-        </p>
-        <strong className="mt-3 block font-mono text-4xl text-white">{completionPercent}%</strong>
-        <div className="mt-4 h-2 bg-white/10">
-          <div className="h-full bg-teal-200" style={{ width: `${completionPercent}%` }} />
-        </div>
-        <p className="mt-4 text-sm font-bold text-slate-300">
-          Status: <span className="text-white">{challengeProgress.status.replace('_', ' ')}</span>
-        </p>
-        <div className="mt-5 grid gap-2">
-          {challenge.steps.map((step, index) => {
-            const done = challengeProgress.completedSteps.includes(step.id);
-            return (
-              <button
-                key={step.id}
-                type="button"
-                onClick={() => selectStep(step.id)}
-                className={
-                  step.id === activeStep?.id
-                    ? 'border border-teal-200 bg-teal-200 px-3 py-3 text-left text-sm font-black text-[#111816]'
-                    : 'border border-white/10 bg-[#101718] px-3 py-3 text-left text-sm font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white'
-                }
-              >
-                <span className="font-mono text-xs">{String(index + 1).padStart(2, '0')}</span>{' '}
-                {step.title}
-                {done ? <span className="ml-2 text-xs">Completed</span> : null}
-              </button>
-            );
-          })}
-        </div>
-      </aside>
+    <section className="grid gap-3 xl:grid-cols-[280px_minmax(0,1fr)_380px]">
+      <StepRail
+        steps={challenge.steps}
+        activeStepId={activeStep?.id || ''}
+        completedSteps={challengeProgress.completedSteps}
+        status={challengeProgress.status}
+        completionPercent={completionPercent}
+        onSelectStep={selectStep}
+      />
 
       {activeStep ? (
-        <section className="grid gap-5">
-          {transitionMessage ? (
-            <div className="border border-teal-200/30 bg-teal-200/[0.08] p-4 text-sm font-bold text-teal-100">
-              {transitionMessage}
-            </div>
-          ) : null}
-          <header className="border border-white/10 bg-white/[0.045] p-6">
-            <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
-              Guided step
-            </p>
-            <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
-              <h2 className="m-0 text-4xl font-black leading-none tracking-tight text-white">
-                {activeStep.title}
-              </h2>
-              {activeStepDone ? (
-                <span className="border border-teal-200/30 bg-teal-200/[0.08] px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-100">
-                  Step complete
-                </span>
-              ) : null}
-            </div>
-            <p className="mt-4 max-w-3xl text-slate-300">{activeStep.objective}</p>
-          </header>
-
-          <LabTerminal challenge={challenge} step={activeStep} />
-
-          <Panel title="Commands">
-            <div className="grid gap-3">
-              {activeStep.commands.map((command) => (
-                <pre
-                  key={command}
-                  className="overflow-x-auto border border-white/10 bg-[#070b0a] p-4 font-mono text-sm text-teal-100"
-                >
-                  {command}
-                </pre>
-              ))}
-            </div>
-          </Panel>
-
-          <Panel title="Expected signals">
-            <ul className="m-0 grid gap-2 p-0">
-              {activeStep.expectedSignals.map((signal) => (
-                <li key={signal} className="list-none border-l-2 border-teal-200/50 pl-3 text-slate-300">
-                  {signal}
-                </li>
-              ))}
-            </ul>
-          </Panel>
-
-          <Panel title="Checks">
-            <div className="grid gap-4">
-              {activeStep.checks.map((check) => (
-                <CheckControl
-                  key={check.id}
-                  check={check}
-                  passed={challengeProgress.passedChecks.includes(check.id)}
-                  message={checkMessages[check.id]}
-                  onPassed={(message) => markCheckPassed(check, message)}
-                  onMessage={(message) =>
-                    setCheckMessages((current) => ({ ...current, [check.id]: message }))
-                  }
-                />
-              ))}
-            </div>
-          </Panel>
-
-          <Panel title="Hints and solution">
-            <div className="grid gap-4">
-              <button
-                type="button"
-                onClick={() => revealHint(activeStep)}
-                className="w-fit border border-white/10 px-4 py-3 text-sm font-black text-slate-200 transition hover:border-teal-200/40 hover:bg-white/5"
-              >
-                Reveal next hint
-              </button>
-              <HintList step={activeStep} openedHints={challengeProgress.openedHints} />
-              <button
-                type="button"
-                onClick={() => revealSolution(activeStep)}
-                className="w-fit border border-amber-300/30 px-4 py-3 text-sm font-black text-amber-100 transition hover:bg-amber-300/10"
-              >
-                Reveal solution
-              </button>
-              {challengeProgress.revealedSolutions.includes(activeStep.id) ? (
-                <div className="border border-amber-300/20 bg-amber-300/[0.08] p-4 text-sm leading-relaxed text-amber-50">
-                  {activeStep.solution}
+        <>
+          <main className="min-w-0 border border-white/10 bg-[#101214]">
+            <div className="border-b border-white/10 px-5 py-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="m-0 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                    Active step {String(activeStepIndex + 1).padStart(2, '0')}
+                  </p>
+                  <h2 className="m-0 mt-2 text-2xl font-black leading-none tracking-tight text-slate-100 md:text-3xl">
+                    {activeStep.title}
+                  </h2>
                 </div>
-              ) : null}
+                <StepStatePill done={activeStepDone} blocked={challengeProgress.status === 'blocked'} />
+              </div>
+              <p className="m-0 mt-3 max-w-4xl text-sm leading-relaxed text-slate-400">
+                {activeStep.objective}
+              </p>
             </div>
-          </Panel>
 
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() =>
-                activeStepDone && nextUnfinishedStep
-                  ? selectStep(nextUnfinishedStep.id)
-                  : challengeDone && nextChallenge
-                    ? continueToNextChallenge()
-                  : completeStep(activeStep)
-              }
-              disabled={activeStepDone && !nextUnfinishedStep && !nextChallenge}
-              className="min-h-12 border border-teal-200/40 bg-teal-200 px-5 font-black text-[#111816] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {activeStepDone
-                ? nextUnfinishedStep
-                  ? 'Go to next unfinished step'
-                  : nextChallenge
-                    ? 'Continue to next challenge'
-                  : 'Challenge complete'
-                : 'Mark step complete'}
-            </button>
-            <button
-              type="button"
-              onClick={markBlocked}
-              className="min-h-12 border border-white/10 px-5 font-black text-slate-200 transition hover:border-amber-300/40 hover:bg-amber-300/10"
-            >
-              Mark blocked
-            </button>
-          </div>
-        </section>
+            {transitionMessage ? (
+              <div className="border-b border-emerald-400/20 bg-emerald-400/[0.06] px-5 py-3 text-sm font-semibold text-emerald-200">
+                {transitionMessage}
+              </div>
+            ) : null}
+
+            <div className="p-3 md:p-4">
+              <LabTerminal challenge={challenge} step={activeStep} />
+            </div>
+          </main>
+
+          <ValidationRail
+            activeStep={activeStep}
+            activeStepDone={activeStepDone}
+            challengeDone={challengeDone}
+            nextChallenge={nextChallenge}
+            nextUnfinishedStep={nextUnfinishedStep}
+            checkMessages={checkMessages}
+            passedChecks={challengeProgress.passedChecks}
+            openedHints={challengeProgress.openedHints}
+            revealedSolutions={challengeProgress.revealedSolutions}
+            onCheckPassed={markCheckPassed}
+            onCheckMessage={(checkId, message) =>
+              setCheckMessages((current) => ({ ...current, [checkId]: message }))
+            }
+            onRevealHint={revealHint}
+            onRevealSolution={revealSolution}
+            onCompleteStep={completeStep}
+            onContinueNextChallenge={continueToNextChallenge}
+            onMarkBlocked={markBlocked}
+            onSelectStep={selectStep}
+          />
+        </>
       ) : null}
-    </div>
+    </section>
   );
 }
 
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+function StepRail({
+  steps,
+  activeStepId,
+  completedSteps,
+  status,
+  completionPercent,
+  onSelectStep,
+}: {
+  steps: LabStep[];
+  activeStepId: string;
+  completedSteps: string[];
+  status: string;
+  completionPercent: number;
+  onSelectStep: (stepId: string) => void;
+}) {
   return (
-    <section className="border border-white/10 bg-white/[0.045] p-5">
-      <h3 className="m-0 mb-4 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
+    <aside className="h-fit border border-white/10 bg-[#101214] xl:sticky xl:top-20">
+      <div className="border-b border-white/10 p-4">
+        <p className="m-0 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
+          Lab progress
+        </p>
+        <div className="mt-3 flex items-end justify-between gap-3">
+          <strong className="font-mono text-3xl text-slate-100">{completionPercent}%</strong>
+          <span className={status === 'blocked' ? 'font-mono text-xs text-amber-300' : 'font-mono text-xs text-slate-400'}>
+            {status.replace('_', ' ')}
+          </span>
+        </div>
+        <div className="mt-4 h-1.5 bg-white/10">
+          <div className="h-full bg-emerald-400" style={{ width: `${completionPercent}%` }} />
+        </div>
+      </div>
+
+      <ol className="m-0 grid p-0">
+        {steps.map((step, index) => {
+          const done = completedSteps.includes(step.id);
+          const active = step.id === activeStepId;
+          return (
+            <li key={step.id} className="list-none border-b border-white/10 last:border-b-0">
+              <button
+                type="button"
+                onClick={() => onSelectStep(step.id)}
+                className={
+                  active
+                    ? 'grid w-full grid-cols-[28px_1fr] gap-3 bg-white/[0.06] px-4 py-3 text-left text-slate-100 outline-none ring-1 ring-inset ring-emerald-400/30'
+                    : 'grid w-full grid-cols-[28px_1fr] gap-3 px-4 py-3 text-left text-slate-400 outline-none transition hover:bg-white/[0.035] hover:text-slate-100 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-emerald-400/40'
+                }
+              >
+                <span
+                  className={
+                    done
+                      ? 'grid h-6 w-6 place-items-center border border-emerald-400/30 bg-emerald-400/10 font-mono text-[0.65rem] text-emerald-300'
+                      : active
+                        ? 'grid h-6 w-6 place-items-center border border-emerald-400/40 font-mono text-[0.65rem] text-emerald-300'
+                        : 'grid h-6 w-6 place-items-center border border-white/10 font-mono text-[0.65rem] text-slate-500'
+                  }
+                >
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span>
+                  <span className="block text-sm font-bold leading-tight">{step.title}</span>
+                  <span className="mt-1 block font-mono text-[0.66rem] uppercase tracking-[0.08em] text-slate-500">
+                    {done ? 'completed' : active ? 'active' : 'queued'}
+                  </span>
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    </aside>
+  );
+}
+
+function ValidationRail({
+  activeStep,
+  activeStepDone,
+  challengeDone,
+  nextChallenge,
+  nextUnfinishedStep,
+  checkMessages,
+  passedChecks,
+  openedHints,
+  revealedSolutions,
+  onCheckPassed,
+  onCheckMessage,
+  onRevealHint,
+  onRevealSolution,
+  onCompleteStep,
+  onContinueNextChallenge,
+  onMarkBlocked,
+  onSelectStep,
+}: {
+  activeStep: LabStep;
+  activeStepDone: boolean;
+  challengeDone: boolean;
+  nextChallenge?: Pick<LabChallenge, 'slug' | 'title'> | null;
+  nextUnfinishedStep?: LabStep;
+  checkMessages: Record<string, string>;
+  passedChecks: string[];
+  openedHints: string[];
+  revealedSolutions: string[];
+  onCheckPassed: (check: LabCheck, message: string) => void;
+  onCheckMessage: (checkId: string, message: string) => void;
+  onRevealHint: (step: LabStep) => void;
+  onRevealSolution: (step: LabStep) => void;
+  onCompleteStep: (step: LabStep) => void;
+  onContinueNextChallenge: () => void;
+  onMarkBlocked: () => void;
+  onSelectStep: (stepId: string) => void;
+}) {
+  return (
+    <aside className="grid content-start gap-3">
+      <RailSection title="Runbook">
+        <div className="grid gap-2">
+          {activeStep.commands.map((command) => (
+            <pre
+              key={command}
+              className="m-0 overflow-x-auto border border-white/10 bg-[#0b0d0f] p-3 font-mono text-xs leading-relaxed text-slate-300"
+            >
+              {command}
+            </pre>
+          ))}
+        </div>
+      </RailSection>
+
+      <RailSection title="Expected signals">
+        <ul className="m-0 grid gap-2 p-0">
+          {activeStep.expectedSignals.map((signal) => (
+            <li key={signal} className="list-none border-l border-emerald-400/30 pl-3 text-sm leading-relaxed text-slate-400">
+              {signal}
+            </li>
+          ))}
+        </ul>
+      </RailSection>
+
+      <RailSection title="Validation">
+        <div className="grid gap-3">
+          {activeStep.checks.map((check) => (
+            <CheckControl
+              key={check.id}
+              check={check}
+              passed={passedChecks.includes(check.id)}
+              message={checkMessages[check.id]}
+              onPassed={(message) => onCheckPassed(check, message)}
+              onMessage={(message) => onCheckMessage(check.id, message)}
+            />
+          ))}
+        </div>
+      </RailSection>
+
+      <RailSection title="Hints">
+        <div className="grid gap-3">
+          <button
+            type="button"
+            onClick={() => onRevealHint(activeStep)}
+            className="min-h-10 border border-white/10 px-3 text-left text-sm font-bold text-slate-300 transition hover:border-emerald-400/30 hover:bg-white/[0.04] hover:text-slate-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400/40"
+          >
+            Reveal next hint
+          </button>
+          <HintList step={activeStep} openedHints={openedHints} />
+          <button
+            type="button"
+            onClick={() => onRevealSolution(activeStep)}
+            className="min-h-10 border border-amber-300/20 px-3 text-left text-sm font-bold text-amber-200 transition hover:bg-amber-300/[0.08] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-300/40"
+          >
+            Reveal solution
+          </button>
+          {revealedSolutions.includes(activeStep.id) ? (
+            <div className="border border-amber-300/20 bg-amber-300/[0.06] p-3 text-sm leading-relaxed text-amber-100">
+              {activeStep.solution}
+            </div>
+          ) : null}
+        </div>
+      </RailSection>
+
+      <div className="grid gap-2 border border-white/10 bg-[#101214] p-3">
+        <button
+          type="button"
+          onClick={() =>
+            activeStepDone && nextUnfinishedStep
+              ? onSelectStep(nextUnfinishedStep.id)
+              : challengeDone && nextChallenge
+                ? onContinueNextChallenge()
+                : onCompleteStep(activeStep)
+          }
+          disabled={activeStepDone && !nextUnfinishedStep && !nextChallenge}
+          className="min-h-11 border border-emerald-400/30 bg-emerald-400 px-4 text-sm font-black text-[#101214] transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {activeStepDone
+            ? nextUnfinishedStep
+              ? 'Go to next unfinished step'
+              : nextChallenge
+                ? 'Continue to next challenge'
+                : 'Challenge complete'
+            : 'Mark step complete'}
+        </button>
+        <button
+          type="button"
+          onClick={onMarkBlocked}
+          className="min-h-10 border border-white/10 px-4 text-sm font-bold text-slate-300 transition hover:border-amber-300/30 hover:bg-amber-300/[0.06] hover:text-amber-100"
+        >
+          Mark blocked
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+function StepStatePill({ done, blocked }: { done: boolean; blocked: boolean }) {
+  if (blocked && !done) {
+    return (
+      <span className="border border-amber-300/25 px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-amber-200">
+        blocked
+      </span>
+    );
+  }
+
+  if (done) {
+    return (
+      <span className="border border-emerald-400/25 bg-emerald-400/[0.06] px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-emerald-300">
+        step complete
+      </span>
+    );
+  }
+
+  return (
+    <span className="border border-white/10 px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-slate-400">
+      running
+    </span>
+  );
+}
+
+function RailSection({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="border border-white/10 bg-[#101214] p-4">
+      <h3 className="m-0 mb-3 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
         {title}
       </h3>
       {children}
@@ -381,30 +526,35 @@ function CheckControl({
     <div
       className={
         passed
-          ? 'border border-teal-200/30 bg-teal-200/[0.06] p-4'
-          : 'border border-white/10 bg-[#101718] p-4'
+          ? 'border border-emerald-400/25 bg-emerald-400/[0.045] p-3'
+          : 'border border-white/10 bg-[#0d0f12] p-3'
       }
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <p className="m-0 text-sm font-bold text-white">{check.prompt}</p>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <p className="m-0 text-sm font-semibold leading-relaxed text-slate-200">{check.prompt}</p>
         {passed ? (
-          <span className="border border-teal-200/30 px-2 py-1 font-mono text-[0.65rem] font-black uppercase tracking-[0.08em] text-teal-100">
-            Passed
+          <span className="border border-emerald-400/25 px-2 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-emerald-300">
+            passed
           </span>
         ) : null}
       </div>
       {check.type === 'paste_regex' ? (
-        <div className="mt-3 grid gap-3">
-          <textarea
-            value={value}
-            onChange={(event) => setValue(event.target.value)}
-            className="min-h-32 resize-y border border-white/10 bg-[#070b0a] p-3 font-mono text-sm text-slate-100 outline-none transition focus:border-teal-200/50"
-            placeholder="Paste command output here"
-          />
+        <div className="mt-3 grid gap-2">
+          <label className="grid gap-2">
+            <span className="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-slate-500">
+              Terminal evidence
+            </span>
+            <textarea
+              value={value}
+              onChange={(event) => setValue(event.target.value)}
+              className="min-h-28 resize-y border border-white/10 bg-[#070809] p-3 font-mono text-xs leading-relaxed text-slate-200 outline-none transition placeholder:text-slate-600 focus:border-emerald-400/35"
+              placeholder="Paste command output"
+            />
+          </label>
           <button
             type="button"
             onClick={validatePaste}
-            className="w-fit border border-teal-200/40 px-4 py-2 text-sm font-black text-teal-100 transition hover:bg-teal-200 hover:text-[#111816]"
+            className="w-fit border border-emerald-400/25 px-3 py-2 text-xs font-black text-emerald-300 transition hover:bg-emerald-400 hover:text-[#101214]"
           >
             {passed ? 'Re-check output' : 'Check output'}
           </button>
@@ -415,20 +565,20 @@ function CheckControl({
         <button
           type="button"
           onClick={() => onPassed(check.successMessage)}
-          className="mt-3 border border-teal-200/40 px-4 py-2 text-sm font-black text-teal-100 transition hover:bg-teal-200 hover:text-[#111816]"
+          className="mt-3 border border-emerald-400/25 px-3 py-2 text-xs font-black text-emerald-300 transition hover:bg-emerald-400 hover:text-[#101214]"
         >
           Confirm
         </button>
       ) : null}
 
       {check.type === 'multi_choice' ? (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 grid gap-2">
           {check.options.map((option) => (
             <button
               key={option}
               type="button"
               onClick={() => chooseOption(option)}
-              className="border border-white/10 px-3 py-2 text-left text-sm font-bold text-slate-300 transition hover:border-teal-200/40 hover:bg-white/5 hover:text-white"
+              className="border border-white/10 px-3 py-2 text-left text-xs font-semibold leading-relaxed text-slate-300 transition hover:border-emerald-400/25 hover:bg-white/[0.035] hover:text-slate-100"
             >
               {option}
             </button>
@@ -440,8 +590,8 @@ function CheckControl({
         <p
           className={
             passed
-              ? 'mt-3 border border-teal-200/20 bg-teal-200/[0.08] p-3 text-sm font-bold text-teal-100'
-              : 'mt-3 border border-amber-300/20 bg-amber-300/[0.08] p-3 text-sm font-bold text-amber-100'
+              ? 'mt-3 border border-emerald-400/20 bg-emerald-400/[0.055] p-3 text-xs font-semibold leading-relaxed text-emerald-200'
+              : 'mt-3 border border-amber-300/20 bg-amber-300/[0.06] p-3 text-xs font-semibold leading-relaxed text-amber-100'
           }
         >
           {message}
@@ -459,14 +609,16 @@ function HintList({ step, openedHints }: { step: LabStep; openedHints: string[] 
   );
 
   if (hints.length === 0) {
-    return <p className="m-0 text-sm text-slate-400">No hints opened for this step yet.</p>;
+    return <p className="m-0 text-sm text-slate-500">No hints opened for this step yet.</p>;
   }
 
   return (
     <ol className="m-0 grid gap-2 p-0">
       {hints.map((hint, index) => (
-        <li key={hint} className="list-none border border-white/10 bg-[#101718] p-3 text-sm text-slate-200">
-          <span className="font-mono text-xs font-black text-teal-200">Hint {index + 1}</span>
+        <li key={hint} className="list-none border border-white/10 bg-[#0d0f12] p-3 text-sm leading-relaxed text-slate-300">
+          <span className="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-slate-500">
+            Hint {index + 1}
+          </span>
           <p className="m-0 mt-1">{hint}</p>
         </li>
       ))}

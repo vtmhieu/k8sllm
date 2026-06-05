@@ -12,7 +12,20 @@ type LabTerminalProps = {
   step: LabStep;
 };
 
-const prompt = 'lab@k8sllm:~$ ';
+const ansi = {
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  gray: '\x1b[90m',
+};
+
+const prompt = `${ansi.green}lab@k8sllm${ansi.reset}:${ansi.blue}llm-serving${ansi.reset}$ `;
 
 export function LabTerminal({ challenge, step }: LabTerminalProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -36,7 +49,7 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     const terminal = terminalRef.current;
 
     if (terminal) {
-      writeInfo(terminal, `Switched to step: ${step.title}`);
+      writeInfo(terminal, `switched step: ${step.title}`);
       writePrompt(terminal);
     }
   }, [challenge, step]);
@@ -63,23 +76,31 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
         disableStdin: false,
         fontFamily: 'JetBrains Mono, SFMono-Regular, Consolas, monospace',
         fontSize: 13,
-        lineHeight: 1.35,
-        rows: 18,
-        scrollback: 1200,
+        lineHeight: 1.34,
+        rows: 24,
+        scrollback: 1600,
         theme: {
-          background: '#070b0a',
-          foreground: '#d9fff6',
-          cursor: '#99f6e4',
-          cursorAccent: '#101718',
-          selectionBackground: '#0f766e66',
-          black: '#070b0a',
-          blue: '#7dd3fc',
-          cyan: '#99f6e4',
-          green: '#5eead4',
-          magenta: '#d8b4fe',
-          red: '#fca5a5',
-          white: '#eef7f3',
-          yellow: '#fde68a',
+          background: '#08090a',
+          foreground: '#d4d4d4',
+          cursor: '#e5e7eb',
+          cursorAccent: '#08090a',
+          selectionBackground: '#37415199',
+          black: '#111827',
+          red: '#ef4444',
+          green: '#22c55e',
+          yellow: '#f59e0b',
+          blue: '#3b82f6',
+          magenta: '#a855f7',
+          cyan: '#06b6d4',
+          white: '#e5e7eb',
+          brightBlack: '#6b7280',
+          brightRed: '#f87171',
+          brightGreen: '#4ade80',
+          brightYellow: '#fbbf24',
+          brightBlue: '#60a5fa',
+          brightMagenta: '#c084fc',
+          brightCyan: '#67e8f9',
+          brightWhite: '#f9fafb',
         },
       });
       const fitAddon = new FitAddon();
@@ -156,71 +177,69 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
   };
 
   return (
-    <section className="overflow-hidden border border-teal-200/20 bg-[#070b0a] shadow-diffusion">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-[#101718] px-4 py-3">
-        <div>
-          <p className="m-0 font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-200">
-            K8sLLM lab terminal
-          </p>
-          <p className="m-0 mt-1 text-sm text-slate-400">
-            Connected to the `llm-serving` lab environment. Type Kubernetes and LLM platform commands directly.
+    <section className="overflow-hidden border border-white/10 bg-[#08090a]">
+      <div className="grid border-b border-white/10 bg-[#0f1115] md:grid-cols-[1fr_auto]">
+        <div className="min-w-0 px-4 py-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" aria-hidden="true" />
+            <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" aria-hidden="true" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" aria-hidden="true" />
+            <p className="m-0 ml-2 truncate font-mono text-xs text-slate-400">
+              lab@k8sllm:llm-serving
+            </p>
+          </div>
+          <p className="m-0 mt-2 text-sm text-slate-500">
+            Kubernetes context is loaded. Type commands directly or run the step sequence.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2 border-t border-white/10 px-4 py-3 md:border-l md:border-t-0">
           <TerminalButton onClick={() => void runSuggestedSequence()} disabled={!ready || running}>
-            {running ? 'Running' : 'Run step commands'}
+            {running ? 'running' : 'run step'}
           </TerminalButton>
           <TerminalButton onClick={copyLastOutput} disabled={!lastOutput}>
-            {copied ? 'Copied' : 'Copy last output'}
+            {copied ? 'copied' : 'copy output'}
           </TerminalButton>
           <TerminalButton onClick={resetEnvironment} disabled={!ready}>
-            Reset
+            reset
           </TerminalButton>
         </div>
       </div>
-      <div className="grid gap-px bg-white/10 xl:grid-cols-[minmax(0,1fr)_280px]">
-        <div className="min-h-[380px] min-w-0 bg-[#070b0a] p-3">
-          <div ref={containerRef} className="h-[360px] w-full" aria-label="K8sLLM lab terminal" />
+
+      <div className="grid bg-white/10 lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-px">
+        <div className="min-h-[520px] min-w-0 bg-[#08090a] p-3">
+          <div ref={containerRef} className="h-[500px] w-full" aria-label="K8sLLM lab terminal" />
         </div>
-        <aside className="grid content-start gap-3 bg-[#101718] p-4">
+        <aside className="grid content-start gap-3 border-t border-white/10 bg-[#0f1115] p-4 lg:border-t-0">
           <div className="grid grid-cols-2 gap-2">
-            <ShellStatus label="Cluster" value="k8sllm-lab-01" />
-            <ShellStatus label="Namespace" value="llm-serving" />
-            <ShellStatus label="GPU pool" value="ready" />
-            <ShellStatus label="Telemetry" value="ready" />
+            <ShellStatus label="cluster" value="k8sllm-lab-01" state="ready" />
+            <ShellStatus label="namespace" value="llm-serving" state="ready" />
+            <ShellStatus label="gpu pool" value="ready" state="ready" />
+            <ShellStatus label="telemetry" value="ready" state="ready" />
           </div>
-          <p className="m-0 font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-200">
-            Try these
-          </p>
-          <button
-            type="button"
-            disabled={!ready || running}
-            onClick={() => writeAndRun('help')}
-            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            help
-          </button>
-          <button
-            type="button"
-            disabled={!ready || running}
-            onClick={() => writeAndRun('k8sllm status')}
-            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            k8sllm status
-          </button>
-          <button
-            type="button"
-            disabled={!ready || running}
-            onClick={() => writeAndRun('k8sllm commands')}
-            className="border border-white/10 px-3 py-2 text-left font-mono text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            k8sllm commands
-          </button>
-          <div className="border border-white/10 bg-[#070b0a] p-3">
-            <p className="m-0 font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-200">
-              Current step
+          <div>
+            <p className="m-0 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              command history
             </p>
-            <p className="m-0 mt-2 text-sm font-bold leading-relaxed text-slate-200">{step.title}</p>
+            <div className="mt-2 grid gap-1">
+              <CommandSuggestion disabled={!ready || running} onClick={() => writeAndRun('help')}>
+                help
+              </CommandSuggestion>
+              <CommandSuggestion disabled={!ready || running} onClick={() => writeAndRun('k8sllm status')}>
+                k8sllm status
+              </CommandSuggestion>
+              <CommandSuggestion disabled={!ready || running} onClick={() => writeAndRun('k8sllm commands')}>
+                k8sllm commands
+              </CommandSuggestion>
+              <CommandSuggestion disabled={!ready || running} onClick={() => writeAndRun('kubectl config current-context')}>
+                kubectl config current-context
+              </CommandSuggestion>
+            </div>
+          </div>
+          <div className="border border-white/10 bg-[#08090a] p-3">
+            <p className="m-0 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              active runbook
+            </p>
+            <p className="m-0 mt-2 text-sm font-semibold leading-relaxed text-slate-300">{step.title}</p>
           </div>
         </aside>
       </div>
@@ -252,7 +271,7 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     }
 
     if (data === '\u0003') {
-      terminal.write('^C\r\n');
+      terminal.write(`${ansi.red}^C${ansi.reset}\r\n`);
       currentLineRef.current = '';
       writePrompt(terminal);
       return;
@@ -279,7 +298,7 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
 
   async function runCommand(command: string, terminal: Terminal, echoCommand: boolean) {
     if (runningRef.current) {
-      writeInfo(terminal, 'A command is already running. Wait for the prompt to return.');
+      writeInfo(terminal, 'command already running; wait for prompt');
       writePrompt(terminal);
       return;
     }
@@ -289,7 +308,7 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     if (echoCommand) {
       clearCurrentLine(terminal);
       currentLineRef.current = '';
-      terminal.write(trimmed + '\r\n');
+      terminal.write(`${trimmed}\r\n`);
     }
 
     if (trimmed) {
@@ -300,7 +319,7 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     setRunning(true);
     const startedAt = Date.now();
     if (trimmed && trimmed !== 'clear') {
-      terminal.writeln('[running]');
+      terminal.writeln(`${ansi.gray}[running]${ansi.reset}`);
       await waitForCommand(trimmed);
     }
 
@@ -341,7 +360,9 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
     }
 
     if (trimmed) {
-      terminal.writeln(`[exit ${result.matched ? '0' : '127'}] ${Date.now() - startedAt}ms`);
+      const exitCode = result.matched ? '0' : '127';
+      const exitColor = result.matched ? ansi.green : ansi.red;
+      terminal.writeln(`${exitColor}[exit ${exitCode}]${ansi.reset} ${ansi.gray}${Date.now() - startedAt}ms${ansi.reset}`);
     }
     runningRef.current = false;
     setRunning(false);
@@ -376,18 +397,18 @@ export function LabTerminal({ challenge, step }: LabTerminalProps) {
 }
 
 function writeIntro(terminal: Terminal, challenge: LabChallenge, step: LabStep) {
-  terminal.writeln('Connecting to k8sllm-lab-01 ... connected');
-  terminal.writeln('Context: cluster=k8sllm-lab-01 namespace=llm-serving user=lab');
-  terminal.writeln(`Challenge: ${challenge.title}`);
-  terminal.writeln(`Step: ${step.title}`);
-  terminal.writeln('Type `help` or `k8sllm commands` to begin.');
+  terminal.writeln(`${ansi.gray}ssh lab@k8sllm-lab-01${ansi.reset}`);
+  terminal.writeln(`${ansi.green}connected${ansi.reset} ${ansi.gray}cluster=k8sllm-lab-01 namespace=llm-serving user=lab${ansi.reset}`);
+  terminal.writeln(`${ansi.gray}challenge${ansi.reset}: ${ansi.bold}${challenge.title}${ansi.reset}`);
+  terminal.writeln(`${ansi.gray}step${ansi.reset}: ${step.title}`);
+  terminal.writeln(`${ansi.gray}type 'help' or 'k8sllm commands' to begin${ansi.reset}`);
   terminal.writeln('');
   writePrompt(terminal);
 }
 
 function writeInfo(terminal: Terminal, message: string) {
   terminal.writeln('');
-  terminal.writeln(`info: ${message}`);
+  terminal.writeln(`${ansi.gray}info:${ansi.reset} ${message}`);
 }
 
 function writePrompt(terminal: Terminal) {
@@ -395,7 +416,29 @@ function writePrompt(terminal: Terminal) {
 }
 
 function formatOutput(output: string) {
-  return `${output.replace(/\n/g, '\r\n')}\r\n`;
+  return `${output
+    .split('\n')
+    .map((line) => colorizeLine(line))
+    .join('\r\n')}\r\n`;
+}
+
+function colorizeLine(line: string) {
+  if (/error|failed|not found|unauthorized/i.test(line)) {
+    return `${ansi.red}${line}${ansi.reset}`;
+  }
+  if (/warn|pending|filtered_before_prompt/i.test(line)) {
+    return `${ansi.yellow}${line}${ansi.reset}`;
+  }
+  if (/ready|running|active|successfully|authorized|200|loaded|connected/i.test(line)) {
+    return `${ansi.green}${line}${ansi.reset}`;
+  }
+  if (/info|context|challenge|step/i.test(line)) {
+    return `${ansi.gray}${line}${ansi.reset}`;
+  }
+  if (/ttft|queue|tokens|gpu|nvidia|accelerator/i.test(line)) {
+    return `${ansi.cyan}${line}${ansi.reset}`;
+  }
+  return line;
 }
 
 function waitForCommand(command: string) {
@@ -408,13 +451,15 @@ function waitForCommand(command: string) {
   });
 }
 
-function ShellStatus({ label, value }: { label: string; value: string }) {
+function ShellStatus({ label, value, state }: { label: string; value: string; state: 'ready' | 'idle' }) {
   return (
-    <div className="border border-white/10 bg-[#070b0a] p-2">
-      <p className="m-0 font-mono text-[0.58rem] font-black uppercase tracking-[0.08em] text-teal-200">
+    <div className="border border-white/10 bg-[#08090a] p-2">
+      <p className="m-0 font-mono text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-slate-500">
         {label}
       </p>
-      <p className="m-0 mt-1 truncate font-mono text-xs font-bold text-slate-200">{value}</p>
+      <p className={state === 'ready' ? 'm-0 mt-1 truncate font-mono text-xs font-semibold text-emerald-300' : 'm-0 mt-1 truncate font-mono text-xs font-semibold text-slate-300'}>
+        {value}
+      </p>
     </div>
   );
 }
@@ -433,8 +478,30 @@ function TerminalButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="min-h-10 border border-white/10 px-3 text-xs font-black text-slate-200 transition hover:border-teal-200/40 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-45"
+      className="min-h-9 border border-white/10 px-3 font-mono text-xs font-semibold text-slate-300 transition hover:border-emerald-400/25 hover:bg-white/[0.04] hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-45"
     >
+      {children}
+    </button>
+  );
+}
+
+function CommandSuggestion({
+  children,
+  disabled,
+  onClick,
+}: {
+  children: ReactNode;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className="border border-transparent px-0 py-1 text-left font-mono text-xs text-slate-400 transition hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-45"
+    >
+      <span className="text-slate-600">$ </span>
       {children}
     </button>
   );
