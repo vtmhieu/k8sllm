@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import type { LabChallenge } from '@k8sllm/lab-content';
-import { getChallengeProgress, loadProgress, ProgressStore } from '@/lib/progress';
+import { getChallengeProgress, loadProgress } from '@/lib/progress';
+import type { ProgressStore } from '@/lib/progress';
 
 type ChallengeCatalogClientProps = {
   challenges: LabChallenge[];
@@ -13,6 +15,13 @@ type ChallengeCatalogClientProps = {
 const allTopics = 'All topics';
 const allDifficulties = 'All difficulty';
 const allPaths = 'All paths';
+
+const statusTone = {
+  not_started: 'border-slate-700 bg-slate-950 text-slate-400',
+  in_progress: 'border-sky-400/50 bg-sky-400/10 text-sky-200',
+  blocked: 'border-red-400/50 bg-red-400/10 text-red-200',
+  completed: 'border-teal-300/60 bg-teal-300/10 text-teal-200',
+};
 
 export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCatalogClientProps) {
   const [topic, setTopic] = useState(allTopics);
@@ -32,6 +41,13 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
     () => [allDifficulties, ...Array.from(new Set(challenges.map((challenge) => challenge.difficulty)))],
     [challenges],
   );
+  const pathLabels = useMemo(
+    () => ({
+      [allPaths]: allPaths,
+      ...Object.fromEntries(productPaths.map((item) => [item.id, item.title])),
+    }),
+    [productPaths],
+  );
 
   const visibleChallenges = useMemo(
     () =>
@@ -45,17 +61,23 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
   );
 
   return (
-    <section className="grid gap-6">
-      <div className="grid gap-px border border-white/10 bg-white/10 lg:grid-cols-[0.8fr_1fr]">
-        <div className="bg-[#111816]/88 p-5">
-          <span className="font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
+    <section className="border border-slate-800 bg-slate-950 text-slate-100">
+      <div className="grid border-b border-slate-800 lg:grid-cols-[minmax(0,0.76fr)_minmax(560px,1fr)]">
+        <div className="border-b border-slate-800 px-3 py-3 lg:border-b-0 lg:border-r">
+          <p className="m-0 font-mono text-[0.68rem] font-black uppercase text-teal-200">
             Challenge catalog
-          </span>
-          <h2 className="mt-3 text-3xl font-black leading-none tracking-tight text-white">
-            Guided checks for Kubernetes LLM operators.
-          </h2>
+          </p>
+          <div className="mt-2 flex flex-wrap items-end gap-x-4 gap-y-1">
+            <h2 className="m-0 text-xl font-black leading-none tracking-tight text-white">
+              Operator lab index
+            </h2>
+            <span className="font-mono text-[0.68rem] font-bold uppercase text-slate-500">
+              {visibleChallenges.length}/{challenges.length} visible
+            </span>
+          </div>
         </div>
-        <div className="grid gap-4 bg-[#111816]/88 p-5">
+
+        <div className="grid gap-2 px-3 py-3">
           <FilterGroup label="Topic" values={topics} value={topic} onChange={setTopic} />
           <FilterGroup
             label="Difficulty"
@@ -68,68 +90,102 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
             values={[allPaths, ...productPaths.map((item) => item.id)]}
             value={path}
             onChange={setPath}
-            labels={{
-              [allPaths]: allPaths,
-              ...Object.fromEntries(productPaths.map((item) => [item.id, item.title])),
-            }}
+            labels={pathLabels}
           />
         </div>
       </div>
 
-      <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
-        Showing {visibleChallenges.length} of {challenges.length} challenges
-      </p>
-
       {visibleChallenges.length > 0 ? (
-        <div className="grid gap-4 lg:grid-cols-2">
-          {visibleChallenges.map((challenge) => {
-            const challengeProgress = getChallengeProgress(progress, challenge.id);
-            return (
-              <article
-                key={challenge.id}
-                className="grid min-h-[360px] gap-5 border border-white/10 bg-white/[0.045] p-5 transition hover:border-teal-200/35 hover:bg-white/[0.07]"
-              >
-                <div className="flex flex-wrap gap-2">
-                  <MetaPill>{challenge.topic}</MetaPill>
-                  <MetaPill>{challenge.difficulty}</MetaPill>
-                  <MetaPill>{challenge.duration}</MetaPill>
-                  <MetaPill>{challenge.free ? 'Free' : 'Premium'}</MetaPill>
-                </div>
-                <div>
-                  <h3 className="m-0 text-2xl font-black leading-none tracking-tight text-white">
-                    {challenge.title}
-                  </h3>
-                  <p className="mt-4 text-sm leading-relaxed text-slate-300">{challenge.summary}</p>
-                </div>
-                <dl className="grid gap-3 border-t border-white/10 pt-4 text-sm">
-                  <InfoRow label="Persona" value={challenge.persona} />
-                  <InfoRow label="Tools" value={challenge.tools.join(', ')} />
-                  <InfoRow label="Progress" value={challengeProgress.status.replace('_', ' ')} />
-                </dl>
-                <div className="mt-auto flex flex-wrap gap-3">
-                  <Link
-                    href={`/challenges/${challenge.slug}`}
-                    className="min-h-11 border border-teal-200/40 bg-teal-200 px-4 py-3 text-sm font-black text-[#111816] transition hover:bg-white"
-                  >
-                    Start challenge
-                  </Link>
-                  <a
-                    href={challenge.docsHref}
-                    className="min-h-11 border border-white/10 px-4 py-3 text-sm font-bold text-slate-200 transition hover:border-white/25 hover:bg-white/5"
-                  >
-                    Read guide
-                  </a>
-                </div>
-              </article>
-            );
-          })}
+        <div>
+          <div className="hidden grid-cols-[42px_minmax(0,1.55fr)_104px_92px_136px_minmax(170px,0.8fr)_138px] border-b border-slate-800 px-3 py-2 font-mono text-[0.65rem] font-black uppercase text-slate-500 lg:grid">
+            <span>ID</span>
+            <span>Challenge</span>
+            <span>Difficulty</span>
+            <span>Time</span>
+            <span>Progress status</span>
+            <span>Persona / tools</span>
+            <span className="text-right">Actions</span>
+          </div>
+
+          <div className="divide-y divide-slate-800">
+            {visibleChallenges.map((challenge, index) => {
+              const challengeProgress = getChallengeProgress(progress, challenge.id);
+              const pathIds = challenge.roadmapIds.join(' / ');
+
+              return (
+                <article
+                  key={challenge.id}
+                  className="grid gap-3 px-3 py-3 transition hover:bg-slate-900/60 lg:grid-cols-[42px_minmax(0,1.55fr)_104px_92px_136px_minmax(170px,0.8fr)_138px] lg:items-start"
+                >
+                  <div className="font-mono text-[0.68rem] font-black text-slate-600">
+                    {String(index + 1).padStart(2, '0')}
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-1">
+                      <MetaChip>{challenge.topic}</MetaChip>
+                      {pathIds ? <MetaChip>{pathIds}</MetaChip> : null}
+                    </div>
+                    <h3 className="mt-2 text-base font-black leading-snug text-white">
+                      <Link
+                        href={`/challenges/${challenge.slug}`}
+                        className="outline-none hover:text-teal-200 focus-visible:text-teal-200"
+                      >
+                        {challenge.title}
+                      </Link>
+                    </h3>
+                    <p className="m-0 mt-1 text-[0.8rem] leading-5 text-slate-400">{challenge.summary}</p>
+
+                    <div className="mt-3 grid gap-1.5 border-t border-slate-800 pt-2 lg:hidden">
+                      <CompactMeta label="Difficulty" value={challenge.difficulty} />
+                      <CompactMeta label="Time" value={challenge.duration} />
+                      <CompactMeta
+                        label="Progress status"
+                        value={formatStatus(challengeProgress.status)}
+                        valueClassName={statusTone[challengeProgress.status]}
+                      />
+                    </div>
+                  </div>
+
+                  <MetadataColumn label="Difficulty" value={challenge.difficulty} />
+                  <MetadataColumn label="Time" value={challenge.duration} />
+                  <MetadataColumn
+                    label="Progress status"
+                    value={formatStatus(challengeProgress.status)}
+                    valueClassName={statusTone[challengeProgress.status]}
+                  />
+
+                  <div className="hidden min-w-0 text-[0.76rem] leading-5 text-slate-300 lg:block">
+                    <p className="m-0 truncate font-bold text-slate-200">{challenge.persona}</p>
+                    <p className="m-0 truncate font-mono text-[0.68rem] uppercase text-slate-500">
+                      {challenge.tools.join(' + ')}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-1.5 lg:justify-end">
+                    <Link
+                      href={`/challenges/${challenge.slug}`}
+                      className="border border-teal-300 bg-teal-300 px-2.5 py-1.5 font-mono text-[0.68rem] font-black uppercase text-slate-950 outline-none transition hover:bg-white focus-visible:ring-2 focus-visible:ring-teal-200"
+                    >
+                      Open lab
+                    </Link>
+                    <a
+                      href={challenge.docsHref}
+                      className="border border-slate-800 bg-slate-950 px-2.5 py-1.5 font-mono text-[0.68rem] font-black uppercase text-slate-300 outline-none transition hover:border-white/20 hover:bg-slate-900 hover:text-white focus-visible:ring-2 focus-visible:ring-teal-200"
+                    >
+                      Docs
+                    </a>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
       ) : (
-        <div className="border border-dashed border-white/20 bg-white/[0.035] p-8">
-          <h3 className="m-0 text-2xl font-black text-white">No matching challenge</h3>
-          <p className="mt-3 max-w-2xl text-slate-300">
-            Clear one filter or switch paths. The catalog is designed to grow weekly without changing
-            the app model.
+        <div className="border-t border-dashed border-slate-800 px-3 py-8">
+          <h3 className="m-0 font-mono text-sm font-black uppercase text-white">No matching challenge</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+            Clear a filter or switch product paths to restore the indexed challenge view.
           </p>
         </div>
       )}
@@ -151,11 +207,11 @@ function FilterGroup({
   labels?: Record<string, string>;
 }) {
   return (
-    <div className="grid gap-2">
-      <span className="font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
+    <div className="grid gap-1 sm:grid-cols-[88px_1fr] sm:items-start">
+      <span className="font-mono text-[0.65rem] font-black uppercase leading-7 text-slate-500">
         {label}
       </span>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1">
         {values.map((item) => (
           <button
             key={item}
@@ -163,8 +219,8 @@ function FilterGroup({
             onClick={() => onChange(item)}
             className={
               item === value
-                ? 'border border-teal-200 bg-teal-200 px-3 py-2 text-xs font-black text-[#111816]'
-                : 'border border-white/10 bg-white/[0.035] px-3 py-2 text-xs font-bold text-slate-300 transition hover:border-teal-200/40 hover:text-white'
+                ? 'border border-teal-300 bg-teal-300 px-2 py-1 font-mono text-[0.68rem] font-black uppercase text-slate-950 outline-none focus-visible:ring-2 focus-visible:ring-teal-200'
+                : 'border border-slate-800 bg-slate-950 px-2 py-1 font-mono text-[0.68rem] font-bold uppercase text-slate-400 outline-none transition hover:border-white/20 hover:bg-slate-900 hover:text-white focus-visible:ring-2 focus-visible:ring-teal-200'
             }
           >
             {labels[item] || item}
@@ -175,21 +231,56 @@ function FilterGroup({
   );
 }
 
-function MetaPill({ children }: { children: React.ReactNode }) {
+function MetadataColumn({
+  label,
+  value,
+  valueClassName = 'border-slate-800 bg-slate-950 text-slate-200',
+}: {
+  label: string;
+  value: string;
+  valueClassName?: string;
+}) {
   return (
-    <span className="border border-teal-200/20 bg-teal-200/[0.08] px-2.5 py-1 font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-100">
+    <div className="hidden lg:block">
+      <span className="sr-only">{label}</span>
+      <span
+        className={`inline-flex border px-2 py-1 font-mono text-[0.68rem] font-black uppercase ${valueClassName}`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function CompactMeta({
+  label,
+  value,
+  valueClassName = 'border-slate-800 bg-slate-950 text-slate-200',
+}: {
+  label: string;
+  value: string;
+  valueClassName?: string;
+}) {
+  return (
+    <div className="grid grid-cols-[132px_1fr] items-center gap-2">
+      <span className="font-mono text-[0.65rem] font-black uppercase text-slate-500">{label}</span>
+      <span
+        className={`w-fit border px-2 py-1 font-mono text-[0.68rem] font-black uppercase ${valueClassName}`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function MetaChip({ children }: { children: ReactNode }) {
+  return (
+    <span className="border border-slate-800 bg-slate-950 px-1.5 py-0.5 font-mono text-[0.62rem] font-black uppercase text-slate-400">
       {children}
     </span>
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid grid-cols-[110px_1fr] gap-3">
-      <dt className="font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-200">
-        {label}
-      </dt>
-      <dd className="m-0 font-bold text-slate-200">{value}</dd>
-    </div>
-  );
+function formatStatus(status: string) {
+  return status.replace(/_/g, ' ');
 }

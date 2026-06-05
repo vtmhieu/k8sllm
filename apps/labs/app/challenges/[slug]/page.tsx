@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ChallengeRunner } from '@/components/ChallengeRunner';
 import { JsonLd } from '@/components/JsonLd';
-import { challenges, getChallenge } from '@/lib/content';
+import { challenges, getChallenge, getNextChallenge } from '@/lib/content';
 import { createPageMetadata } from '@/lib/seo';
 import { challengeBreadcrumbJsonLd, challengeJsonLd } from '@/lib/structured-data';
 
@@ -38,6 +38,8 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   if (!challenge) {
     notFound();
   }
+
+  const nextChallenge = getNextChallenge(challenge.id);
 
   return (
     <main className="mx-auto grid w-[min(1440px,calc(100%-32px))] gap-8 py-12">
@@ -86,7 +88,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
         </div>
       </section>
 
-      <ChallengeRunner challenge={challenge} />
+      <ChallengeRunner challenge={challenge} nextChallenge={nextChallenge} />
     </main>
   );
 }
