@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { LabChallenge, LabCheck, LabStep } from '@k8sllm/lab-content';
 import { LabTerminal } from '@/components/LabTerminal';
 import { trackLabEvent } from '@/lib/analytics';
@@ -14,9 +15,11 @@ import {
 
 type ChallengeRunnerProps = {
   challenge: LabChallenge;
+  nextChallenge?: Pick<LabChallenge, 'slug' | 'title'> | null;
 };
 
-export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
+export function ChallengeRunner({ challenge, nextChallenge }: ChallengeRunnerProps) {
+  const router = useRouter();
   const [progress, setProgress] = useState<ProgressStore>({});
   const [activeStepId, setActiveStepId] = useState(challenge.steps[0]?.id || '');
   const [checkMessages, setCheckMessages] = useState<Record<string, string>>({});
@@ -54,6 +57,7 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
   ).length;
   const completionPercent =
     challenge.steps.length > 0 ? Math.round((completedCount / challenge.steps.length) * 100) : 0;
+  const challengeDone = completedCount === challenge.steps.length;
 
   const updateProgress = (update: Parameters<typeof upsertChallengeProgress>[2]) => {
     setProgress((current) => {
@@ -61,6 +65,14 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
       saveProgress(next);
       return next;
     });
+  };
+
+  const continueToNextChallenge = () => {
+    if (!nextChallenge) {
+      return;
+    }
+
+    router.push(`/challenges/${nextChallenge.slug}`);
   };
 
   const markCheckPassed = (check: LabCheck, message: string) => {
@@ -130,7 +142,12 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
     });
 
     if (allDone) {
-      setTransitionMessage('Challenge complete. Review the expected signals and move to the roadmap when ready.');
+      if (nextChallenge) {
+        setTransitionMessage(`Challenge complete. Continuing to ${nextChallenge.title}.`);
+        window.setTimeout(continueToNextChallenge, 650);
+      } else {
+        setTransitionMessage('Challenge complete. All roadmap challenges are complete.');
+      }
       return;
     }
 
@@ -282,14 +299,18 @@ export function ChallengeRunner({ challenge }: ChallengeRunnerProps) {
               onClick={() =>
                 activeStepDone && nextUnfinishedStep
                   ? selectStep(nextUnfinishedStep.id)
+                  : challengeDone && nextChallenge
+                    ? continueToNextChallenge()
                   : completeStep(activeStep)
               }
-              disabled={activeStepDone && !nextUnfinishedStep}
+              disabled={activeStepDone && !nextUnfinishedStep && !nextChallenge}
               className="min-h-12 border border-teal-200/40 bg-teal-200 px-5 font-black text-[#111816] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               {activeStepDone
                 ? nextUnfinishedStep
                   ? 'Go to next unfinished step'
+                  : nextChallenge
+                    ? 'Continue to next challenge'
                   : 'Challenge complete'
                 : 'Mark step complete'}
             </button>
