@@ -147,12 +147,7 @@ export function ChallengeRunner({ challenge, nextChallenge }: ChallengeRunnerPro
     });
 
     if (allDone) {
-      if (nextChallenge) {
-        setTransitionMessage(`Challenge complete. Continuing to ${nextChallenge.title}.`);
-        window.setTimeout(continueToNextChallenge, 650);
-      } else {
-        setTransitionMessage('Challenge complete. All roadmap challenges are complete.');
-      }
+      setTransitionMessage('Challenge complete. Completion card unlocked.');
       return;
     }
 
@@ -185,26 +180,26 @@ export function ChallengeRunner({ challenge, nextChallenge }: ChallengeRunnerPro
 
       {activeStep ? (
         <>
-          <main className="min-w-0 border border-white/10 bg-[#101214]">
-            <div className="border-b border-white/10 px-5 py-4">
+          <main className="min-w-0 border border-blue-100 bg-white/90 shadow-[0_18px_55px_rgba(50,108,229,0.1)]">
+            <div className="border-b border-blue-100 px-5 py-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="m-0 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="m-0 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[#326ce5]">
                     Active step {String(activeStepIndex + 1).padStart(2, '0')}
                   </p>
-                  <h2 className="m-0 mt-2 text-2xl font-black leading-none tracking-tight text-slate-100 md:text-3xl">
+                  <h2 className="m-0 mt-2 text-2xl font-black leading-none tracking-tight text-slate-950 md:text-3xl">
                     {activeStep.title}
                   </h2>
                 </div>
                 <StepStatePill done={activeStepDone} blocked={challengeProgress.status === 'blocked'} />
               </div>
-              <p className="m-0 mt-3 max-w-4xl text-sm leading-relaxed text-slate-400">
+              <p className="m-0 mt-3 max-w-4xl text-sm leading-relaxed text-slate-600">
                 {activeStep.objective}
               </p>
             </div>
 
             {transitionMessage ? (
-              <div className="border-b border-emerald-400/20 bg-emerald-400/[0.06] px-5 py-3 text-sm font-semibold text-emerald-200">
+              <div className="border-b border-blue-100 bg-blue-50 px-5 py-3 text-sm font-semibold text-blue-900">
                 {transitionMessage}
               </div>
             ) : null}
@@ -215,6 +210,7 @@ export function ChallengeRunner({ challenge, nextChallenge }: ChallengeRunnerPro
           </main>
 
           <ValidationRail
+            challenge={challenge}
             activeStep={activeStep}
             activeStepDone={activeStepDone}
             challengeDone={challengeDone}
@@ -257,19 +253,19 @@ function StepRail({
   onSelectStep: (stepId: string) => void;
 }) {
   return (
-    <aside className="h-fit border border-white/10 bg-[#101214] xl:sticky xl:top-20">
-      <div className="border-b border-white/10 p-4">
-        <p className="m-0 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
+    <aside className="h-fit border border-blue-100 bg-white/90 shadow-[0_18px_55px_rgba(50,108,229,0.08)] xl:sticky xl:top-20">
+      <div className="border-b border-blue-100 p-4">
+        <p className="m-0 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[#326ce5]">
           Lab progress
         </p>
         <div className="mt-3 flex items-end justify-between gap-3">
-          <strong className="font-mono text-3xl text-slate-100">{completionPercent}%</strong>
-          <span className={status === 'blocked' ? 'font-mono text-xs text-amber-300' : 'font-mono text-xs text-slate-400'}>
+          <strong className="font-mono text-3xl text-slate-950">{completionPercent}%</strong>
+          <span className={status === 'blocked' ? 'font-mono text-xs text-amber-700' : 'font-mono text-xs text-slate-500'}>
             {status.replace('_', ' ')}
           </span>
         </div>
-        <div className="mt-4 h-1.5 bg-white/10">
-          <div className="h-full bg-emerald-400" style={{ width: `${completionPercent}%` }} />
+        <div className="mt-4 h-1.5 bg-blue-50">
+          <div className="h-full bg-[#326ce5]" style={{ width: `${completionPercent}%` }} />
         </div>
       </div>
 
@@ -278,23 +274,23 @@ function StepRail({
           const done = completedSteps.includes(step.id);
           const active = step.id === activeStepId;
           return (
-            <li key={step.id} className="list-none border-b border-white/10 last:border-b-0">
+            <li key={step.id} className="list-none border-b border-blue-100 last:border-b-0">
               <button
                 type="button"
                 onClick={() => onSelectStep(step.id)}
                 className={
                   active
-                    ? 'grid w-full grid-cols-[28px_1fr] gap-3 bg-white/[0.06] px-4 py-3 text-left text-slate-100 outline-none ring-1 ring-inset ring-emerald-400/30'
-                    : 'grid w-full grid-cols-[28px_1fr] gap-3 px-4 py-3 text-left text-slate-400 outline-none transition hover:bg-white/[0.035] hover:text-slate-100 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-emerald-400/40'
+                    ? 'grid w-full grid-cols-[28px_1fr] gap-3 bg-blue-50 px-4 py-3 text-left text-slate-950 outline-none ring-1 ring-inset ring-[#326ce5]/30'
+                    : 'grid w-full grid-cols-[28px_1fr] gap-3 px-4 py-3 text-left text-slate-600 outline-none transition hover:bg-blue-50 hover:text-slate-950 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[#326ce5]/40'
                 }
               >
                 <span
                   className={
                     done
-                      ? 'grid h-6 w-6 place-items-center border border-emerald-400/30 bg-emerald-400/10 font-mono text-[0.65rem] text-emerald-300'
+                      ? 'grid h-6 w-6 place-items-center border border-emerald-300 bg-emerald-50 font-mono text-[0.65rem] text-emerald-700'
                       : active
-                        ? 'grid h-6 w-6 place-items-center border border-emerald-400/40 font-mono text-[0.65rem] text-emerald-300'
-                        : 'grid h-6 w-6 place-items-center border border-white/10 font-mono text-[0.65rem] text-slate-500'
+                        ? 'grid h-6 w-6 place-items-center border border-[#326ce5]/40 bg-blue-50 font-mono text-[0.65rem] text-[#326ce5]'
+                        : 'grid h-6 w-6 place-items-center border border-blue-100 font-mono text-[0.65rem] text-slate-500'
                   }
                 >
                   {String(index + 1).padStart(2, '0')}
@@ -315,6 +311,7 @@ function StepRail({
 }
 
 function ValidationRail({
+  challenge,
   activeStep,
   activeStepDone,
   challengeDone,
@@ -333,6 +330,7 @@ function ValidationRail({
   onMarkBlocked,
   onSelectStep,
 }: {
+  challenge: LabChallenge;
   activeStep: LabStep;
   activeStepDone: boolean;
   challengeDone: boolean;
@@ -358,7 +356,7 @@ function ValidationRail({
           {activeStep.commands.map((command) => (
             <pre
               key={command}
-              className="m-0 overflow-x-auto border border-white/10 bg-[#0b0d0f] p-3 font-mono text-xs leading-relaxed text-slate-300"
+              className="m-0 overflow-x-auto border border-slate-800 bg-[#0b0d0f] p-3 font-mono text-xs leading-relaxed text-slate-200"
             >
               {command}
             </pre>
@@ -369,7 +367,7 @@ function ValidationRail({
       <RailSection title="Expected signals">
         <ul className="m-0 grid gap-2 p-0">
           {activeStep.expectedSignals.map((signal) => (
-            <li key={signal} className="list-none border-l border-emerald-400/30 pl-3 text-sm leading-relaxed text-slate-400">
+            <li key={signal} className="list-none border-l border-[#326ce5]/40 pl-3 text-sm leading-relaxed text-slate-600">
               {signal}
             </li>
           ))}
@@ -396,7 +394,7 @@ function ValidationRail({
           <button
             type="button"
             onClick={() => onRevealHint(activeStep)}
-            className="min-h-10 border border-white/10 px-3 text-left text-sm font-bold text-slate-300 transition hover:border-emerald-400/30 hover:bg-white/[0.04] hover:text-slate-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400/40"
+            className="min-h-10 border border-blue-100 bg-white px-3 text-left text-sm font-bold text-slate-700 transition hover:border-[#326ce5] hover:bg-blue-50 hover:text-[#326ce5] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#326ce5]/40"
           >
             Reveal next hint
           </button>
@@ -404,19 +402,27 @@ function ValidationRail({
           <button
             type="button"
             onClick={() => onRevealSolution(activeStep)}
-            className="min-h-10 border border-amber-300/20 px-3 text-left text-sm font-bold text-amber-200 transition hover:bg-amber-300/[0.08] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-300/40"
+            className="min-h-10 border border-amber-200 bg-white px-3 text-left text-sm font-bold text-amber-800 transition hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-300/40"
           >
             Reveal solution
           </button>
           {revealedSolutions.includes(activeStep.id) ? (
-            <div className="border border-amber-300/20 bg-amber-300/[0.06] p-3 text-sm leading-relaxed text-amber-100">
+            <div className="border border-amber-200 bg-amber-50 p-3 text-sm leading-relaxed text-amber-900">
               {activeStep.solution}
             </div>
           ) : null}
         </div>
       </RailSection>
 
-      <div className="grid gap-2 border border-white/10 bg-[#101214] p-3">
+      {challengeDone ? (
+        <CompletionCard
+          challenge={challenge}
+          nextChallenge={nextChallenge}
+          onContinueNextChallenge={onContinueNextChallenge}
+        />
+      ) : null}
+
+      <div className="grid gap-2 border border-blue-100 bg-white/90 p-3">
         <button
           type="button"
           onClick={() =>
@@ -427,7 +433,7 @@ function ValidationRail({
                 : onCompleteStep(activeStep)
           }
           disabled={activeStepDone && !nextUnfinishedStep && !nextChallenge}
-          className="min-h-11 border border-emerald-400/30 bg-emerald-400 px-4 text-sm font-black text-[#101214] transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-11 border border-[#326ce5] bg-[#326ce5] px-4 text-sm font-black text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {activeStepDone
             ? nextUnfinishedStep
@@ -440,7 +446,7 @@ function ValidationRail({
         <button
           type="button"
           onClick={onMarkBlocked}
-          className="min-h-10 border border-white/10 px-4 text-sm font-bold text-slate-300 transition hover:border-amber-300/30 hover:bg-amber-300/[0.06] hover:text-amber-100"
+          className="min-h-10 border border-blue-100 bg-white px-4 text-sm font-bold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50 hover:text-amber-800"
         >
           Mark blocked
         </button>
@@ -449,10 +455,82 @@ function ValidationRail({
   );
 }
 
+function CompletionCard({
+  challenge,
+  nextChallenge,
+  onContinueNextChallenge,
+}: {
+  challenge: LabChallenge;
+  nextChallenge?: Pick<LabChallenge, 'slug' | 'title'> | null;
+  onContinueNextChallenge: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const checkedSignals = challenge.steps
+    .flatMap((step) => step.expectedSignals)
+    .slice(0, 4);
+  const shareText = `I completed ${challenge.title} on K8sLLM Labs. Difficulty: ${challenge.difficulty}. Duration: ${challenge.duration}. Checked: ${checkedSignals.join('; ')}. https://labs.k8sllm.online/challenges/${challenge.slug}`;
+
+  const copyShareText = async () => {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <section className="border border-emerald-200 bg-emerald-50 p-4">
+      <p className="m-0 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-emerald-700">
+        Completion card
+      </p>
+      <h3 className="m-0 mt-3 text-2xl font-black leading-none tracking-tight text-slate-950">
+        {challenge.title}
+      </h3>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {[challenge.difficulty, challenge.duration, 'completed'].map((item) => (
+          <span
+            key={item}
+            className="border border-emerald-200 bg-white px-2 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-emerald-800"
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+      <ul className="m-0 mt-4 grid gap-2 p-0">
+        {checkedSignals.map((signal) => (
+          <li key={signal} className="list-none border-l border-emerald-400/60 pl-3 text-sm leading-relaxed text-slate-700">
+            {signal}
+          </li>
+        ))}
+      </ul>
+      <div className="mt-4 grid gap-2">
+        <button
+          type="button"
+          onClick={copyShareText}
+          className="min-h-10 border border-emerald-300 bg-white px-3 text-sm font-black text-emerald-800 transition hover:bg-emerald-100"
+        >
+          {copied ? 'Copied share text' : 'Copy share text'}
+        </button>
+        {nextChallenge ? (
+          <button
+            type="button"
+            onClick={onContinueNextChallenge}
+            className="min-h-10 border border-blue-100 bg-white px-3 text-sm font-bold text-slate-700 transition hover:border-[#326ce5] hover:bg-blue-50 hover:text-[#326ce5]"
+          >
+            Continue to {nextChallenge.title}
+          </button>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 function StepStatePill({ done, blocked }: { done: boolean; blocked: boolean }) {
   if (blocked && !done) {
     return (
-      <span className="border border-amber-300/25 px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-amber-200">
+      <span className="border border-amber-200 bg-amber-50 px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-amber-800">
         blocked
       </span>
     );
@@ -460,14 +538,14 @@ function StepStatePill({ done, blocked }: { done: boolean; blocked: boolean }) {
 
   if (done) {
     return (
-      <span className="border border-emerald-400/25 bg-emerald-400/[0.06] px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-emerald-300">
+      <span className="border border-emerald-200 bg-emerald-50 px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-emerald-700">
         step complete
       </span>
     );
   }
 
   return (
-    <span className="border border-white/10 px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-slate-400">
+    <span className="border border-blue-100 bg-blue-50 px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-blue-800">
       running
     </span>
   );
@@ -475,8 +553,8 @@ function StepStatePill({ done, blocked }: { done: boolean; blocked: boolean }) {
 
 function RailSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="border border-white/10 bg-[#101214] p-4">
-      <h3 className="m-0 mb-3 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
+    <section className="border border-blue-100 bg-white/90 p-4 shadow-[0_14px_42px_rgba(50,108,229,0.08)]">
+      <h3 className="m-0 mb-3 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[#326ce5]">
         {title}
       </h3>
       {children}
@@ -526,14 +604,14 @@ function CheckControl({
     <div
       className={
         passed
-          ? 'border border-emerald-400/25 bg-emerald-400/[0.045] p-3'
-          : 'border border-white/10 bg-[#0d0f12] p-3'
+          ? 'border border-emerald-200 bg-emerald-50 p-3'
+          : 'border border-blue-100 bg-white p-3'
       }
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="m-0 text-sm font-semibold leading-relaxed text-slate-200">{check.prompt}</p>
+        <p className="m-0 text-sm font-semibold leading-relaxed text-slate-800">{check.prompt}</p>
         {passed ? (
-          <span className="border border-emerald-400/25 px-2 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-emerald-300">
+          <span className="border border-emerald-200 bg-white px-2 py-1 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-emerald-700">
             passed
           </span>
         ) : null}
@@ -547,14 +625,14 @@ function CheckControl({
             <textarea
               value={value}
               onChange={(event) => setValue(event.target.value)}
-              className="min-h-28 resize-y border border-white/10 bg-[#070809] p-3 font-mono text-xs leading-relaxed text-slate-200 outline-none transition placeholder:text-slate-600 focus:border-emerald-400/35"
+              className="min-h-28 resize-y border border-slate-800 bg-[#070809] p-3 font-mono text-xs leading-relaxed text-slate-200 outline-none transition placeholder:text-slate-600 focus:border-[#326ce5]"
               placeholder="Paste command output"
             />
           </label>
           <button
             type="button"
             onClick={validatePaste}
-            className="w-fit border border-emerald-400/25 px-3 py-2 text-xs font-black text-emerald-300 transition hover:bg-emerald-400 hover:text-[#101214]"
+            className="w-fit border border-[#326ce5] px-3 py-2 text-xs font-black text-[#326ce5] transition hover:bg-[#326ce5] hover:text-white"
           >
             {passed ? 'Re-check output' : 'Check output'}
           </button>
@@ -565,7 +643,7 @@ function CheckControl({
         <button
           type="button"
           onClick={() => onPassed(check.successMessage)}
-          className="mt-3 border border-emerald-400/25 px-3 py-2 text-xs font-black text-emerald-300 transition hover:bg-emerald-400 hover:text-[#101214]"
+          className="mt-3 border border-[#326ce5] px-3 py-2 text-xs font-black text-[#326ce5] transition hover:bg-[#326ce5] hover:text-white"
         >
           Confirm
         </button>
@@ -578,7 +656,7 @@ function CheckControl({
               key={option}
               type="button"
               onClick={() => chooseOption(option)}
-              className="border border-white/10 px-3 py-2 text-left text-xs font-semibold leading-relaxed text-slate-300 transition hover:border-emerald-400/25 hover:bg-white/[0.035] hover:text-slate-100"
+              className="border border-blue-100 bg-white px-3 py-2 text-left text-xs font-semibold leading-relaxed text-slate-700 transition hover:border-[#326ce5] hover:bg-blue-50 hover:text-[#326ce5]"
             >
               {option}
             </button>
@@ -590,8 +668,8 @@ function CheckControl({
         <p
           className={
             passed
-              ? 'mt-3 border border-emerald-400/20 bg-emerald-400/[0.055] p-3 text-xs font-semibold leading-relaxed text-emerald-200'
-              : 'mt-3 border border-amber-300/20 bg-amber-300/[0.06] p-3 text-xs font-semibold leading-relaxed text-amber-100'
+              ? 'mt-3 border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold leading-relaxed text-emerald-800'
+              : 'mt-3 border border-amber-200 bg-amber-50 p-3 text-xs font-semibold leading-relaxed text-amber-900'
           }
         >
           {message}
@@ -615,8 +693,8 @@ function HintList({ step, openedHints }: { step: LabStep; openedHints: string[] 
   return (
     <ol className="m-0 grid gap-2 p-0">
       {hints.map((hint, index) => (
-        <li key={hint} className="list-none border border-white/10 bg-[#0d0f12] p-3 text-sm leading-relaxed text-slate-300">
-          <span className="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-slate-500">
+        <li key={hint} className="list-none border border-blue-100 bg-blue-50 p-3 text-sm leading-relaxed text-slate-700">
+          <span className="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.1em] text-[#326ce5]">
             Hint {index + 1}
           </span>
           <p className="m-0 mt-1">{hint}</p>

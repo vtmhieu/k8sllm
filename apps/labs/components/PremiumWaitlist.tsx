@@ -33,41 +33,41 @@ export function PremiumWaitlist() {
   };
 
   return (
-    <section className="border border-teal-200/20 bg-teal-200/[0.08] p-6 shadow-diffusion">
+    <section className="border border-blue-200 bg-white/90 p-6 shadow-[0_26px_70px_rgba(50,108,229,0.12)]">
       <div className="grid gap-5 lg:grid-cols-[0.7fr_1fr] lg:items-end">
         <div>
-          <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
+          <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-[#326ce5]">
             Advanced lab access
           </p>
-          <h2 className="mt-3 max-w-xl text-3xl font-black leading-none tracking-tight text-white">
+          <h2 className="mt-3 max-w-xl text-3xl font-black leading-none tracking-tight text-slate-950">
             Get notified when downloadable kits, deeper scenarios, and review worksheets are ready.
           </h2>
         </div>
         <div className="grid gap-3">
           <label className="grid gap-2">
-            <span className="text-sm font-bold text-slate-200">Email for early access</span>
+            <span className="text-sm font-bold text-slate-700">Email for early access</span>
             <input
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               type="email"
               placeholder="you@example.com"
-              className="min-h-12 border border-white/10 bg-[#101718] px-4 text-white outline-none transition placeholder:text-slate-500 focus:border-teal-200/50"
+              className="min-h-12 border border-blue-100 bg-white px-4 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-[#326ce5]"
             />
           </label>
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={submitInterest}
-              className="min-h-11 border border-teal-200/40 bg-teal-200 px-5 font-black text-[#111816] transition hover:bg-white"
+              className="min-h-11 border border-[#326ce5] bg-[#326ce5] px-5 font-black text-white transition hover:bg-blue-700"
             >
               Save interest
             </button>
-            <p className="m-0 max-w-xl text-sm leading-relaxed text-slate-400">
+            <p className="m-0 max-w-xl text-sm leading-relaxed text-slate-600">
               For now this saves interest on this device. A real signup form will include consent and email delivery before launch.
             </p>
           </div>
           {saved ? (
-            <p className="m-0 border border-teal-200/20 bg-teal-200/10 p-3 text-sm font-bold text-teal-100">
+            <p className="m-0 border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold text-emerald-800">
               Interest saved on this device.
             </p>
           ) : null}

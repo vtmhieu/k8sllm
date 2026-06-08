@@ -18,6 +18,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.95,
     },
+    {
+      url: absoluteLabsUrl('/roadmaps'),
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.88,
+    },
     ...challenges.map((challenge) => ({
       url: absoluteLabsUrl(`/challenges/${challenge.slug}`),
       lastModified,

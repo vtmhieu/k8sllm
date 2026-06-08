@@ -60,6 +60,7 @@ The goal is practical: help a platform team design and run LLM on Kubernetes wit
 6. Build retrieval systems with [RAG on Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes).
 7. Validate the path with the [Kubernetes LLM Labs](/docs/labs).
 8. Review production scenarios in [Field Notes](/docs/field-notes) before launch or incident review.
+9. Use the [Production Guides](/docs/production-guides) when you need an exact checklist for latency, GPU scheduling, RAG isolation, serving ownership, or launch readiness.
 
 ## What makes a K8s LLM platform production-grade
 
@@ -80,6 +81,19 @@ The goal is practical: help a platform team design and run LLM on Kubernetes wit
 | [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools) | GPU node pool Kubernetes | Accelerator placement, quotas, autoscaling, and isolation. |
 | [RAG on Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes) | RAG on Kubernetes | Ingestion, retrieval, vector databases, evaluation, and failure modes. |
 | [Inference Benchmarking and Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model) | Kubernetes LLM cost model | Latency phases, throughput, GPU economics, and benchmark design. |
+
+## High-intent production guides
+
+Use these pages when a visitor is searching for a concrete operating problem and needs a practical path into a lab.
+
+| Guide | Use it for | Matching lab |
+| --- | --- | --- |
+| [LLM Latency on Kubernetes](/docs/production-guides/llm-latency-on-kubernetes) | Debug TTFT, queue wait, decode throughput, and GPU pressure. | [vLLM inference challenge](https://labs.k8sllm.online/challenges/vllm-inference) |
+| [vLLM Kubernetes Production Deployment](/docs/production-guides/vllm-kubernetes-production-deployment) | Build a production contract for vLLM runtime, probes, metrics, cache, and rollout. | [vLLM inference challenge](https://labs.k8sllm.online/challenges/vllm-inference) |
+| [GPU Node Pool Scheduling for LLM Inference](/docs/production-guides/gpu-node-pool-scheduling-llm-inference) | Prove labels, taints, tolerations, GPU requests, and quota boundaries. | [GPU scheduling challenge](https://labs.k8sllm.online/challenges/gpu-node-pool-scheduling) |
+| [KServe vs Ray Serve for LLM Platforms](/docs/production-guides/kserve-vs-ray-serve-llm-platforms) | Decide between platform-owned CRDs and application-owned serving graphs. | [KServe vs Ray Serve challenge](https://labs.k8sllm.online/challenges/kserve-vs-ray-serve-decision) |
+| [RAG Tenant Isolation on Kubernetes](/docs/production-guides/rag-tenant-isolation-kubernetes) | Validate tenant filters, citations, unauthorized-document tests, and prompt boundaries. | [RAG retrieval challenge](https://labs.k8sllm.online/challenges/rag-retrieval) |
+| [LLM Production Readiness Checklist](/docs/production-guides/llm-production-readiness-checklist) | Run the launch gate for latency, rollback, security, observability, and cost evidence. | [Production readiness challenge](https://labs.k8sllm.online/challenges/production-readiness) |
 
 ## Production field notes
 

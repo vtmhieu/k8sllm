@@ -1,0 +1,69 @@
+---
+title: GPU Node Pool Scheduling for LLM Inference
+description: Debug GPU node pool scheduling for LLM inference with labels, taints, tolerations, GPU requests, quotas, autoscaling buffers, and cost signals.
+tags:
+  - gpu-node-pool
+  - scheduling
+  - kubernetes
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-08
+sources:
+  - "https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/"
+  - "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/"
+  - "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
+  - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
+diagram_ids:
+  - "production-cluster"
+  - "llm-inference-stack"
+---
+
+# GPU Node Pool Scheduling for LLM Inference
+
+GPU node pool scheduling for LLM inference is a capacity contract. The platform must make accelerator type, taints, labels, quotas, priority, and workload lane visible before trying to optimize throughput.
+
+> Last reviewed: June 8, 2026. Use this page when GPU nodes exist but inference pods are pending, misplaced, or too expensive for the traffic served.
+
+![Production Kubernetes cluster architecture](/img/architectures/production-cluster.svg)
+
+## Scenario
+
+An interactive model needs A100-class GPUs. The cluster has GPU nodes online, but pods are pending. A batch job consumed the compatible profile, one node is blocked by a taint mismatch, and autoscaling does not start because the pod selector does not match a scalable node group.
+
+## Decision table
+
+| Scheduling control | Production use |
+| --- | --- |
+| Node labels | Encode accelerator type, memory, topology, zone, lifecycle, and profile. |
+| Taints | Keep unapproved and general workloads away from expensive GPU nodes. |
+| Tolerations | Require approved model serving workloads to opt into GPU placement. |
+| GPU requests | Use `nvidia.com/gpu` explicitly through the device plugin path. |
+| Quotas | Stop experiments and batch jobs from starving interactive inference. |
+| Warm buffer | Protect user-facing routes from node provisioning and model cold starts. |
+
+## Commands and checks
+
+```bash
+kubectl get nodes -L accelerator,nvidia.com/gpu.product
+kubectl -n llm-serving describe pod <model-pod>
+kubectl -n llm-serving get resourcequota
+kubectl -n llm-serving get pod <model-pod> -o wide
+```
+
+| Check | Pass signal |
+| --- | --- |
+| Compatible profile | Node labels match the model's GPU memory and accelerator requirement. |
+| Taint contract | GPU nodes reject general workloads and accept approved inference workloads. |
+| Pending reason | Scheduler events identify the exact missing label, taint, quota, or GPU resource. |
+| Workload lane | Batch and interactive workloads do not fight for the same unbounded pool. |
+
+## Related lab
+
+Run the [GPU node pool scheduling lab](https://labs.k8sllm.online/challenges/gpu-node-pool-scheduling) to practice unschedulable-pod debugging.
+
+## Related pages
+
+- [GPU Capacity Incident](/docs/field-notes/gpu-capacity-incident)
+- [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools)
+- [Workloads and Scheduling](/docs/kubernetes/workloads-scheduling)
+- [Production Cluster Architecture](/docs/reference-architectures/production-cluster)

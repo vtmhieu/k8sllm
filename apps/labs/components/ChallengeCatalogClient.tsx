@@ -17,10 +17,10 @@ const allDifficulties = 'All difficulty';
 const allPaths = 'All paths';
 
 const statusTone = {
-  not_started: 'border-slate-700 bg-slate-950 text-slate-400',
-  in_progress: 'border-sky-400/50 bg-sky-400/10 text-sky-200',
-  blocked: 'border-red-400/50 bg-red-400/10 text-red-200',
-  completed: 'border-teal-300/60 bg-teal-300/10 text-teal-200',
+  not_started: 'border-slate-200 bg-white text-slate-500',
+  in_progress: 'border-blue-200 bg-blue-50 text-blue-800',
+  blocked: 'border-amber-200 bg-amber-50 text-amber-800',
+  completed: 'border-emerald-200 bg-emerald-50 text-emerald-800',
 };
 
 export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCatalogClientProps) {
@@ -61,14 +61,14 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
   );
 
   return (
-    <section className="border border-slate-800 bg-slate-950 text-slate-100">
-      <div className="grid border-b border-slate-800 lg:grid-cols-[minmax(0,0.76fr)_minmax(560px,1fr)]">
-        <div className="border-b border-slate-800 px-3 py-3 lg:border-b-0 lg:border-r">
-          <p className="m-0 font-mono text-[0.68rem] font-black uppercase text-teal-200">
+    <section className="border border-blue-100 bg-white/90 text-slate-950 shadow-[0_24px_70px_rgba(50,108,229,0.1)]">
+      <div className="grid border-b border-blue-100 lg:grid-cols-[minmax(0,0.76fr)_minmax(560px,1fr)]">
+        <div className="border-b border-blue-100 px-3 py-3 lg:border-b-0 lg:border-r">
+          <p className="m-0 font-mono text-[0.68rem] font-black uppercase text-[#326ce5]">
             Challenge catalog
           </p>
           <div className="mt-2 flex flex-wrap items-end gap-x-4 gap-y-1">
-            <h2 className="m-0 text-xl font-black leading-none tracking-tight text-white">
+            <h2 className="m-0 text-xl font-black leading-none tracking-tight text-slate-950">
               Operator lab index
             </h2>
             <span className="font-mono text-[0.68rem] font-bold uppercase text-slate-500">
@@ -97,7 +97,7 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
 
       {visibleChallenges.length > 0 ? (
         <div>
-          <div className="hidden grid-cols-[42px_minmax(0,1.55fr)_104px_92px_136px_minmax(170px,0.8fr)_138px] border-b border-slate-800 px-3 py-2 font-mono text-[0.65rem] font-black uppercase text-slate-500 lg:grid">
+          <div className="hidden grid-cols-[42px_minmax(0,1.55fr)_104px_92px_136px_minmax(170px,0.8fr)_138px] border-b border-blue-100 bg-blue-50/60 px-3 py-2 font-mono text-[0.65rem] font-black uppercase text-slate-500 lg:grid">
             <span>ID</span>
             <span>Challenge</span>
             <span>Difficulty</span>
@@ -107,7 +107,7 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
             <span className="text-right">Actions</span>
           </div>
 
-          <div className="divide-y divide-slate-800">
+          <div className="divide-y divide-blue-100">
             {visibleChallenges.map((challenge, index) => {
               const challengeProgress = getChallengeProgress(progress, challenge.id);
               const pathIds = challenge.roadmapIds.join(' / ');
@@ -115,9 +115,9 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
               return (
                 <article
                   key={challenge.id}
-                  className="grid gap-3 px-3 py-3 transition hover:bg-slate-900/60 lg:grid-cols-[42px_minmax(0,1.55fr)_104px_92px_136px_minmax(170px,0.8fr)_138px] lg:items-start"
+                  className="grid gap-3 px-3 py-3 transition hover:bg-blue-50/65 lg:grid-cols-[42px_minmax(0,1.55fr)_104px_92px_136px_minmax(170px,0.8fr)_138px] lg:items-start"
                 >
-                  <div className="font-mono text-[0.68rem] font-black text-slate-600">
+                  <div className="font-mono text-[0.68rem] font-black text-blue-300">
                     {String(index + 1).padStart(2, '0')}
                   </div>
 
@@ -126,17 +126,17 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
                       <MetaChip>{challenge.topic}</MetaChip>
                       {pathIds ? <MetaChip>{pathIds}</MetaChip> : null}
                     </div>
-                    <h3 className="mt-2 text-base font-black leading-snug text-white">
+                    <h3 className="mt-2 text-base font-black leading-snug text-slate-950">
                       <Link
                         href={`/challenges/${challenge.slug}`}
-                        className="outline-none hover:text-teal-200 focus-visible:text-teal-200"
+                        className="outline-none hover:text-[#326ce5] focus-visible:text-[#326ce5]"
                       >
                         {challenge.title}
                       </Link>
                     </h3>
-                    <p className="m-0 mt-1 text-[0.8rem] leading-5 text-slate-400">{challenge.summary}</p>
+                    <p className="m-0 mt-1 text-[0.8rem] leading-5 text-slate-600">{challenge.summary}</p>
 
-                    <div className="mt-3 grid gap-1.5 border-t border-slate-800 pt-2 lg:hidden">
+                    <div className="mt-3 grid gap-1.5 border-t border-blue-100 pt-2 lg:hidden">
                       <CompactMeta label="Difficulty" value={challenge.difficulty} />
                       <CompactMeta label="Time" value={challenge.duration} />
                       <CompactMeta
@@ -155,8 +155,8 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
                     valueClassName={statusTone[challengeProgress.status]}
                   />
 
-                  <div className="hidden min-w-0 text-[0.76rem] leading-5 text-slate-300 lg:block">
-                    <p className="m-0 truncate font-bold text-slate-200">{challenge.persona}</p>
+                  <div className="hidden min-w-0 text-[0.76rem] leading-5 text-slate-700 lg:block">
+                    <p className="m-0 truncate font-bold text-slate-800">{challenge.persona}</p>
                     <p className="m-0 truncate font-mono text-[0.68rem] uppercase text-slate-500">
                       {challenge.tools.join(' + ')}
                     </p>
@@ -165,13 +165,13 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
                   <div className="flex gap-1.5 lg:justify-end">
                     <Link
                       href={`/challenges/${challenge.slug}`}
-                      className="border border-teal-300 bg-teal-300 px-2.5 py-1.5 font-mono text-[0.68rem] font-black uppercase text-slate-950 outline-none transition hover:bg-white focus-visible:ring-2 focus-visible:ring-teal-200"
+                      className="border border-[#326ce5] bg-[#326ce5] px-2.5 py-1.5 font-mono text-[0.68rem] font-black uppercase text-white outline-none transition hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-300"
                     >
                       Open lab
                     </Link>
                     <a
                       href={challenge.docsHref}
-                      className="border border-slate-800 bg-slate-950 px-2.5 py-1.5 font-mono text-[0.68rem] font-black uppercase text-slate-300 outline-none transition hover:border-white/20 hover:bg-slate-900 hover:text-white focus-visible:ring-2 focus-visible:ring-teal-200"
+                      className="border border-blue-200 bg-white px-2.5 py-1.5 font-mono text-[0.68rem] font-black uppercase text-slate-700 outline-none transition hover:border-[#326ce5] hover:bg-blue-50 hover:text-[#326ce5] focus-visible:ring-2 focus-visible:ring-blue-300"
                     >
                       Docs
                     </a>
@@ -182,9 +182,9 @@ export function ChallengeCatalogClient({ challenges, productPaths }: ChallengeCa
           </div>
         </div>
       ) : (
-        <div className="border-t border-dashed border-slate-800 px-3 py-8">
-          <h3 className="m-0 font-mono text-sm font-black uppercase text-white">No matching challenge</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+        <div className="border-t border-dashed border-blue-100 px-3 py-8">
+          <h3 className="m-0 font-mono text-sm font-black uppercase text-slate-950">No matching challenge</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
             Clear a filter or switch product paths to restore the indexed challenge view.
           </p>
         </div>
@@ -219,8 +219,8 @@ function FilterGroup({
             onClick={() => onChange(item)}
             className={
               item === value
-                ? 'border border-teal-300 bg-teal-300 px-2 py-1 font-mono text-[0.68rem] font-black uppercase text-slate-950 outline-none focus-visible:ring-2 focus-visible:ring-teal-200'
-                : 'border border-slate-800 bg-slate-950 px-2 py-1 font-mono text-[0.68rem] font-bold uppercase text-slate-400 outline-none transition hover:border-white/20 hover:bg-slate-900 hover:text-white focus-visible:ring-2 focus-visible:ring-teal-200'
+                ? 'border border-[#326ce5] bg-[#326ce5] px-2 py-1 font-mono text-[0.68rem] font-black uppercase text-white outline-none focus-visible:ring-2 focus-visible:ring-blue-300'
+                : 'border border-blue-100 bg-white px-2 py-1 font-mono text-[0.68rem] font-bold uppercase text-slate-600 outline-none transition hover:border-[#326ce5] hover:bg-blue-50 hover:text-[#326ce5] focus-visible:ring-2 focus-visible:ring-blue-300'
             }
           >
             {labels[item] || item}
@@ -234,7 +234,7 @@ function FilterGroup({
 function MetadataColumn({
   label,
   value,
-  valueClassName = 'border-slate-800 bg-slate-950 text-slate-200',
+  valueClassName = 'border-blue-100 bg-blue-50 text-slate-700',
 }: {
   label: string;
   value: string;
@@ -255,7 +255,7 @@ function MetadataColumn({
 function CompactMeta({
   label,
   value,
-  valueClassName = 'border-slate-800 bg-slate-950 text-slate-200',
+  valueClassName = 'border-blue-100 bg-blue-50 text-slate-700',
 }: {
   label: string;
   value: string;
@@ -275,7 +275,7 @@ function CompactMeta({
 
 function MetaChip({ children }: { children: ReactNode }) {
   return (
-    <span className="border border-slate-800 bg-slate-950 px-1.5 py-0.5 font-mono text-[0.62rem] font-black uppercase text-slate-400">
+    <span className="border border-blue-100 bg-blue-50 px-1.5 py-0.5 font-mono text-[0.62rem] font-black uppercase text-blue-800">
       {children}
     </span>
   );

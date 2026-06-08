@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ChallengeOfWeek } from '@/components/ChallengeOfWeek';
 import { ChallengeCatalogClient } from '@/components/ChallengeCatalogClient';
 import { JsonLd } from '@/components/JsonLd';
 import { MetricStrip } from '@/components/MetricStrip';
@@ -16,19 +17,21 @@ export const metadata = createPageMetadata({
 
 export default function LabsHomePage() {
   const roadmap = roadmaps[0];
+  const challengeOfWeek =
+    challenges.find((challenge) => challenge.slug === 'vllm-inference') || challenges[0];
 
   return (
     <main>
       <JsonLd data={[websiteJsonLd(), challengeCatalogJsonLd(challenges)]} />
       <section className="mx-auto grid min-h-[calc(100vh-64px)] w-[min(1440px,calc(100%-32px))] gap-8 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
-          <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.12em] text-teal-200">
+          <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.12em] text-[#326ce5]">
             Kubernetes LLM guided labs
           </p>
-          <h1 className="mt-5 max-w-4xl text-6xl font-black leading-[0.9] tracking-tight text-white md:text-7xl">
+          <h1 className="mt-5 max-w-4xl text-6xl font-black leading-[0.9] tracking-tight text-slate-950 md:text-7xl">
             Practice the platform checks behind production LLM systems.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
             K8sLLM Labs turns Kubernetes LLM architecture into interactive operator challenges:
             type commands in a lab terminal, inspect Kubernetes output, unlock hints, validate
             readiness, and keep private progress on this device.
@@ -36,50 +39,54 @@ export default function LabsHomePage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/challenges"
-              className="min-h-12 border border-teal-200/40 bg-teal-200 px-5 py-3 font-black text-[#111816] transition hover:bg-white"
+              className="min-h-12 border border-[#326ce5] bg-[#326ce5] px-5 py-3 font-black text-white shadow-[0_18px_36px_rgba(50,108,229,0.2)] transition hover:bg-blue-700"
             >
               Browse challenges
             </Link>
             <Link
               href={`/roadmaps/${roadmap.slug}`}
-              className="min-h-12 border border-white/10 px-5 py-3 font-black text-slate-200 transition hover:border-teal-200/40 hover:bg-white/5"
+              className="min-h-12 border border-blue-200 bg-white px-5 py-3 font-black text-slate-900 transition hover:border-[#326ce5] hover:bg-blue-50 hover:text-[#326ce5]"
             >
               Follow roadmap
             </Link>
             <a
               href="https://www.k8sllm.online/docs/labs"
-              className="min-h-12 border border-white/10 px-5 py-3 font-black text-slate-200 transition hover:border-teal-200/40 hover:bg-white/5"
+              className="min-h-12 border border-blue-200 bg-white px-5 py-3 font-black text-slate-900 transition hover:border-[#326ce5] hover:bg-blue-50 hover:text-[#326ce5]"
             >
               Read docs
             </a>
           </div>
         </div>
 
-        <div className="shell-grid border border-white/10 bg-white/[0.045] p-5 shadow-diffusion">
+        <div className="shell-grid border border-blue-200 bg-white/88 p-5 shadow-[0_30px_80px_rgba(50,108,229,0.13)]">
           <div className="grid gap-3">
             <LabFlowRow left="Pull architecture guide" right="Choose challenge" />
             <LabFlowRow left="Type kubectl or curl" right="Inspect terminal output" />
             <LabFlowRow left="Regex check passes" right="Step completed" />
             <LabFlowRow left="Open hint if blocked" right="Reveal solution if needed" />
           </div>
-          <div className="mt-5 grid gap-3 border border-white/10 bg-[#070b0a] p-4">
+          <div className="mt-5 grid gap-3 border border-slate-800 bg-[#070b0a] p-4">
             <div className="flex items-center justify-between gap-4">
-              <span className="font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
+              <span className="font-mono text-xs font-black uppercase tracking-[0.08em] text-sky-300">
                 Example check
               </span>
-              <span className="border border-teal-200/25 px-2 py-1 font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-teal-100">
+              <span className="border border-sky-300/25 px-2 py-1 font-mono text-[0.68rem] font-black uppercase tracking-[0.08em] text-sky-100">
                 paste_regex
               </span>
             </div>
-            <pre className="m-0 overflow-x-auto text-sm leading-relaxed text-teal-100">
+            <pre className="m-0 overflow-x-auto text-sm leading-relaxed text-sky-100">
               kubectl get nodes -L accelerator,nvidia.com/gpu.product
             </pre>
-            <p className="m-0 border-l-2 border-teal-200/60 pl-3 text-sm leading-relaxed text-slate-300">
+            <p className="m-0 border-l-2 border-sky-300/60 pl-3 text-sm leading-relaxed text-slate-300">
               The check passes when the output proves GPU placement, node labeling, or accelerator
               scheduling evidence.
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto w-[min(1440px,calc(100%-32px))] pb-12">
+        <ChallengeOfWeek challenge={challengeOfWeek} />
       </section>
 
       <section className="mx-auto w-[min(1440px,calc(100%-32px))] pb-12">
@@ -96,20 +103,20 @@ export default function LabsHomePage() {
       <section className="mx-auto grid w-[min(1440px,calc(100%-32px))] gap-6 pb-12">
         <div className="grid gap-4 lg:grid-cols-[0.7fr_1fr]">
           <div>
-            <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.12em] text-teal-200">
+            <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.12em] text-[#326ce5]">
               Product paths
             </p>
-            <h2 className="mt-3 max-w-2xl text-4xl font-black leading-none tracking-tight text-white">
+            <h2 className="mt-3 max-w-2xl text-4xl font-black leading-none tracking-tight text-slate-950">
               Built for platform engineers, DevOps, MLOps, and AI infrastructure learners.
             </h2>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {productPaths.map((path) => (
-              <article key={path.id} className="border border-white/10 bg-white/[0.045] p-4">
-                <h3 className="m-0 text-xl font-black leading-none tracking-tight text-white">
+              <article key={path.id} className="border border-blue-100 bg-white/88 p-4">
+                <h3 className="m-0 text-xl font-black leading-none tracking-tight text-slate-950">
                   {path.title}
                 </h3>
-                <p className="m-0 mt-3 text-sm leading-relaxed text-slate-400">{path.summary}</p>
+                <p className="m-0 mt-3 text-sm leading-relaxed text-slate-600">{path.summary}</p>
               </article>
             ))}
           </div>
@@ -120,7 +127,7 @@ export default function LabsHomePage() {
         <ChallengeCatalogClient challenges={challenges.slice(0, 6)} productPaths={productPaths} />
       </section>
 
-      <section className="mx-auto w-[min(1440px,calc(100%-32px))] pb-16">
+      <section id="premium-labs" className="mx-auto w-[min(1440px,calc(100%-32px))] pb-16">
         <PremiumWaitlist />
       </section>
     </main>
@@ -130,11 +137,11 @@ export default function LabsHomePage() {
 function LabFlowRow({ left, right }: { left: string; right: string }) {
   return (
     <div className="grid grid-cols-[1fr_36px_1fr] items-center gap-3">
-      <span className="border border-white/10 bg-[#101718] p-3 text-sm font-bold text-slate-200">
+      <span className="border border-blue-100 bg-white p-3 text-sm font-bold text-slate-800">
         {left}
       </span>
-      <span className="text-center font-mono text-teal-200">-&gt;</span>
-      <span className="border border-teal-200/20 bg-teal-200/[0.08] p-3 text-sm font-bold text-teal-100">
+      <span className="text-center font-mono text-[#326ce5]">-&gt;</span>
+      <span className="border border-blue-200 bg-blue-50 p-3 text-sm font-bold text-blue-900">
         {right}
       </span>
     </div>

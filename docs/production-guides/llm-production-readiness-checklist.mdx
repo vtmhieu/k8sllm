@@ -1,0 +1,68 @@
+---
+title: LLM Production Readiness Checklist
+description: Free Kubernetes LLM production readiness checklist covering GPU placement, serving health, RAG security, observability, rollout, rollback, cost, and ownership.
+tags:
+  - production-readiness
+  - checklist
+  - kubernetes-llm
+  - platform-engineering
+difficulty: senior
+last_reviewed: 2026-06-08
+sources:
+  - "https://kubernetes.io/docs/concepts/security/"
+  - "https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/"
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
+diagram_ids:
+  - "production-cluster"
+  - "llm-inference-stack"
+---
+
+# LLM Production Readiness Checklist
+
+This free checklist is the launch gate for Kubernetes LLM workloads. It focuses on evidence: what the platform can prove before live traffic, not what the team hopes will work.
+
+> Last reviewed: June 8, 2026. Use this checklist as the lead review document before exposing a model, RAG system, or inference route to users.
+
+![Production Kubernetes cluster architecture](/img/architectures/production-cluster.svg)
+
+## Readiness checklist
+
+| Area | Required evidence |
+| --- | --- |
+| Ownership | Namespace, route, runtime, model artifact, and on-call owner are documented. |
+| GPU placement | Workload requests GPU resources and lands on a compatible, tainted accelerator pool. |
+| Serving health | Readiness proves model load and endpoint response, not only container process startup. |
+| Latency | TTFT, queue wait, tokens/sec, and p95/p99 latency are visible by route and model. |
+| Security | RBAC, NetworkPolicy, secret handling, prompt logging controls, and tenant routing are reviewed. |
+| RAG access | Retrieval applies tenant and authorization filters before prompt assembly. |
+| Rollout | Traffic shift, readiness gates, model revision, and runtime image are reviewable. |
+| Rollback | Rollback has been tested for route, runtime image, model artifact, and index where relevant. |
+| Cost | Cost/request includes input tokens, output tokens, GPU profile, utilization, and route class. |
+
+## Commands and checks
+
+```bash
+kubectl auth can-i list pods --namespace llm-serving
+kubectl -n llm-serving get deploy,svc,endpoints,quota,networkpolicy
+kubectl -n llm-serving rollout history deploy/<model-deployment>
+curl -sS "$METRICS" | grep -Ei "ttft|queue|tokens|gpu|latency"
+```
+
+| Check | Pass signal |
+| --- | --- |
+| Launch evidence exists | RBAC, quota, NetworkPolicy, deployment, endpoint, and rollout history can be inspected. |
+| Runtime evidence exists | Model loaded, endpoint responds, and inference latency is visible. |
+| Security evidence exists | Tenant, secret, prompt logging, egress, and retrieval boundaries are reviewed. |
+| Business evidence exists | Cost and rollback impact are understood before traffic shift. |
+
+## Related lab
+
+Run the [Production readiness challenge](https://labs.k8sllm.online/challenges/production-readiness) to turn this checklist into guided validation.
+
+## Related pages
+
+- [Security Hardening Checklist](/docs/best-practices/security-hardening-checklist)
+- [Production Scaling Decision Guide](/docs/best-practices/production-scaling-decision-guide)
+- [LLM Observability Lab](/docs/labs/observability-lab)
+- [Reference Architectures](/docs/reference-architectures)

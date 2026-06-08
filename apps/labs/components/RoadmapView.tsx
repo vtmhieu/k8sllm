@@ -34,36 +34,36 @@ export function RoadmapView({ roadmap, modules }: RoadmapViewProps) {
 
   return (
     <section className="grid gap-8">
-      <div className="grid gap-px border border-white/10 bg-white/10 lg:grid-cols-[0.6fr_1fr]">
-        <div className="bg-[#111816]/88 p-6">
-          <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
+      <div className="grid gap-px border border-blue-100 bg-blue-100 lg:grid-cols-[0.6fr_1fr]">
+        <div className="bg-white/90 p-6">
+          <p className="m-0 font-mono text-xs font-black uppercase tracking-[0.08em] text-[#326ce5]">
             Roadmap progress
           </p>
-          <strong className="mt-3 block font-mono text-5xl text-white">{percent}%</strong>
-          <p className="mt-3 text-sm font-bold text-slate-300">
+          <strong className="mt-3 block font-mono text-5xl text-slate-950">{percent}%</strong>
+          <p className="mt-3 text-sm font-bold text-slate-600">
             {completedChallenges} of {totalChallenges} challenges completed on this device
           </p>
         </div>
-        <div className="bg-[#111816]/88 p-6">
-          <h1 className="m-0 max-w-3xl text-5xl font-black leading-none tracking-tight text-white">
+        <div className="bg-white/90 p-6">
+          <h1 className="m-0 max-w-3xl text-5xl font-black leading-none tracking-tight text-slate-950">
             {roadmap.title}
           </h1>
-          <p className="mt-4 max-w-3xl text-slate-300">{roadmap.summary}</p>
-          <div className="mt-6 h-2 bg-white/10">
-            <div className="h-full bg-teal-200" style={{ width: `${percent}%` }} />
+          <p className="mt-4 max-w-3xl text-slate-600">{roadmap.summary}</p>
+          <div className="mt-6 h-2 bg-blue-50">
+            <div className="h-full bg-[#326ce5]" style={{ width: `${percent}%` }} />
           </div>
         </div>
       </div>
 
       <div className="grid gap-5">
         {modules.map((module, moduleIndex) => (
-          <article key={module.title} className="border border-white/10 bg-white/[0.045] p-5">
+          <article key={module.title} className="border border-blue-100 bg-white/90 p-5 shadow-[0_18px_55px_rgba(50,108,229,0.08)]">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <span className="font-mono text-xs font-black uppercase tracking-[0.08em] text-teal-200">
+                <span className="font-mono text-xs font-black uppercase tracking-[0.08em] text-[#326ce5]">
                   Module {String(moduleIndex + 1).padStart(2, '0')}
                 </span>
-                <h2 className="mt-2 text-3xl font-black leading-none tracking-tight text-white">
+                <h2 className="mt-2 text-3xl font-black leading-none tracking-tight text-slate-950">
                   {module.title}
                 </h2>
               </div>
@@ -75,18 +75,18 @@ export function RoadmapView({ roadmap, modules }: RoadmapViewProps) {
                   <Link
                     key={challenge.id}
                     href={`/challenges/${challenge.slug}`}
-                    className="grid min-h-48 gap-4 border border-white/10 bg-[#101718] p-4 transition hover:border-teal-200/40 hover:bg-white/[0.04]"
+                    className="grid min-h-48 gap-4 border border-blue-100 bg-blue-50/70 p-4 transition hover:border-[#326ce5] hover:bg-white"
                   >
                     <div className="flex flex-wrap gap-2">
-                      <span className="border border-teal-200/20 px-2 py-1 font-mono text-[0.65rem] font-black uppercase tracking-[0.08em] text-teal-200">
+                      <span className="border border-blue-200 bg-white px-2 py-1 font-mono text-[0.65rem] font-black uppercase tracking-[0.08em] text-blue-800">
                         {challenge.difficulty}
                       </span>
-                      <span className="border border-white/10 px-2 py-1 font-mono text-[0.65rem] font-black uppercase tracking-[0.08em] text-slate-300">
+                      <span className="border border-blue-100 bg-white px-2 py-1 font-mono text-[0.65rem] font-black uppercase tracking-[0.08em] text-slate-600">
                         {status.replace('_', ' ')}
                       </span>
                     </div>
-                    <strong className="text-xl leading-none text-white">{challenge.title}</strong>
-                    <small className="text-sm leading-relaxed text-slate-400">{challenge.summary}</small>
+                    <strong className="text-xl leading-none text-slate-950">{challenge.title}</strong>
+                    <small className="text-sm leading-relaxed text-slate-600">{challenge.summary}</small>
                   </Link>
                 );
               })}

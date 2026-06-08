@@ -1,0 +1,51 @@
+---
+title: Production Guides
+description: High-intent Kubernetes LLM production guides for latency, vLLM deployment, GPU scheduling, serving choices, RAG tenant isolation, and readiness checks.
+tags:
+  - production
+  - kubernetes-llm
+  - ai-infrastructure
+difficulty: senior
+last_reviewed: 2026-06-08
+sources:
+  - "https://kubernetes.io/docs/"
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
+  - "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html"
+diagram_ids:
+  - "llm-inference-stack"
+  - "rag-platform"
+  - "production-cluster"
+---
+
+# Production Guides
+
+These guides target the searches that usually come from a real platform problem: slow first token, pending GPU pods, serving framework decisions, RAG access failures, and launch readiness.
+
+> Last reviewed: June 8, 2026. These pages are source-anchored and designed as entry points into the matching K8sLLM labs.
+
+| Guide | Production problem | Matching lab |
+| --- | --- | --- |
+| [LLM Latency on Kubernetes](/docs/production-guides/llm-latency-on-kubernetes) | Pods are healthy, but users still wait for first token. | [vLLM inference challenge](https://labs.k8sllm.online/challenges/vllm-inference) |
+| [vLLM Kubernetes Production Deployment](/docs/production-guides/vllm-kubernetes-production-deployment) | Runtime is deployed, but model readiness, cache, probes, and metrics are unclear. | [vLLM Kubernetes deployment lab](https://labs.k8sllm.online/challenges/vllm-kubernetes-deployment) |
+| [GPU Node Pool Scheduling for LLM Inference](/docs/production-guides/gpu-node-pool-scheduling-llm-inference) | Expensive GPU capacity exists, but pods are pending or fragmented. | [GPU node pool scheduling lab](https://labs.k8sllm.online/challenges/gpu-node-pool-scheduling) |
+| [KServe vs Ray Serve for LLM Platforms](/docs/production-guides/kserve-vs-ray-serve-llm-platforms) | The team is choosing a serving layer without agreeing on ownership. | [KServe vs Ray Serve decision lab](https://labs.k8sllm.online/challenges/kserve-vs-ray-serve-decision) |
+| [RAG Tenant Isolation on Kubernetes](/docs/production-guides/rag-tenant-isolation-kubernetes) | Retrieval quality looks good, but tenant boundaries are not proven. | [RAG retrieval challenge](https://labs.k8sllm.online/challenges/rag-retrieval) |
+| [LLM Production Readiness Checklist](/docs/production-guides/llm-production-readiness-checklist) | The model works in staging, but launch evidence is incomplete. | [Production readiness challenge](https://labs.k8sllm.online/challenges/production-readiness) |
+
+## Weekly publishing cadence
+
+Each new page should produce one short distribution package:
+
+| Asset | Required content |
+| --- | --- |
+| LinkedIn post | One failure mode, one decision table, one lab link. |
+| Dev.to article | Same core content with the diagram, commands, and checklist preserved. |
+| Community post | One practical question and one link to the matching lab or guide. |
+
+## Related paths
+
+- [K8s LLM Platform Guide](/docs/k8s-llm)
+- [Field Notes](/docs/field-notes)
+- [Kubernetes LLM Labs](/docs/labs)
+- [Reference Architectures](/docs/reference-architectures)

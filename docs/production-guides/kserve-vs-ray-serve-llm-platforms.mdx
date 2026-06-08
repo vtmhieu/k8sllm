@@ -1,0 +1,69 @@
+---
+title: KServe vs Ray Serve for LLM Platforms
+description: Decide between KServe and Ray Serve for LLM platforms by ownership model, CRDs, serving graph complexity, autoscaling, rollout, and SRE operability.
+tags:
+  - kserve
+  - ray-serve
+  - model-serving
+  - kubernetes
+difficulty: senior
+last_reviewed: 2026-06-08
+sources:
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/llmisvc/llmisvc-overview"
+  - "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html"
+  - "https://docs.ray.io/en/latest/cluster/kubernetes/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# KServe vs Ray Serve for LLM Platforms
+
+KServe vs Ray Serve is not only a feature comparison. It is an ownership decision: should the primary serving contract be a Kubernetes-native platform API or a Python-native application serving graph?
+
+> Last reviewed: June 8, 2026. Use this page when a team is choosing a serving layer for more than one model endpoint.
+
+![LLM inference stack on Kubernetes architecture](/img/architectures/llm-inference-stack.svg)
+
+## Scenario
+
+A model endpoint starts simple. Later it needs retrieval, reranking, model routing, generation, post-processing, custom metrics, and rollback. The platform team wants CRDs, revisions, policy, and standard lifecycle controls. The ML team wants programmable Python graph behavior.
+
+## Decision table
+
+| Dimension | KServe tends to fit | Ray Serve tends to fit |
+| --- | --- | --- |
+| Primary contract | Kubernetes resources and platform policy. | Python deployment graph and application code. |
+| Owner | Platform team standardizes endpoint lifecycle. | ML or application team owns graph behavior. |
+| Serving graph | Repeatable endpoint patterns. | Custom multi-step pipelines. |
+| Rollout | Resource revision, route, runtime, artifact. | Ray Serve deployment, graph code, runtime env, artifact. |
+| SRE operability | Operate from Kubernetes resources and controller signals. | Operate Ray cluster plus graph-level telemetry. |
+
+## Commands and checks
+
+```bash
+# Write this inventory before choosing the serving layer.
+route=<route-name>
+owner=<platform-or-app-team>
+graph_complexity=<single-endpoint-or-multi-step>
+rollback_unit=<resource-runtime-model-graph>
+autoscaling_owner=<gateway-serving-layer-runtime-cluster>
+```
+
+| Check | Pass signal |
+| --- | --- |
+| Owner is explicit | The team knows who owns the endpoint contract and production behavior. |
+| Rollback unit is explicit | Runtime image, model artifact, prompt, and graph code are not confused. |
+| SRE can operate it | On-call can debug routing, queueing, replica state, and runtime health. |
+| Alternative rejected | The decision records why the other serving layer was not selected. |
+
+## Related lab
+
+Run the [KServe vs Ray Serve decision lab](https://labs.k8sllm.online/challenges/kserve-vs-ray-serve-decision) to practice choosing by ownership and graph complexity.
+
+## Related pages
+
+- [KServe vs Ray Serve Ownership](/docs/field-notes/kserve-ray-serve-ownership)
+- [KServe vs Ray Serve](/docs/llm-on-kubernetes/kserve-vs-ray-serve)
+- [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options)
+- [LLM Inference Stack](/docs/reference-architectures/llm-inference-stack)

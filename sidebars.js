@@ -18,6 +18,19 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Production Guides',
+      link: { type: 'doc', id: 'production-guides/index' },
+      items: [
+        'production-guides/llm-latency-on-kubernetes',
+        'production-guides/vllm-kubernetes-production-deployment',
+        'production-guides/gpu-node-pool-scheduling-llm-inference',
+        'production-guides/kserve-vs-ray-serve-llm-platforms',
+        'production-guides/rag-tenant-isolation-kubernetes',
+        'production-guides/llm-production-readiness-checklist',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Kubernetes Core',
       link: { type: 'doc', id: 'kubernetes/index' },
       items: [

@@ -1,0 +1,66 @@
+---
+title: RAG Tenant Isolation on Kubernetes
+description: Production guide for RAG tenant isolation on Kubernetes, covering ingestion metadata, retrieval filters, prompt assembly, evaluation, and unauthorized-document tests.
+tags:
+  - rag
+  - tenant-isolation
+  - security
+  - kubernetes
+difficulty: senior
+last_reviewed: 2026-06-08
+sources:
+  - "https://kubernetes.io/docs/concepts/security/"
+  - "https://kubernetes.io/docs/concepts/workloads/controllers/job/"
+  - "https://opentelemetry.io/docs/"
+diagram_ids:
+  - "rag-platform"
+  - "multi-tenant-security"
+---
+
+# RAG Tenant Isolation on Kubernetes
+
+RAG tenant isolation on Kubernetes must be proven before context enters the prompt. If unauthorized text reaches prompt assembly, filtering the final answer is already too late.
+
+> Last reviewed: June 8, 2026. Use this page when retrieval quality is good but access boundaries are not measurable.
+
+![RAG platform on Kubernetes architecture](/img/architectures/rag-platform.svg)
+
+## Scenario
+
+A shared RAG service stores embeddings for multiple customer workspaces. Ingestion writes tenant metadata, but a migration leaves stale chunks without complete access fields. Retrieval returns a strong answer with one citation from another tenant.
+
+## Decision table
+
+| RAG layer | Tenant isolation requirement |
+| --- | --- |
+| Ingestion | Attach tenant, source owner, access scope, source version, and index version to every chunk. |
+| Index publish | Reject indexes with incomplete or stale authorization metadata. |
+| Retrieval | Apply tenant and access filters before reranking and prompt assembly. |
+| Prompt assembly | Log context IDs and policy decisions without storing sensitive prompt text. |
+| Evaluation | Test retrieval recall and unauthorized-document exclusion together. |
+
+## Commands and checks
+
+```bash
+curl -sS "$RAG_API/search?tenant=team-a&q=rollback"
+curl -sS "$RAG_API/search?tenant=team-b&q=rollback"
+kubectl -n rag-system logs deploy/rag-api --tail=100
+```
+
+| Check | Pass signal |
+| --- | --- |
+| Tenant filter visible | Search output or logs show tenant-aware metadata filtering. |
+| Unauthorized test exists | Evaluation includes documents the user must not retrieve. |
+| Context is traceable | Citations map to source ID, tenant ID, index version, and chunking config. |
+| Rollback is possible | The index can roll back independently from the model runtime. |
+
+## Related lab
+
+Run the [RAG retrieval challenge](https://labs.k8sllm.online/challenges/rag-retrieval) to practice tenant filters, citations, recall, and failure drills.
+
+## Related pages
+
+- [RAG Tenant Isolation Review](/docs/field-notes/rag-tenant-isolation-review)
+- [RAG on Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes)
+- [RAG Failure Modes and Evaluation](/docs/llm-on-kubernetes/rag-failure-modes-evaluation)
+- [Multi-Tenant Security](/docs/reference-architectures/multi-tenant-security)

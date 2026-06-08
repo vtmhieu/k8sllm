@@ -9,20 +9,20 @@ const navItems = [
 
 export function TopNav() {
   return (
-    <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0e1013]/88 backdrop-blur-xl">
+    <header className="sticky top-0 z-20 border-b border-blue-100 bg-white/90 backdrop-blur-xl">
       <nav className="mx-auto flex min-h-16 w-[min(1440px,calc(100%-32px))] items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3">
-          <span className="grid h-8 w-8 place-items-center border border-white/10 bg-white/[0.04] font-mono text-xs font-black text-emerald-300">
+          <span className="grid h-8 w-8 place-items-center border border-blue-200 bg-blue-50 font-mono text-xs font-black text-[#326ce5]">
             KL
           </span>
-          <span className="font-black tracking-tight text-slate-100">K8sLLM Labs</span>
+          <span className="font-black tracking-tight text-slate-950">K8sLLM Labs</span>
         </Link>
         <div className="hidden items-center gap-1 md:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="border border-transparent px-3 py-2 text-sm font-bold text-slate-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white"
+              className="border border-transparent px-3 py-2 text-sm font-bold text-slate-600 transition hover:border-blue-100 hover:bg-blue-50 hover:text-[#326ce5]"
             >
               {item.label}
             </Link>
@@ -30,7 +30,7 @@ export function TopNav() {
         </div>
         <a
           href="https://www.k8sllm.online/docs/labs"
-          className="border border-white/10 px-3 py-2 text-sm font-bold text-slate-300 transition hover:border-emerald-400/30 hover:bg-white/[0.04] hover:text-slate-100"
+          className="border border-blue-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:border-[#326ce5] hover:bg-blue-50 hover:text-[#326ce5]"
         >
           Docs
         </a>

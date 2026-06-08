@@ -117,6 +117,51 @@ const productionScenarios = [
   },
 ];
 
+const debuggingPaths = [
+  {
+    label: 'LLM latency',
+    question: 'Pods are healthy, but users still wait for the first token.',
+    href: '/docs/production-guides/llm-latency-on-kubernetes',
+    labHref: 'https://labs.k8sllm.online/challenges/vllm-inference',
+    signal: 'TTFT, queue wait, tokens/sec',
+  },
+  {
+    label: 'GPU scheduling',
+    question: 'GPU nodes exist, but inference pods are pending or misplaced.',
+    href: '/docs/production-guides/gpu-node-pool-scheduling-llm-inference',
+    labHref: 'https://labs.k8sllm.online/challenges/gpu-node-pool-scheduling',
+    signal: 'labels, taints, GPU requests',
+  },
+  {
+    label: 'RAG isolation',
+    question: 'Retrieval is strong, but tenant access is not proven.',
+    href: '/docs/production-guides/rag-tenant-isolation-kubernetes',
+    labHref: 'https://labs.k8sllm.online/challenges/rag-retrieval',
+    signal: 'tenant filters, citations, policy',
+  },
+  {
+    label: 'Serving choice',
+    question: 'KServe or Ray Serve is really an ownership decision.',
+    href: '/docs/production-guides/kserve-vs-ray-serve-llm-platforms',
+    labHref: 'https://labs.k8sllm.online/challenges/kserve-vs-ray-serve-decision',
+    signal: 'contract, graph complexity, rollback',
+  },
+  {
+    label: 'Readiness',
+    question: 'The model works, but launch evidence is incomplete.',
+    href: '/docs/production-guides/llm-production-readiness-checklist',
+    labHref: 'https://labs.k8sllm.online/challenges/production-readiness',
+    signal: 'policy, rollback, cost, latency',
+  },
+];
+
+const growthProof = [
+  { value: '12', label: 'free guided labs' },
+  { value: '6', label: 'production guides' },
+  { value: '4', label: 'field notes' },
+  { value: '0', label: 'fake customer claims' },
+];
+
 const llmPillars = [
   {
     label: 'K8s LLM Guide',
@@ -217,8 +262,10 @@ const stackItems = [
 const credibilityLinks = [
   { label: 'About K8sLLM', href: '/docs/about-k8sllm' },
   { label: 'Field Notes', href: '/docs/field-notes' },
+  { label: 'Production guides', href: '/docs/production-guides' },
   { label: 'Review checklist', href: '/docs/content-review-checklist' },
   { label: 'Challenge labs', href: '/docs/labs' },
+  { label: 'Premium lab waitlist', href: 'https://labs.k8sllm.online/#premium-labs' },
   { label: 'Reference architectures', href: '/docs/reference-architectures' },
 ];
 
@@ -435,6 +482,65 @@ export default function Home() {
           </div>
 
           <HeroTopology />
+        </section>
+
+        <section className={styles.debugSection}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.kicker}>What are you debugging?</p>
+            <h2>Enter from the symptom, then move into the matching lab.</h2>
+          </div>
+          <div className={styles.debugGrid}>
+            {debuggingPaths.map((path, index) => (
+              <article className={styles.debugCard} key={path.label} style={{ '--index': index }}>
+                <span>{path.label}</span>
+                <h3>{path.question}</h3>
+                <p>
+                  <b>Inspect:</b> {path.signal}
+                </p>
+                <div className={styles.debugActions}>
+                  <Link to={path.href}>Read guide</Link>
+                  <Link to={path.labHref}>Open lab</Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.labSpotlight}>
+          <div className={styles.spotlightCopy}>
+            <p className={styles.kicker}>Challenge of the Week</p>
+            <h2>vLLM Inference Challenge</h2>
+            <p>
+              Start with the strongest demo: deploy a GPU-backed inference
+              service, inspect terminal evidence, validate placement, measure
+              token latency, and prove the runtime is ready for traffic.
+            </p>
+            <div className={styles.spotlightMeta} aria-label="Challenge metadata">
+              <span>Hard</span>
+              <span>75 min</span>
+              <span>AI infrastructure</span>
+              <span>TTFT and GPU placement</span>
+            </div>
+            <div className={styles.spotlightActions}>
+              <Link className={styles.primaryAction} to="https://labs.k8sllm.online/challenges/vllm-inference">
+                Start vLLM lab
+              </Link>
+              <Link className={styles.secondaryAction} to="/docs/production-guides/vllm-kubernetes-production-deployment">
+                Read deployment guide
+              </Link>
+              <Link className={styles.textAction} to="/docs/production-guides/llm-production-readiness-checklist">
+                Open readiness checklist
+              </Link>
+            </div>
+          </div>
+          <div className={styles.spotlightProof} aria-label="K8sLLM usefulness proof">
+            {growthProof.map((item) => (
+              <div key={item.label}>
+                <strong>{item.value}</strong>
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className={styles.pathSection}>

@@ -1,0 +1,69 @@
+---
+title: vLLM Kubernetes Production Deployment
+description: Production deployment guide for vLLM on Kubernetes covering runtime contract, GPU scheduling, model cache, probes, metrics, and rollout evidence.
+tags:
+  - vllm
+  - kubernetes
+  - model-serving
+  - gpu
+difficulty: senior
+last_reviewed: 2026-06-08
+sources:
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
+  - "https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html"
+  - "https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/"
+  - "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# vLLM Kubernetes Production Deployment
+
+vLLM on Kubernetes should be deployed as a runtime contract, not just a container. The platform still owns GPU placement, route policy, health, metrics, rollout, rollback, and model artifact control.
+
+> Last reviewed: June 8, 2026. Use this page before promoting a vLLM deployment from experiment to production route.
+
+![LLM inference stack on Kubernetes architecture](/img/architectures/llm-inference-stack.svg)
+
+## Scenario
+
+A team deploys vLLM with an OpenAI-compatible route. The endpoint responds in staging, but production review cannot answer which GPU profile is required, how model cache behaves, which readiness probe proves model load, or which metric will trigger rollback.
+
+## Decision table
+
+| Deployment area | Production requirement |
+| --- | --- |
+| Model artifact | Pin model ID, revision, tokenizer behavior, and context limit. |
+| Runtime image | Pin image version and startup flags; record why flags changed. |
+| GPU scheduling | Request `nvidia.com/gpu` and use labels, taints, tolerations, and compatible node profiles. |
+| Model cache | Make model download, cache path, and warmup time measurable. |
+| Readiness | Probe model readiness, not only process startup. |
+| Metrics | Emit TTFT, queue wait, tokens/sec, GPU memory, errors, and model revision. |
+| Rollback | Roll back route, runtime image, and model artifact as one reviewed unit. |
+
+## Commands and checks
+
+```bash
+kubectl -n llm-serving get deploy,pod,svc,endpoints
+kubectl -n llm-serving describe pod <vllm-pod>
+kubectl -n llm-serving logs deploy/vllm-runtime --tail=120
+curl -sS "$GATEWAY/v1/models"
+```
+
+| Check | Pass signal |
+| --- | --- |
+| GPU contract | Pod requests `nvidia.com/gpu` and lands on the intended accelerator node. |
+| Model loaded | Logs or readiness endpoint prove the model is loaded before route traffic. |
+| Runtime visibility | Metrics include TTFT, queue wait, tokens/sec, and model revision. |
+| Rollback evidence | Rollout history and artifact revision are available to the on-call engineer. |
+
+## Related lab
+
+Run the [vLLM Kubernetes deployment lab](https://labs.k8sllm.online/challenges/vllm-kubernetes-deployment) to practice the runtime contract before live traffic.
+
+## Related pages
+
+- [vLLM on Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes)
+- [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools)
+- [Inference Benchmarking and Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
+- [LLM Inference Stack](/docs/reference-architectures/llm-inference-stack)
