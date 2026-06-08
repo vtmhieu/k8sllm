@@ -59,6 +59,7 @@ The goal is practical: help a platform team design and run LLM on Kubernetes wit
 5. Use [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options) to compare vLLM, KServe, Ray Serve, and Triton.
 6. Build retrieval systems with [RAG on Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes).
 7. Validate the path with the [Kubernetes LLM Labs](/docs/labs).
+8. Review production scenarios in [Field Notes](/docs/field-notes) before launch or incident review.
 
 ## What makes a K8s LLM platform production-grade
 
@@ -79,6 +80,17 @@ The goal is practical: help a platform team design and run LLM on Kubernetes wit
 | [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools) | GPU node pool Kubernetes | Accelerator placement, quotas, autoscaling, and isolation. |
 | [RAG on Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes) | RAG on Kubernetes | Ingestion, retrieval, vector databases, evaluation, and failure modes. |
 | [Inference Benchmarking and Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model) | Kubernetes LLM cost model | Latency phases, throughput, GPU economics, and benchmark design. |
+
+## Production field notes
+
+Use Field Notes when the question starts like an incident, not a tutorial.
+
+| Field note | Use it when |
+| --- | --- |
+| [LLM Latency War Room](/docs/field-notes/llm-latency-war-room) | Pods are healthy but time to first token is too slow. |
+| [GPU Capacity Incident](/docs/field-notes/gpu-capacity-incident) | GPU nodes are costly, fragmented, or not accepting inference pods. |
+| [RAG Tenant Isolation Review](/docs/field-notes/rag-tenant-isolation-review) | Retrieval quality and tenant authorization must be reviewed together. |
+| [KServe vs Ray Serve Ownership](/docs/field-notes/kserve-ray-serve-ownership) | The serving choice depends on ownership, rollback, and graph complexity. |
 
 ## Hands-on lab path
 

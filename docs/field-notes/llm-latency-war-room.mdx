@@ -1,0 +1,75 @@
+---
+title: LLM Latency War Room
+description: Field note for debugging LLM latency on Kubernetes when pods are healthy but users still wait for time to first token.
+tags:
+  - llm-latency
+  - vllm
+  - kubernetes
+  - observability
+difficulty: senior
+last_reviewed: 2026-06-07
+sources:
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
+  - "https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html"
+  - "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/"
+  - "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# LLM Latency War Room
+
+The incident starts with a dashboard that looks calm. Pods are ready, the Service has endpoints, and the gateway is not returning errors. Users still wait 14 seconds before the first token arrives.
+
+This is a classic LLM latency on Kubernetes failure: Kubernetes health says the container is alive, but the inference path is saturated somewhere between routing, queueing, prefill, decode, GPU memory, or model loading.
+
+## Scenario
+
+A platform team rolls out a new vLLM model revision behind the same gateway route. Request volume is stable, but p95 time to first token jumps from 2 seconds to 14 seconds. Horizontal scaling adds another replica, but latency stays high for 20 minutes because the new pod is still loading the model and warming cache.
+
+## Symptoms
+
+| Symptom | Why it misleads the team |
+| --- | --- |
+| Readiness is green | The probe may verify the server process, not model readiness under traffic. |
+| Gateway latency increases | The gateway sees the delay, but it does not explain prefill, queue wait, or decode. |
+| CPU looks normal | The bottleneck is usually GPU memory, batching, cache pressure, or runtime queueing. |
+| Adding replicas is slow | LLM replicas have image pull, model download, model load, and warmup costs. |
+
+## Common wrong instinct
+
+"The pod is healthy, so scale replicas."
+
+That can help only if replica capacity is the bottleneck and new replicas become ready quickly enough. For LLM serving, scale-out can be too slow for an active incident unless warm capacity, model cache, and readiness semantics are already designed.
+
+## Production reasoning
+
+Split the request path into measurable phases:
+
+| Phase | Signal to inspect | Platform decision |
+| --- | --- | --- |
+| Gateway | request duration, timeout, streaming behavior | Keep gateway metrics separate from runtime metrics. |
+| Runtime queue | queue wait, active sequences, pending requests | Scale from inference-specific signals, not only CPU. |
+| Prefill | input token count, TTFT, prompt class | Separate long-context traffic from interactive traffic. |
+| Decode | tokens/sec, inter-token latency | Compare runtime flags and GPU profile against baseline. |
+| GPU | memory use, utilization, cache pressure | Match model revision to node profile and capacity buffer. |
+| Rollout | model load time, readiness duration | Gate traffic until the model is actually ready. |
+
+## Decision checklist
+
+- Does readiness prove the model is loaded and able to answer a small request?
+- Are TTFT and queue wait emitted by model, route, tenant, and revision?
+- Do long prompts share the same runtime queue as short interactive prompts?
+- Is model load time included in rollout SLOs and autoscaling expectations?
+- Can the team roll back the route, the runtime image, and the model artifact together?
+
+## Related lab
+
+Run the [vLLM inference challenge](https://labs.k8sllm.online/challenges/vllm-inference) to practice validating GPU placement, time to first token, queue wait, and runtime health.
+
+## Related guides
+
+- [vLLM on Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes)
+- [Inference Benchmarking and Cost Model](/docs/llm-on-kubernetes/inference-benchmarking-cost-model)
+- [LLM Inference Stack](/docs/reference-architectures/llm-inference-stack)
+- [LLM Observability Lab](/docs/labs/observability-lab)

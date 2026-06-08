@@ -1,0 +1,52 @@
+---
+title: Field Notes
+description: Production scenario field notes for Kubernetes LLM platforms, covering latency, GPU capacity, RAG tenant isolation, and KServe vs Ray Serve ownership decisions.
+tags:
+  - field-notes
+  - kubernetes-llm
+  - platform-engineering
+difficulty: senior
+last_reviewed: 2026-06-07
+sources:
+  - "https://kubernetes.io/docs/"
+  - "https://docs.vllm.ai/en/latest/serving/deploying_with_k8s.html"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
+  - "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html"
+diagram_ids:
+  - "llm-inference-stack"
+  - "rag-platform"
+---
+
+# Field Notes
+
+Field Notes are production-style conversations for Kubernetes LLM platform teams. Each note starts from a failure mode that looks simple from a dashboard but becomes a platform decision once traffic, GPU capacity, tenant boundaries, and rollout controls are involved.
+
+Use these notes before design reviews, launch readiness checks, and incident retrospectives.
+
+| Field note | Production question | Matching lab |
+| --- | --- | --- |
+| [LLM Latency War Room](/docs/field-notes/llm-latency-war-room) | Why are pods healthy while users wait for the first token? | [vLLM inference challenge](https://labs.k8sllm.online/challenges/vllm-inference) |
+| [GPU Capacity Incident](/docs/field-notes/gpu-capacity-incident) | Why are expensive accelerators idle while inference pods are pending? | [GPU node pool scheduling](https://labs.k8sllm.online/challenges/gpu-node-pool-scheduling) |
+| [RAG Tenant Isolation Review](/docs/field-notes/rag-tenant-isolation-review) | Where must authorization happen before documents enter a prompt? | [RAG retrieval challenge](https://labs.k8sllm.online/challenges/rag-retrieval) |
+| [KServe vs Ray Serve Ownership](/docs/field-notes/kserve-ray-serve-ownership) | Is the serving layer a platform API or an application-owned graph? | [KServe vs Ray Serve decision](https://labs.k8sllm.online/challenges/kserve-vs-ray-serve-decision) |
+
+## How to read a field note
+
+Each note uses the same review shape:
+
+1. Start with the visible symptoms.
+2. Name the common wrong instinct.
+3. Split the system into platform layers.
+4. Pick the signals that prove or disprove the theory.
+5. Decide what should be automated, documented, or moved into a lab check.
+
+## Why this section exists
+
+Most Kubernetes LLM failures do not start as tool-selection problems. They start as ownership problems: who owns latency, GPU placement, retrieval quality, runtime flags, rollback boundaries, and cost evidence. Field Notes make those conversations explicit before a platform team scales the model.
+
+## Related pages
+
+- [K8s LLM: Kubernetes LLM Platform Guide](/docs/k8s-llm)
+- [LLM on Kubernetes](/docs/llm-on-kubernetes)
+- [Kubernetes LLM Labs](/docs/labs)
+- [Reference Architectures](/docs/reference-architectures)

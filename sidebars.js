@@ -7,6 +7,17 @@ const sidebars = {
     'k8s-llm',
     {
       type: 'category',
+      label: 'Field Notes',
+      link: { type: 'doc', id: 'field-notes/index' },
+      items: [
+        'field-notes/llm-latency-war-room',
+        'field-notes/gpu-capacity-incident',
+        'field-notes/rag-tenant-isolation-review',
+        'field-notes/kserve-ray-serve-ownership',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Kubernetes Core',
       link: { type: 'doc', id: 'kubernetes/index' },
       items: [

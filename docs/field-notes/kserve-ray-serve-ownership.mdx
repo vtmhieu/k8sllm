@@ -1,0 +1,74 @@
+---
+title: KServe vs Ray Serve Ownership
+description: Field note for deciding between KServe and Ray Serve for LLM serving on Kubernetes by ownership model, rollback unit, graph complexity, and SRE operability.
+tags:
+  - kserve
+  - ray-serve
+  - model-serving
+  - kubernetes
+difficulty: senior
+last_reviewed: 2026-06-07
+sources:
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/overview"
+  - "https://kserve.github.io/website/docs/model-serving/generative-inference/llmisvc/llmisvc-overview"
+  - "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html"
+  - "https://docs.ray.io/en/latest/cluster/kubernetes/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# KServe vs Ray Serve Ownership
+
+The meeting starts as a tool comparison and ends as an ownership debate. The platform team wants one inference API. The ML team wants a Python serving graph with retrieval, reranking, routing, and generation in one code path.
+
+That is the real KServe vs Ray Serve decision: who owns the serving contract, and what unit must be rolled back during an incident?
+
+## Scenario
+
+A team begins with one model endpoint. Three months later, the endpoint includes request normalization, retrieval, reranking, model routing, generation, post-processing, and custom telemetry. The platform team wants standardized CRDs, revisions, and policy controls. The application team wants to deploy a programmable graph quickly.
+
+## Symptoms
+
+| Symptom | What it reveals |
+| --- | --- |
+| Runtime flags are hidden behind an abstraction | The platform API may be too narrow for the model runtime. |
+| SRE cannot explain the serving graph | Operational ownership sits inside application code. |
+| Rollback restores the endpoint but not behavior | Model artifact, prompt, graph code, and runtime image may be separate rollback units. |
+| Autoscaling has two owners | Kubernetes, KServe, Ray Serve, and runtime queues may all influence capacity. |
+
+## Common wrong instinct
+
+"Pick the more popular serving framework."
+
+Popularity does not answer the ownership question. KServe is strong when the platform wants a standardized Kubernetes-native inference contract. Ray Serve is strong when the serving path is application-owned Python logic and graph complexity is the main value.
+
+## Production reasoning
+
+Compare by operating model:
+
+| Decision | KServe fit | Ray Serve fit |
+| --- | --- | --- |
+| Primary contract | Kubernetes resources and platform policy. | Python deployments and serving graph code. |
+| Team ownership | Platform team standardizes endpoint lifecycle. | ML or application team owns graph behavior. |
+| Serving graph | Best when endpoint patterns are repeatable. | Strong for custom multi-step pipelines. |
+| Rollback unit | Resource revision, runtime, model artifact, and route. | Ray Serve deployment, graph code, runtime env, and model artifact. |
+| SRE operability | Easier when teams can operate from Kubernetes resources. | Requires Ray cluster and graph-level visibility. |
+
+## Decision checklist
+
+- Is the workload mostly a standard endpoint or a custom serving graph?
+- Who owns the production contract: platform team or application team?
+- Can the on-call engineer debug routing, queueing, model revision, and graph behavior?
+- What is the rollback unit when quality, latency, or cost regresses?
+- Are autoscaling signals owned at the gateway, serving abstraction, runtime, or Ray cluster layer?
+
+## Related lab
+
+Run the [KServe vs Ray Serve decision challenge](https://labs.k8sllm.online/challenges/kserve-vs-ray-serve-decision) to practice choosing the serving layer from requirements, risks, and ownership boundaries.
+
+## Related guides
+
+- [KServe vs Ray Serve](/docs/llm-on-kubernetes/kserve-vs-ray-serve)
+- [Model Serving Options](/docs/llm-on-kubernetes/model-serving-options)
+- [LLM Inference Stack](/docs/reference-architectures/llm-inference-stack)
+- [vLLM on Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes)

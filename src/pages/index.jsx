@@ -74,6 +74,49 @@ const pathCards = [
   },
 ];
 
+const productionScenarios = [
+  {
+    label: 'LLM latency on Kubernetes',
+    title: 'Pods are healthy, users still wait 14 seconds',
+    href: '/docs/field-notes/llm-latency-war-room',
+    labHref: 'https://labs.k8sllm.online/challenges/vllm-inference',
+    symptoms: ['green readiness', 'slow first token', 'runtime queueing'],
+    decision:
+      'Separate gateway time, prefill, decode, queue wait, and GPU pressure before adding replicas.',
+    signals: 'TTFT, queue wait, tokens/sec, GPU memory, model load time',
+  },
+  {
+    label: 'GPU node pool Kubernetes',
+    title: 'GPU nodes are expensive but underutilized',
+    href: '/docs/field-notes/gpu-capacity-incident',
+    labHref: 'https://labs.k8sllm.online/challenges/gpu-node-pool-scheduling',
+    symptoms: ['pending pods', 'idle accelerators', 'fragmented profiles'],
+    decision:
+      'Treat GPU pools as distinct capacity classes with labels, taints, quotas, buffers, and workload lanes.',
+    signals: 'pending reasons, GPU utilization, memory profile, queue wait, cost/request',
+  },
+  {
+    label: 'RAG on Kubernetes',
+    title: 'RAG retrieves documents the user should not see',
+    href: '/docs/field-notes/rag-tenant-isolation-review',
+    labHref: 'https://labs.k8sllm.online/challenges/rag-retrieval',
+    symptoms: ['cross-tenant context', 'wrong citations', 'metadata drift'],
+    decision:
+      'Enforce authorization before context enters the prompt and test retrieval quality as a release gate.',
+    signals: 'tenant filters, citation IDs, retrieval recall, unauthorized-document tests',
+  },
+  {
+    label: 'KServe vs Ray Serve',
+    title: 'KServe vs Ray Serve becomes an ownership decision',
+    href: '/docs/field-notes/kserve-ray-serve-ownership',
+    labHref: 'https://labs.k8sllm.online/challenges/kserve-vs-ray-serve-decision',
+    symptoms: ['unclear rollback unit', 'runtime knobs hidden', 'serving graph sprawl'],
+    decision:
+      'Pick the serving layer by ownership model, not popularity: platform API or programmable serving graph.',
+    signals: 'revision boundary, graph complexity, autoscaling owner, SRE operability',
+  },
+];
+
 const llmPillars = [
   {
     label: 'K8s LLM Guide',
@@ -173,6 +216,7 @@ const stackItems = [
 
 const credibilityLinks = [
   { label: 'About K8sLLM', href: '/docs/about-k8sllm' },
+  { label: 'Field Notes', href: '/docs/field-notes' },
   { label: 'Review checklist', href: '/docs/content-review-checklist' },
   { label: 'Challenge labs', href: '/docs/labs' },
   { label: 'Reference architectures', href: '/docs/reference-architectures' },
@@ -412,6 +456,46 @@ export default function Home() {
                       {link.label}
                     </Link>
                   ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.scenarioSection}>
+          <div className={styles.scenarioIntro}>
+            <p className={styles.kicker}>Production scenarios</p>
+            <h2>Read the incidents before they happen.</h2>
+            <p>
+              Field notes turn common Kubernetes LLM failures into practical
+              engineering conversations. Start with symptoms, inspect the
+              right signals, then move into the matching guide or lab.
+            </p>
+            <Link className={styles.textAction} to="/docs/field-notes">
+              Browse Field Notes
+            </Link>
+          </div>
+          <div className={styles.scenarioGrid}>
+            {productionScenarios.map((scenario, index) => (
+              <article className={styles.scenarioCard} key={scenario.title} style={{ '--index': index }}>
+                <div className={styles.scenarioTopline}>
+                  <span>{scenario.label}</span>
+                  <strong>{scenario.title}</strong>
+                </div>
+                <div className={styles.scenarioSymptoms} aria-label={`${scenario.title} symptoms`}>
+                  {scenario.symptoms.map((symptom) => (
+                    <em key={symptom}>{symptom}</em>
+                  ))}
+                </div>
+                <p>
+                  <b>Platform decision:</b> {scenario.decision}
+                </p>
+                <small>
+                  <b>Signals:</b> {scenario.signals}
+                </small>
+                <div className={styles.scenarioActions}>
+                  <Link to={scenario.href}>Read field note</Link>
+                  <Link to={scenario.labHref}>Open lab</Link>
                 </div>
               </article>
             ))}

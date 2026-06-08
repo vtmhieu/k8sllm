@@ -1,28 +1,28 @@
 :root {
-  --ifm-color-primary: #0f766e;
-  --ifm-color-primary-dark: #115e59;
-  --ifm-color-primary-darker: #134e4a;
-  --ifm-color-primary-darkest: #042f2e;
-  --ifm-color-primary-light: #14b8a6;
-  --ifm-color-primary-lighter: #2dd4bf;
-  --ifm-color-primary-lightest: #99f6e4;
-  --ifm-background-color: #f8faf9;
+  --ifm-color-primary: #326ce5;
+  --ifm-color-primary-dark: #1d4ed8;
+  --ifm-color-primary-darker: #1e40af;
+  --ifm-color-primary-darkest: #172554;
+  --ifm-color-primary-light: #60a5fa;
+  --ifm-color-primary-lighter: #93c5fd;
+  --ifm-color-primary-lightest: #bfdbfe;
+  --ifm-background-color: #f8fbff;
   --ifm-font-family-base: "Satoshi", "Geist", "Aptos", "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ifm-font-family-monospace: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --ifm-heading-font-weight: 820;
   --ifm-heading-letter-spacing: 0;
   --ifm-code-font-size: 0.92rem;
   --ifm-navbar-height: 64px;
-  --k8sllm-ink: #111816;
-  --k8sllm-muted: #52625f;
+  --k8sllm-ink: #0f172a;
+  --k8sllm-muted: #475569;
   --k8sllm-surface: rgba(255, 255, 255, 0.76);
   --k8sllm-border: rgba(15, 23, 42, 0.13);
 }
 
 html[data-theme='dark'] {
-  --ifm-background-color: #101718;
-  --ifm-color-primary: #2dd4bf;
-  --ifm-footer-background-color: #101718;
+  --ifm-background-color: #0f172a;
+  --ifm-color-primary: #93c5fd;
+  --ifm-footer-background-color: #0f172a;
 }
 
 body {
@@ -46,7 +46,7 @@ body {
 
 .navbar__link:hover,
 .navbar__link--active {
-  color: #0f766e;
+  color: #326ce5;
 }
 
 .navbar__link:active,
@@ -61,7 +61,7 @@ a:active {
 }
 
 .menu__link--active {
-  border-left: 3px solid #0f766e;
+  border-left: 3px solid #326ce5;
 }
 
 .theme-doc-sidebar-container {
@@ -97,7 +97,7 @@ a:active {
 
 .theme-doc-markdown th {
   color: var(--k8sllm-ink);
-  background: rgba(15, 118, 110, 0.07);
+  background: rgba(50, 108, 229, 0.07);
 }
 
 .theme-doc-markdown td,
@@ -111,8 +111,8 @@ a:active {
 }
 
 .theme-doc-markdown blockquote {
-  border-left: 4px solid #0f766e;
-  background: rgba(15, 118, 110, 0.06);
+  border-left: 4px solid #326ce5;
+  background: rgba(50, 108, 229, 0.06);
   color: #334155;
   padding: 1rem 1.1rem;
 }
@@ -124,7 +124,7 @@ a:active {
 
 .theme-doc-markdown pre {
   border-radius: 0;
-  box-shadow: 0 18px 42px rgba(15, 35, 33, 0.12);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
 }
 
 .theme-doc-markdown code {
@@ -162,7 +162,7 @@ a:active {
   padding: 20px;
   border: 1px solid var(--k8sllm-border);
   background:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(240, 245, 241, 0.82)),
+    linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.82)),
     #ffffff;
   color: var(--k8sllm-ink);
   text-decoration: none;
@@ -176,13 +176,13 @@ a:active {
   color: var(--k8sllm-ink);
   text-decoration: none;
   transform: translateY(-3px);
-  border-color: rgba(15, 118, 110, 0.5);
-  box-shadow: 0 22px 58px rgba(15, 35, 33, 0.12);
+  border-color: rgba(50, 108, 229, 0.5);
+  box-shadow: 0 22px 58px rgba(15, 23, 42, 0.12);
 }
 
 .lab-tile span {
   grid-row: span 2;
-  color: #0f766e;
+  color: #326ce5;
   font-family: var(--ifm-font-family-monospace);
   font-variant-numeric: tabular-nums;
 }
@@ -227,7 +227,7 @@ a:active {
   top: 50%;
   width: 14px;
   height: 2px;
-  background: #0f766e;
+  background: #326ce5;
 }
 
 .challenge-catalog {
@@ -248,7 +248,7 @@ a:active {
 .challenge-card {
   border: 1px solid var(--k8sllm-border);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(240, 245, 241, 0.76)),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(239, 246, 255, 0.76)),
     #ffffff;
 }
 
@@ -264,7 +264,7 @@ a:active {
 .challenge-card__meta span,
 .challenge-card dt,
 .challenge-empty span {
-  color: #0f766e;
+  color: #326ce5;
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.74rem;
   font-weight: 760;
@@ -336,8 +336,8 @@ a:active {
 .challenge-catalog__filters button.is-active,
 .challenge-card__actions a:hover,
 .challenge-card__actions button:hover {
-  border-color: rgba(15, 118, 110, 0.56);
-  background: #0f766e;
+  border-color: rgba(50, 108, 229, 0.56);
+  background: #326ce5;
   color: #ffffff;
   text-decoration: none;
 }
@@ -351,7 +351,7 @@ a:active {
 .challenge-catalog__filters button:focus-visible,
 .challenge-card__actions a:focus-visible,
 .challenge-card__actions button:focus-visible {
-  outline: 2px solid #0f766e;
+  outline: 2px solid #326ce5;
   outline-offset: 3px;
 }
 
@@ -397,9 +397,9 @@ a:active {
 }
 
 .challenge-card__meta span {
-  border: 1px solid rgba(15, 118, 110, 0.18);
+  border: 1px solid rgba(50, 108, 229, 0.18);
   padding: 5px 8px;
-  background: rgba(15, 118, 110, 0.07);
+  background: rgba(50, 108, 229, 0.07);
 }
 
 .challenge-card h3 {
@@ -461,12 +461,12 @@ html[data-theme='dark'] .theme-doc-sidebar-container {
 }
 
 html[data-theme='dark'] .theme-doc-markdown blockquote {
-  background: rgba(45, 212, 191, 0.1);
+  background: rgba(147, 197, 253, 0.1);
   color: #d7dee7;
 }
 
 html[data-theme='dark'] .theme-doc-markdown img {
-  background: #f8faf9;
+  background: #f8fbff;
 }
 
 html[data-theme='dark'] .theme-doc-markdown table,
@@ -481,45 +481,45 @@ html[data-theme='dark'] .challenge-card {
 }
 
 html[data-theme='dark'] .theme-doc-markdown th {
-  background: rgba(45, 212, 191, 0.12);
+  background: rgba(147, 197, 253, 0.12);
 }
 
 html[data-theme='dark'] .lab-tile,
 html[data-theme='dark'] .lab-tile:hover {
-  color: #eef7f3;
+  color: #eff6ff;
 }
 
 html[data-theme='dark'] .lab-tile small {
-  color: #c5d7d3;
+  color: #cbd5e1;
 }
 
 html[data-theme='dark'] .lab-flow span {
   background: rgba(255, 255, 255, 0.075);
-  color: #eef7f3;
+  color: #eff6ff;
 }
 
 html[data-theme='dark'] .challenge-card h3,
 html[data-theme='dark'] .challenge-card dd,
 html[data-theme='dark'] .challenge-catalog__summary strong {
-  color: #eef7f3;
+  color: #eff6ff;
 }
 
 html[data-theme='dark'] .challenge-card p,
 html[data-theme='dark'] .challenge-catalog__summary > p,
 html[data-theme='dark'] .challenge-catalog__summary small,
 html[data-theme='dark'] .challenge-empty p {
-  color: #c5d7d3;
+  color: #cbd5e1;
 }
 
 html[data-theme='dark'] .challenge-catalog__filters button,
 html[data-theme='dark'] .challenge-card__actions button,
 html[data-theme='dark'] .challenge-card__actions a {
   background: rgba(255, 255, 255, 0.075);
-  color: #eef7f3;
+  color: #eff6ff;
 }
 
 html[data-theme='dark'] .challenge-empty {
-  border-color: rgba(153, 246, 228, 0.24);
+  border-color: rgba(191, 219, 254, 0.24);
   background: rgba(255, 255, 255, 0.04);
 }
 

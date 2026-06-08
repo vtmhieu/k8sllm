@@ -1,0 +1,75 @@
+---
+title: RAG Tenant Isolation Review
+description: Field note for RAG on Kubernetes failures where retrieval returns documents outside the user's tenant or authorization boundary.
+tags:
+  - rag
+  - security
+  - tenant-isolation
+  - kubernetes
+difficulty: senior
+last_reviewed: 2026-06-07
+sources:
+  - "https://kubernetes.io/docs/concepts/security/"
+  - "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+  - "https://kubernetes.io/docs/concepts/workloads/controllers/job/"
+  - "https://opentelemetry.io/docs/"
+diagram_ids:
+  - "rag-platform"
+  - "multi-tenant-security"
+---
+
+# RAG Tenant Isolation Review
+
+The model answer looks helpful, but one citation belongs to another tenant. The final API route checked the user identity, yet unauthorized text still reached prompt assembly.
+
+This is the security boundary that makes RAG on Kubernetes different from normal retrieval. Authorization must happen before retrieved context enters the prompt.
+
+## Scenario
+
+A shared RAG service supports multiple customer workspaces. Ingestion jobs write embeddings into one vector database with tenant metadata. A query route receives user identity from the gateway, but retrieval only filters by workspace after reranking. During a metadata migration, stale chunks from another tenant are retrieved and summarized.
+
+## Symptoms
+
+| Symptom | What it suggests |
+| --- | --- |
+| Citation points to the wrong workspace | Tenant metadata is missing, stale, or not enforced before generation. |
+| Retrieval recall looks strong | Quality metrics may hide authorization failures. |
+| Audit logs show a valid user | Authentication succeeded, but context authorization failed. |
+| The prompt contains unexpected document IDs | Prompt assembly accepted context that should have been rejected earlier. |
+
+## Common wrong instinct
+
+"Filter the final answer."
+
+That is too late. Once unauthorized text enters the prompt, the model can summarize, paraphrase, or cite it. The retrieval layer must enforce tenant and access policy before reranking and prompt assembly.
+
+## Production reasoning
+
+Separate the RAG platform into two lifecycles:
+
+| Lifecycle | Isolation requirement |
+| --- | --- |
+| Ingestion | Attach tenant, source owner, access scope, source version, and index version to every chunk. |
+| Index publish | Validate metadata completeness before a new index becomes active. |
+| Retrieval | Apply tenant and access filters before ranking results are exposed downstream. |
+| Prompt assembly | Log context IDs and policy decisions, not only generated answers. |
+| Evaluation | Include unauthorized-document tests alongside recall and groundedness tests. |
+
+## Decision checklist
+
+- Does retrieval receive tenant and authorization context from the gateway?
+- Are tenant filters applied before reranking and prompt assembly?
+- Can every citation be traced to source ID, tenant ID, index version, and chunking config?
+- Do evaluation jobs include negative tests for unauthorized documents?
+- Can the platform roll back an index independently from the model runtime?
+
+## Related lab
+
+Run the [RAG retrieval challenge](https://labs.k8sllm.online/challenges/rag-retrieval) to practice checking tenant filters, citations, retrieval recall, and failure drills.
+
+## Related guides
+
+- [RAG on Kubernetes](/docs/llm-on-kubernetes/rag-on-kubernetes)
+- [RAG Failure Modes and Evaluation](/docs/llm-on-kubernetes/rag-failure-modes-evaluation)
+- [RAG Platform Reference Architecture](/docs/reference-architectures/rag-platform)
+- [Multi-Tenant Security](/docs/reference-architectures/multi-tenant-security)

@@ -1,0 +1,75 @@
+---
+title: GPU Capacity Incident
+description: Field note for GPU node pool Kubernetes incidents where accelerators are expensive, underutilized, or unavailable for LLM inference pods.
+tags:
+  - gpu-node-pool
+  - kubernetes
+  - scheduling
+  - llm
+difficulty: senior
+last_reviewed: 2026-06-07
+sources:
+  - "https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/"
+  - "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/"
+  - "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
+  - "https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/"
+diagram_ids:
+  - "llm-inference-stack"
+---
+
+# GPU Capacity Incident
+
+The bill says the GPU pool is expensive. The scheduler says inference pods are pending. The runtime team says the model is ready. Everyone is correct, but they are looking at different parts of the capacity contract.
+
+This field note frames GPU node pool Kubernetes design as a scheduling, cost, and isolation problem.
+
+## Scenario
+
+An interactive inference deployment needs one A100-class GPU per replica. The cluster has GPU nodes online, but two pods stay pending. Another team's batch job is running on a compatible node, a platform agent is using CPU and memory on another GPU node, and a new node group cannot scale because the pod selector does not match its labels.
+
+## Symptoms
+
+| Symptom | What it usually means |
+| --- | --- |
+| Pods are pending | Inspect node selectors, taints, tolerations, GPU requests, and node group labels. |
+| GPUs look idle | Utilization can be low while memory, topology, or scheduling constraints block placement. |
+| Autoscaler does nothing | The pod may not match any scalable node group. |
+| Cost/request is unstable | Batch and interactive workloads may be sharing the same accelerator lane. |
+
+## Common wrong instinct
+
+"Buy more GPUs."
+
+More accelerators help only after the placement contract is clear. Without labels, taints, tolerations, quotas, workload lanes, and compatible node profiles, new capacity can stay unusable or be consumed by the wrong workload class.
+
+## Production reasoning
+
+Treat each GPU pool as a capacity product:
+
+| Capacity decision | Why it matters |
+| --- | --- |
+| Accelerator profile | Model memory, tensor parallelism, and throughput depend on GPU type. |
+| Taints and tolerations | Prevent general workloads and unapproved jobs from landing on GPU nodes. |
+| Node labels | Make model-to-hardware compatibility explicit and debuggable. |
+| Namespace quotas | Stop experiments and batch jobs from starving production inference. |
+| Warm buffer | Protect interactive traffic from cold node provisioning and model load time. |
+| Separate lanes | Keep batch, experimentation, embeddings, and interactive serving from fighting for the same queue. |
+
+## Decision checklist
+
+- Does every GPU pod request `nvidia.com/gpu` explicitly?
+- Are GPU nodes tainted so only approved workloads land there?
+- Can a pending pod explain which label, taint, quota, or resource blocked placement?
+- Are batch jobs separated from interactive inference by quota, pool, or priority?
+- Is cost reported by model, tenant, request class, and GPU profile?
+
+## Related lab
+
+Run the [GPU node pool scheduling challenge](https://labs.k8sllm.online/challenges/gpu-node-pool-scheduling) to practice inspecting placement, taints, tolerations, and accelerator profile mismatches.
+
+## Related guides
+
+- [GPU Node Pool Kubernetes](/docs/llm-on-kubernetes/gpu-node-pools)
+- [vLLM on Kubernetes](/docs/llm-on-kubernetes/vllm-kubernetes)
+- [Inference Scaling and Cost](/docs/llm-on-kubernetes/inference-scaling-cost)
+- [Production Cluster Architecture](/docs/reference-architectures/production-cluster)
